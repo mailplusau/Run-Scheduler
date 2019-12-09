@@ -6,8 +6,8 @@
  *
  * Remarks:         
  * 
- * @Last Modified by:   ankith.ravindran
- * @Last Modified time: 2019-05-07 10:41:45
+ * @Last Modified by:   Ankith
+ * @Last Modified time: 2019-12-05 16:41:41
  *
  */
 var baseURL = 'https://1048144.app.netsuite.com';
@@ -128,6 +128,7 @@ function pageInit() {
 $(".nav-tabs").on("click", "li a", function(e) {
 	var main_stop = $(this).attr('href');
 	var main_stop_det = $(this);
+	var freq_array = $(this).attr('data-freq');
 	console.log(main_stop);
 	var error = false;
 	var old_stored_run;
@@ -904,7 +905,9 @@ function saveRecord() {
 	$(".tabs").each(function() {
 		$(this).find(".nav-tabs li").each(function(index, element) {
 			var stop_id = $(this).children('a').attr('href');
+			var freq_main_id = $(this).children('a').attr('data-freq');
 			console.log('Stop ID: ' + stop_id)
+			console.log('freq_main_id: ' + freq_main_id)
 			stop_id = stop_id.split('#');
 			if (!isNullorEmpty(stop_id[1])) {
 
@@ -920,10 +923,15 @@ function saveRecord() {
 				}
 				console.log('Rows: ' + rows);
 				console.log('Rows Length :' + rows.length);
-				if (rows.length == 1) {
+				if (rows.length == 1 || rows.length == 0) {
 					var run = $('#' + stop_id[1]).find('#run' + stop_id[1]).val();
 					var old_run = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-oldrun');
-					var run_freq_id = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-freqid');
+					if(isNullorEmpty(freq_main_id)){
+						var run_freq_id = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-freqid');
+					} else {
+						var run_freq_id = freq_main_id;
+					}
+					
 					console.log('service_time: ' + $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
 					var service_time = onTimeChange($('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
 
@@ -1113,9 +1121,9 @@ function saveRecord() {
 		nlapiSetFieldValue('delete_freq', delete_freq_string)
 	}
 
-	if (exit == true) {
-		return true;
-	}
+	// if (exit == true) {
+	// 	return true;
+	// }
 }
 
 
