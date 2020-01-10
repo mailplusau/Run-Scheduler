@@ -7,7 +7,7 @@
  * Remarks:         
  * 
  * @Last Modified by:   Ankith
- * @Last Modified time: 2019-12-05 16:41:41
+ * @Last Modified time: 2020-01-10 12:07:17
  *
  */
 var baseURL = 'https://1048144.app.netsuite.com';
@@ -1121,9 +1121,9 @@ function saveRecord() {
 		nlapiSetFieldValue('delete_freq', delete_freq_string)
 	}
 
-	// if (exit == true) {
-	// 	return true;
-	// }
+	if (exit == true) {
+		return true;
+	}
 }
 
 

@@ -2,7 +2,7 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
- * @Last Modified time: 2019-11-15 09:52:43
+ * @Last Modified time: 2020-01-08 14:40:53
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -217,7 +217,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc);
                         } else {
 
                             var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
@@ -237,7 +237,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc);
                         }
                     }
                 }
@@ -301,10 +301,15 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     service_leg_addr_state,
     service_leg_addr_postcode,
     service_leg_addr_lat,
-    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type) {
+    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc) {
     var app_job_rec = nlapiCreateRecord('customrecord_job');
     app_job_rec.setFieldValue('custrecord_job_franchisee', service_leg_zee);
-    app_job_rec.setFieldValue('custrecord_app_job_stop_name', service_leg_name);
+    if(service_freq_adhoc == 'T'){
+        app_job_rec.setFieldValue('custrecord_app_job_stop_name', 'ADHOC - ' + service_leg_name);
+    } else {
+       app_job_rec.setFieldValue('custrecord_app_job_stop_name', service_leg_name); 
+    }
+    
     app_job_rec.setFieldValue('custrecord_job_customer', service_leg_customer);
     app_job_rec.setFieldValue('custrecord_job_source', 6);
     app_job_rec.setFieldValue('custrecord_job_service', service_id);
