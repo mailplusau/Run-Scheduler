@@ -2,7 +2,7 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-08 14:40:53
+ * @Last Modified time: 2020-01-10 14:27:39
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -304,6 +304,7 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc) {
     var app_job_rec = nlapiCreateRecord('customrecord_job');
     app_job_rec.setFieldValue('custrecord_job_franchisee', service_leg_zee);
+    nlapiLogExecution('DEBUG', 'Adhoc Value', service_freq_adhoc);
     if(service_freq_adhoc == 'T'){
         app_job_rec.setFieldValue('custrecord_app_job_stop_name', 'ADHOC - ' + service_leg_name);
     } else {
