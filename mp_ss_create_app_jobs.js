@@ -2,7 +2,7 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-10 14:27:39
+ * @Last Modified time: 2020-01-24 09:24:01
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -74,7 +74,6 @@ function main() {
                 "AND", [
                     ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_closing_date}, 'DD/MM/YYYY') <= TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"], "AND", ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_opening_date}, 'DD/MM/YYYY') > TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"]
                 ],
-                "AND", ["custrecord_service_leg_franchisee", "noneof", "119988", "404079", "422793", "6"],
                 "AND", ["custrecord_app_ser_leg_daily_job_create", "anyof", "2", "@NONE@"],
                 "AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"]
             ];
