@@ -72,6 +72,7 @@ function createStops(request, response) {
 
 
 		form.addField('custpage_customer_id', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(customer_id);
+		form.addField('custpage_service_leg_customer','text','Customer ID').setDisplayType('hidden').setDefaultValue(entity_id + ' ' + company_name);
 		form.addField('custpage_service_id', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(service_id);
 		form.addField('custpage_suitlet', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.scriptid);
 		form.addField('custpage_deploy', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.deployid);
@@ -152,9 +153,10 @@ function createStops(request, response) {
 
 
 
-		inlineQty += '<div class="se-pre-con"></div><button type="button" class="btn btn-sm btn-info instruction_button" data-toggle="collapse" data-target="#demo" style="margin-top: 50px;position: absolute;">Click for Instructions</button><div id="demo" style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute" class="collapse"><b><u>IMPORTANT INSTRUCTIONS:</u></b><ul><li>This page is used to Create / Add / Edit Stops for a particular service. The information required are the stop address, time spent at that stop & notes with respect to the stop</li><li><button class="btn btn-success btn-sm  glyphicon glyphicon-log-out" type="button"  title="Add Stop"></button> - <b>ADD STOP</b><ul><li>Click to Add Stop Information</li></ul></li><li><button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" title="Edit Stop" ></button> - <b>EDIT STOP</b> </li><ul><li>Click to Edit Stop Information.</li></ul><li><button class="btn btn-danger btn-sm  glyphicon glyphicon-trash" type="button"  title="Delete Stop" ></button> - <b>DELETE STOP</b></li><ul><li>Click to Delete the Stop</li></ul><li><button type="button" class="btn btn-sm glyphicon glyphicon-plus" value="+" style="color: green;" title="Add Row" ></button> - <b>CREATE STOP</b><ul><li>Click to create a New Stop</li></ul></li><ul></div>';
+		inlineQty += '<div class="se-pre-con"></div><button type="button" class="btn btn-sm btn-info instruction_button" data-toggle="collapse" data-target="#demo" style="margin-top: 50px;position: absolute;">Click for Instructions</button><div id="demo" style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute; margin-top:90px;" class="collapse"><b><u>IMPORTANT INSTRUCTIONS:</u></b><ul><li>This page is used to Create / Add / Edit Stops for a particular service. The information required are the stop address, time spent at that stop & notes with respect to the stop</li><li><button class="btn btn-success btn-sm  glyphicon glyphicon-log-out" type="button"  title="Add Stop"></button> - <b>ADD STOP</b><ul><li>Click to Add Stop Information</li></ul></li><li><button class="btn btn-warning btn-sm glyphicon glyphicon-pencil" type="button" title="Edit Stop" ></button> - <b>EDIT STOP</b> </li><ul><li>Click to Edit Stop Information.</li></ul><li><button class="btn btn-danger btn-sm  glyphicon glyphicon-trash" type="button"  title="Delete Stop" ></button> - <b>DELETE STOP</b></li><ul><li>Click to Delete the Stop</li></ul><li><button type="button" class="btn btn-sm glyphicon glyphicon-plus" value="+" style="color: green;" title="Add Row" ></button> - <b>CREATE STOP</b><ul><li>Click to create a New Stop</li></ul></li><ul></div>';
 
-		inlineQty += '<div class="container" style="padding-top: 10%;">';
+		//inlineQty += '<div class="serviceinfo-section">';
+		inlineQty += '<div class="container" id="container" style="padding-top: 120px;">';
 
 		inlineQty += '<div class="form-group container service_descp_row ">';
 		inlineQty += '<div class="row">';
@@ -162,6 +164,7 @@ function createStops(request, response) {
 		inlineQty += '<div class="col-xs-3 service_pprice_section"><div class="input-group"><span class="input-group-addon" id="descp_text">SERVICE PRICE | $</span><input id="descp" class="form-control service_price" readonly value="' + service_price + '" /></div></div>';
 		inlineQty += '</div>';
 		inlineQty += '</div>';
+		//inlineQty += '</div>';
 
 		inlineQty += '<div class="form-group container transfer_type_row hide">';
 		inlineQty += '<div class="row">';
@@ -332,7 +335,7 @@ function createStops(request, response) {
 
 		inlineQty += '</div>';
 		inlineQty += '</div>';
-
+		//inlineQty += '</div>';
 
 
 		inlineQty += '<br><br><style>table#services {font-size:12px; text-align:center; border-color: #24385b}</style><form id="package_form" class="form-horizontal"><div class="form-group container-fluid"><div><div id="alert" class="alert alert-danger fade in"></div><div id="myModal" class="modal fade bs-example-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true"><div class="modal-dialog modal-sm" role="document"><div class="modal-content" style="width: max-content;"><div class="modal-header"><button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button><h4 class="modal-title panel panel-info" id="exampleModalLabel">Information</h4><br> </div><div class="modal-body"></div><div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Close</button></div></div></div></div><table border="0" cellpadding="15" id="services" class="table table-responsive table-striped services tablesorter" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr class="text-center">';
@@ -340,7 +343,7 @@ function createStops(request, response) {
 		/**
 		 * ACTION ROW
 		 */
-		inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>ACTION</b></th>';
+		inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>ACTION TEST</b></th>';
 		/**
 		 * INFO ROW
 		 */
@@ -423,7 +426,7 @@ function createStops(request, response) {
 		form.addField('preview_table', 'inlinehtml', '').setLayoutType('startrow').setDefaultValue(inlineQty);
 
 
-		form.addSubmitButton('Submit');
+		form.addSubmitButton('Submit & Next');
 		form.addButton('back', 'Back', 'onclick_back()');
 		form.addButton('back', 'Reset', 'onclick_reset()');
 		form.addButton('main_page', 'Back to Main Page', 'onclick_mainpage()');
