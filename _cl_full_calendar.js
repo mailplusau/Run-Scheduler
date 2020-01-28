@@ -249,21 +249,21 @@ function pageInit() {
 
 				var header = '<div class="form-group"><h4><label class="control-label" for="inputError1">Stop: ' + event.title + ' </label></h4></div>';
 				var body = '';
-				if (!isNullorEmpty(event.description)) {
+/*				if (!isNullorEmpty(event.description)) {
 					var modal_notes = wordWrap(event.description, 40);
 					// console.log(modal_notes);
 					body += modal_notes + '<br>';
-				}
-				body += '<table border="0" cellpadding="15" id="customer" class="display compact tablesorter table table-striped" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th><b>EDIT</b></th><th><b>CUSTOMER NAME</b></th><th class="col-sm-2"><b>SERVICE</b></th></tr></thead><tbody>';
+				}*/
+				body += '<table border="0" cellpadding="15" id="customer" class="display compact tablesorter table table-striped" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th><b>EDIT</b></th><th><b>CUSTOMER NAME</b></th><th><b>SERVICE</b></th><th><b>STOP NOTES</b></th></tr></thead><tbody>';
 
 				for (var x = 0; x < event.services.length; x++) {
 
 					var split_name = event.services[x].customer_text.split('CLOSED - ');
 
 					if (isNullorEmpty(split_name[0])) {
-						body += '<tr style="color:#ad3a3a;"><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td></tr>';
+						body += '<tr style="color:#ad3a3a;"><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
 					} else {
-						body += '<tr><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td></tr>';
+						body += '<tr><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td style="max-width:500px; word-break: normal;">' + event.services[x].customer_notes + '</td></tr>';
 					}
 
 
@@ -382,7 +382,7 @@ function onclick_customerClosure() {
 	if (zee != 0) {
 
 		var params = {
-			scriptid: 'customscript_sl_full_calendar',
+			scriptid: 'customscript_sl_full_calender',
 			deployid: 'customdeploy_sl_full_calender',
 			zee: zee
 		}
@@ -681,7 +681,7 @@ $(document).on('click', '.edit_stop', function(event) {
 
 	var params = {
 		serviceid: service_id,
-		scriptid: 'customscript_sl_full_calendar',
+		scriptid: 'customscript_sl_full_calender',
 		deployid: 'customdeploy_sl_full_calender',
 		zee: zee
 	}
