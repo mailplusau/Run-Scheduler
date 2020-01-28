@@ -157,7 +157,7 @@ function onclick_back() {
 }
 
 function onclick_mainpage() {
-    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender') + '&unlayered=T';
+    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender') + '&unlayered=T';
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 

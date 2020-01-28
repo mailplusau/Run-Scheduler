@@ -746,7 +746,7 @@ function scheduleRun(request, response) {
         if (role == 1000) {
             nlapiSetRedirectURL('SUITELET', 'customscript_sl_rp_customer_list', 'customdeploy_sl_rp_customer_list', null, null);
         } else {
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender', null, null);
+            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender', null, null);
         }
 
     }

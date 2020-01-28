@@ -630,10 +630,10 @@ function runPlanner(request, response) {
         }
 
         if (save_button == 'T') {
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender', null, null);
+            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender', null, null);
         } else {
             var params = {
-                scriptid: 'customscript_sl_full_calender',
+                scriptid: 'customscript_sl_full_calendar',
                 deployid: 'customdeploy_sl_full_calender',
                 zee: zee_response
             }
