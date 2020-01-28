@@ -231,10 +231,10 @@ function scheduleRun(request, response) {
         inlineQty += '</ol>';
 
 
-        inlineQty += '<button type="button" class="btn btn-sm btn-info instruction_button" data-toggle="collapse" data-target="#demo" style="margin-top: 50px;position: absolute;">Click for Instructions</button><div id="demo" style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute" class="collapse"><b><u>IMPORTANT INSTRUCTIONS:</u></b><ul><li>This page is used to Schedule the Service for each Stop. Information required to be entered are <ul><li>Frequency of the Service</li><li>Time at which the Service is being performed currently</li><li>The Earliest and Latest time for each Stop</li><li>Select the Run associated with each stop</li></ul></li><ul></div>';
+        inlineQty += '<button type="button" class="btn btn-sm btn-info instruction_button" data-toggle="collapse" data-target="#demo" style ="margin-top: 40px;position: absolute">Click for Instructions</button><div id="demo" style="background-color: #cfeefc !important;border: 1px solid #417ed9;padding: 10px 10px 10px 20px;width:96%;position:absolute; margin-top:80px" class="collapse"><b><u>IMPORTANT INSTRUCTIONS:</u></b><ul><li>This page is used to Schedule the Service for each Stop. Information required to be entered are <ul><li>Frequency of the Service</li><li>Time at which the Service is being performed currently</li><li>The Earliest and Latest time for each Stop</li><li>Select the Run associated with each stop</li></ul></li><ul></div>';
 
 
-        inlineQty += '<div class="container" style="padding-top: 10%;" ng-app="">';
+        inlineQty += '<div class="container" id="container" style="padding-top: 80px;" ng-app="">';
 
 
         inlineQty += '<div class="form-group container">';
@@ -338,33 +338,39 @@ function scheduleRun(request, response) {
         var stop_ids = [];
 
         nlapiLogExecution('DEBUG', 'parsedStopFreq', parsedStopFreq);
+        nlapiLogExecution('DEBUG', 'parsedStopFreq.data.length', parsedStopFreq.data.length);
 
         for (var i = 0; i < parsedStopFreq.data.length; i++) {
             var obj = parsedStopFreq.data[i];
 
             if (i == 0) {
-                if (obj['stop_freq'].length > 1) {
+                if (obj['stop_freq'].length > 1 && !isNullorEmpty(obj['transfer_type'])) {
                     var obj_freq = obj['stop_freq'];
-                    if (!isNullorEmpty(obj['transfer_type'])) {
-                        for (var y = 0; y < obj['stop_freq'].length; y++) {
-                            inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
-                        }
-
+                    //if (!isNullorEmpty(obj['transfer_type'])) {
+                    for (var y = 0; y < obj['stop_freq'].length; y++) {
+                        inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                     }
+                    /*                    } else {
+                                            inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
+                                        }*/
+
                 } else {
-                    inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
+                    inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                 }
                 active_class = 'active';
             } else {
                 // inlineQty += '<li class="add_stop_li hide"><a href="#" class="add_stop_link hide" data-addstop="true">+ Add Stop</a></li>';
-                if (obj['stop_freq'].length > 1) {
+                if (obj['stop_freq'].length > 1 && !isNullorEmpty(obj['transfer_type'])) {
                     var obj_freq = obj['stop_freq'];
-                    if (!isNullorEmpty(obj['transfer_type'])) {
-                        for (var y = 0; y < obj['stop_freq'].length; y++) {
-                            inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
-                        }
-
+                    nlapiLogExecution('DEBUG', 'obj[stop_freq]', obj['stop_freq']);
+                    //if (!isNullorEmpty(obj['transfer_type'])) {
+                    for (var y = 0; y < obj['stop_freq'].length; y++) {
+                        inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                     }
+                    /*
+                                        } else {
+                                            inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
+                                        }*/
                 } else {
                     inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq=""  data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                 }
@@ -420,6 +426,7 @@ function scheduleRun(request, response) {
                 var resultSet_runPlan = runPlanSearch.runSearch();
                 resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
 
+                    nlapiLogExecution('DEBUG', 'obj_freq[0][freq_run_plan]', obj_freq[0]['freq_run_plan']);
                     if (obj_freq[0]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
                         tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
                     } else {
@@ -602,9 +609,11 @@ function scheduleRun(request, response) {
                 tab_content += '</div>';
                 tab_content += '</div>';
 
-                if (!isNullorEmpty(obj['transfer_type'])) {
+                /*                if (!isNullorEmpty(obj['transfer_type'])) {
 
-                } else {
+
+                                } else {*/
+                if (isNullorEmpty(obj['transfer_type'])) {
 
                     tab_content += '<table border="0" cellpadding="15" id="services' + obj['stop_id'] + '" class="table table-responsive table-striped services tablesorter " data-stopid="' + obj['stop_id'] + '" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr class="text-center">';
 
@@ -737,7 +746,7 @@ function scheduleRun(request, response) {
         if (role == 1000) {
             nlapiSetRedirectURL('SUITELET', 'customscript_sl_rp_customer_list', 'customdeploy_sl_rp_customer_list', null, null);
         } else {
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender', null, null);
+            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender', null, null);
         }
 
     }
