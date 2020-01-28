@@ -18,7 +18,7 @@ var zee = 0;
 var role = ctx.getRole();
 
 if (role == 1000) {
-  //Franchisee
+  //Franchiseea
   zee = ctx.getUser();
 } else if (role == 3) { //Administrator
   zee = 6; //test
@@ -123,7 +123,7 @@ function main(request, response) {
     form.addField('preview_table', 'inlinehtml', '').setLayoutType('outsidebelow', 'startrow').setDefaultValue(inlineQty);
 
     form.addButton('back', 'Back', 'onclick_back()');
-    form.setScript('customscript_cl_rp_customer_list');
+    form.setScript('customscript_cl_rp_Customer_list');
     response.writePage(form);
 
   } else {
