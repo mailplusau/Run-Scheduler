@@ -305,14 +305,18 @@ function scheduleRun(request, response) {
                 if (monday_checkbox == 'checked' && tuesday_checkbox == 'checked' && wednesday_checkbox == 'checked' && thursday_checkbox == 'checked' && friday_checkbox == 'checked') {
                     daily_checkbox = 'checked';
                 }
+
+                if (obj_freq[y]['freq_adhoc'] == 'T'){
+                    adhoc_checkbox = 'checked';
+                }
             }
         }
 
 
 
         inlineQty += '<div class="row">';
-        inlineQty += '<div class="col-xs-2 daily_section"><div class="input-group"><input type="text" readonly value="DAILY" class="form-control input-group-addon"/> <span class="input-group-addon"><input type="checkbox" ng-model="daily_checkbox" id="daily" class=" daily" ' + daily_checkbox + ' /></span></div></div>';
-        inlineQty += '<div class="col-xs-2 adhoc_section"><div class="input-group"><input type="text" readonly value="ADHOC" class="form-control input-group-addon"/> <span class="input-group-addon"><input type="checkbox" id="adhoc" ng-model="adhoc_checkbox" class=" adhoc" /></span></div></div>';
+        inlineQty += '<div class="col-xs-2 daily_section"><div class="input-group"><input type="text" readonly value="DAILY" class="form-control input-group-addon"/> <span class="input-group-addon"><input type="checkbox" id="daily" class=" daily" ' + daily_checkbox + ' /></span></div></div>';
+        inlineQty += '<div class="col-xs-2 adhoc_section"><div class="input-group"><input type="text" readonly value="ADHOC" class="form-control input-group-addon"/> <span class="input-group-addon"><input type="checkbox" id="adhoc" class=" adhoc" ' + adhoc_checkbox + '/></span></div></div>';
         inlineQty += '</div>';
         inlineQty += '</div>';
 
