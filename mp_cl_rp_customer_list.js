@@ -709,15 +709,11 @@ function format(index) {
                     return true
                 });
                 console.log('count', count);
-                /*                if (count == 0) {
-                                    service_leg_count_active = service_leg_count;
-                                    service_freq_count_active = service_freq_count
-                                }*/
                 console.log('service_leg_count_active', service_leg_count_active);
                 console.log('service_freq_count_active', service_freq_count_active);
                 //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
                 if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
-                    html += '<td style="text-align: center;"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /><input type="button" class="form-control btn-xs btn-dark remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
                 } else {
                     html += '<td style="text-align: center;"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></td>';
                 }
