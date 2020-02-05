@@ -56,6 +56,23 @@ function pageInit() {
         var service_leg_freq_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
         var service_leg_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
+        /*
+                var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
+
+                var newFilters = new Array();
+                newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', service_id);
+                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
+                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_customer', null, 'is', custid);
+                legSearch.addFilters(newFilters);
+
+                var resultSetLeg_inactive = legSearch.runSearch();
+                resultSetLeg_inactive.forEachResult(function(searchResult) {
+                    var no_of_legs_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
+                    var customer = searchResult.getValue("custrecord_service_customer", null, "GROUP");
+                    console.log(no_of_legs_inactive);
+                    console.log(customer);
+                    return true
+            rp - services    });*/
 
         if (count != 0 && old_customer_id != custid) {
 
@@ -276,20 +293,10 @@ $(document).on('click', '.details-control', function() {
         $(this).removeClass('btn-success');
         $(this).find('.span_class').removeClass('glyphicon-plus');
         $(this).find('.span_class').addClass('glyphicon-minus');
-        //console.log(tr.child(".setup_service"));
-        //console.log('tr', tr.nextElementSibling);
-        /*        $('.service_summary').each(function() {
-                    console.log($(this));
-                    console.log($(this).find('.setup_service'));
-                    $(this).prop('disabled', true);
-                })*/
-        //$(this).prop('disabled', true);
     }
 
 
     $(".row_service").each(function() {
-        console.log($(this));
-        console.log($(this).find(".setup_service").val());
         if ($(this).find(".setup_service").val() == 'SETUP STOP') {
             $(this).find(".service_summary").prop('disabled', true);
         }
@@ -652,9 +659,17 @@ function format(index) {
         html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + service.service_id + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
         var no_of_legs;
         var service_leg_count;
+        var service_leg_count_active;
+        var service_freq_count;
+        var service_freq_count_active;
+        var count = 0;
         $.each(service, function(key, value) {
             if (key == "leg_count") {
                 service_leg_count = parseInt(value);
+            }
+
+            if (key == "freq_count") {
+                service_freq_count = parseInt(value);
             }
 
             if (key == "no_of_legs") {
@@ -663,9 +678,45 @@ function format(index) {
 
             console.log(key)
 
+            service_leg_count_active = service_leg_count;
+            service_freq_count_active = service_freq_count;
+
+
             if (key == "service_id") {
+                console.log('value', value);
+                var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
+
+                var newFilters = new Array();
+                newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'anyof', value);
+                //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
+                //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', service.custid);
+                legSearch.addFilters(newFilters);
+
+                var resultSetLeg_inactive = legSearch.runSearch();
+                resultSetLeg_inactive.forEachResult(function(searchResult) {
+                    var service_leg_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
+                    var service_freq_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
+                    var serv_id = searchResult.getValue("internalid", null, "GROUP");
+                    console.log('service_leg_count_inactive', service_leg_count_inactive);
+                    console.log('service_freq_count_inactive', service_freq_count_inactive);
+                    console.log('serv_id', serv_id);
+
+                    service_leg_count_active = service_leg_count - service_leg_count_inactive;
+                    service_freq_count_active = service_freq_count - service_freq_count_inactive;
+                    console.log('service_leg_count_active', service_leg_count_active);
+                    console.log('service_freq_count_active', service_freq_count_active);
+                    count++;
+                    return true
+                });
+                console.log('count', count);
+                /*                if (count == 0) {
+                                    service_leg_count_active = service_leg_count;
+                                    service_freq_count_active = service_freq_count
+                                }*/
+                console.log('service_leg_count_active', service_leg_count_active);
+                console.log('service_freq_count_active', service_freq_count_active);
                 //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
-                if (service_leg_count >= no_of_legs) {
+                if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
                     html += '<td style="text-align: center;"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /><input type="button" class="form-control btn-xs btn-dark remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></td>';
                 } else {
                     html += '<td style="text-align: center;"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></td>';
@@ -704,7 +755,7 @@ $(document).on("change", ".zee_dropdown", function(e) {
 });
 
 $(document).on("click", ".remove_service", function(e) {
-    if (confirm('Are you sure you want to remove this service from the run?\n\nThis action cannot be undone.')) {
+    if (confirm('Are you sure you want to remove this service from run?\n\nThis action cannot be undone.')) {
         var service_id = $(this).attr('data-serviceid');
         var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all');
 
@@ -728,16 +779,21 @@ $(document).on("click", ".remove_service", function(e) {
             return true
         });
 
-        for (i = 0; i < freq_toinactivate.length; i++) {
-            var freq_id = freq_toinactivate[i];
-            console.log('delete freq', freq_id);
-            nlapiDeleteRecord('customrecord_service_freq', freq_id);
-        }
-
         for (i = 0; i < leg_toinactivate.length; i++) {
             var leg_id = leg_toinactivate[i];
             console.log('delete leg', leg_id);
-            nlapiDeleteRecord('customrecord_service_leg', leg_id);
+            var legRecord = nlapiLoadRecord('customrecord_service_leg', leg_id);
+            legRecord.setFieldValue('isinactive', 'T');
+            nlapiSubmitRecord(legRecord);
+        }
+
+        for (i = 0; i < freq_toinactivate.length; i++) {
+            var freq_id = freq_toinactivate[i];
+            console.log('delete leg', leg_id);
+            var freqRecord = nlapiLoadRecord('customrecord_service_freq', freq_id);
+            freqRecord.setFieldValue('isinactive', 'T');
+            console.log('delete freq', freq_id);
+            nlapiSubmitRecord(freqRecord);
         }
 
         $(this).prop('hidden', true);
