@@ -953,6 +953,12 @@ function saveRecord() {
                                 freq_record.setFieldValue('custrecord_service_freq_day_fri', 'F');
                             }
 
+                            if ($('#adhoc').is(':checked')) {
+                                freq_record.setFieldValue('custrecord_service_freq_day_adhoc', 'T');
+                            } else {
+                                freq_record.setFieldValue('custrecord_service_freq_day_adhoc', 'F');
+                            }
+
                             nlapiSubmitRecord(freq_record);
                         }
 
@@ -1053,12 +1059,12 @@ function saveRecord() {
         nlapiSetFieldValue('delete_freq', delete_freq_string)
     }
 
-/*    for (var i = 0; i < freq_time_current_array.length; i++) {
-        if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
-            error = true;
-            message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
-        }
-    }*/
+    /*    for (var i = 0; i < freq_time_current_array.length; i++) {
+            if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
+                error = true;
+                message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
+            }
+        }*/
 
     if (error == true) {
         // $(this).children('a').css('background-color', '#337ab7')
