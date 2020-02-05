@@ -324,9 +324,9 @@ $(document).on('click', '.service_summary', function() {
     console.log('click');
 
     var header = '<div><h3><label class="control-label">Summary Page</label></h3></div>';
-    var body = '<div class="container-fluid"><div class="row">';
-    var bodyService = '<div class="col col-sm" id="servicedetails"><h3 style="color: rgb(50, 122, 183);">Service Details</h3>'
-    var bodyStop = '<div class="col col-sm" id="stopsdetails"><h3 style="color: rgb(50, 122, 183);">Stops Details</h3>';
+    var body = '';
+    var bodyService = '<div /*class="col-sm-4"*/ id="servicedetails"><h3 style="color: rgb(50, 122, 183);">Service Details</h3>'
+    var bodyStop = '<div /*class="col col-sm-8"*/ id="stopsdetails"><h3 style="color: rgb(50, 122, 183);">Stops Details</h3>';
 
     var service_id = $(this).attr('data-serviceid');
 
@@ -626,17 +626,13 @@ $(document).on('click', '.service_summary', function() {
     });
 
 
-    bodyService += '</div>';
+    bodyService += '</div></div>';
 
     //console.log('bodyService', bodyService);
     //console.log('bodyStops', bodyStop);
 
     body += bodyService;
     body += bodyStop;
-    body += '</div>';
-    //body += '<div class="row"><div class="col">Test</div></div>';
-    body += '</div>';
-    //console.log('body', body);
 
 
     $('#myModal .modal-header').html(header);
