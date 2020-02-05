@@ -653,7 +653,7 @@ function format(index) {
     $.each(index.services, function(i, service) {
         console.log('service', service);
         if (i == 0) {
-            html += '<thead><tr style="color:white;background-color: grey;"><th style="text-align: center;"></th><th style="text-align: center;">Service Name</th><th style="text-align: center;">Description</th><th style="text-align: center;">Price</th><th style="text-align: center;">Action</th></tr></thead>';
+            html += '<thead><tr style="color:white;background-color: grey;"><th style="text-align: center;"></th><th style="text-align: center;">Service Name</th><th style="text-align: center;">Description</th><th style="text-align: center;">Price</th><th class="col-sm-4" style="text-align: center;">Action</th></tr></thead>';
         }
         html += '<tr class="row_service">'
         html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + service.service_id + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
@@ -715,7 +715,7 @@ function format(index) {
                 if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
                     html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
                 } else {
-                    html += '<td style="text-align: center;"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 }
 
 
