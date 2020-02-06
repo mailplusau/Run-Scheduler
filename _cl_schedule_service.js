@@ -94,17 +94,6 @@ function showAlert(message) {
     // }, 5000);
 }
 
-// $(document).ready(function(message) {
-// 	$(".modal_display").click(function() {
-// 		var link = $(this).data("whatever");
-// 		$('.modal .modal-header').html('<div class="form-group"><h4><label class="control-label" for="inputError1">Error!!</label></h4></div>');
-// 		$('.modal .modal-body').html("");
-// 		$('.modal .modal-body').html(message);
-// 		$('.modal').modal("show");
-
-
-// 	});
-// });
 
 $(document).on('click', '#alert .close', function(e) {
     $(this).parent().hide();
@@ -124,7 +113,7 @@ function onclick_back() {
 }
 
 function onclick_mainpage() {
-    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender') + '&unlayered=T';
+    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender') + '&unlayered=T';
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 
@@ -315,122 +304,12 @@ $(".nav-tabs").on("click", "li a", function(e) {
 });
 
 
-// $(document).on("click", ".close", function() {
-
-// 	var divid = $(this).attr('data-stopid');
-// 	$(this).parents('li').remove();
-// 	$('#' + divid).remove();
-// 	$(".nav-pills li").children('a').first().click();
-// });
-
-//Onclick of the Add Stop button and add new tab
-// $(document).on("click", ".add_stop", function() {
-// 	$(".add_stop_link").trigger("click");
-// });
-
-//To add new tab with all the details.
-// $('.add_stop_link').click(function(e) {
-// 	e.preventDefault();
-// 	var id = $(".nav-pills").children().length; //think about it ;)
-// 	$(this).closest('li').before('<li class="stop' + id + ' "><a href="#new_stop_' + id + '" class="stop' + id + '" data-toggle="tab">Stop ' + id + ' <button type="button" class="close" aria-label="Close" data-stopid="stop' + id + '"><span aria-hidden="" style="color: red;position: absolute;">×</span></button></a></li>');
-
-// 	var inlineQty = '<div role="tabpanel" class="tab-pane " id="new_stop_' + id + '">';
-// 	inlineQty += '<div class="form-group container stop_name_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 stop_name_section"><div class="input-group"><span class="input-group-addon" id="descp_text">STOP NAME</span><input id="stop_name" class="form-control stop_name" /></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container stop_type_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 stop_name_section"><div class="input-group"><span class="input-group-addon" id="descp_text">STOP TYPE</span><select id="stop_type" class="form-control stop_type" ><option value="0"></option><option value="3">Transfer In</option><option value="4">Transfer Out</option></select></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container duration_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 duration_section"><div class="input-group"><span class="input-group-addon" id="descp_text">DURATION</span><input id="duration" class="form-control duration" /></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container notes_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 notes_section"><div class="input-group"><span class="input-group-addon" id="descp_text">NOTES</span><textarea id="notes" class="form-control notes"  rows="4" cols="50" ></textarea></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-
-// 	inlineQty += '<div class="form-group container difference_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 difference_section"><div class="input-group"><input type="text" readonly value="DIFFERENT FOR EACH DAY?" class="form-control input-group-addon"/> <span class="input-group-addon"><input type="checkbox" id="different_each_day" class=" different_each_day" data-stopid="' + id + '" /></span></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container run_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 run_section"><div class="input-group"><span class="input-group-addon" id="run_text">SELECT RUN</span><input id="run" class="form-control run" type="textbox" /></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container time_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-6 service_time_section"><div class="input-group"><span class="input-group-addon" id="service_time_text">SERVICE TIME</span><input id="service_time" class="form-control service_time" type="time" /></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<div class="form-group container time_window_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-3 earliest_time_section"><div class="input-group"><span class="input-group-addon" id="earliest_time_text">EARLIEST TIME</span><input id="earliest_time" class="form-control earliest_time" type="time" /></div></div>';
-// 	inlineQty += '<div class="col-xs-3 latest_time_section"><div class="input-group"><span class="input-group-addon" id="latest_time_text">LATEST TIME</span><input id="latest_time" class="form-control latest_time" type="time" /></div></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-// 	inlineQty += '<table border="0" cellpadding="15" id="services' + id + '" class="table table-responsive table-striped services tablesorter hide" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr class="text-center">';
-
-// 	/**
-// 	 * DAYS OF WEEK ROW
-// 	 */
-// 	inlineQty += '<th style="vertical-align: middle;text-align: center;"><b></b></th>';
-
-// 	/**
-// 	 * SELECT RUN ROW
-// 	 */
-// 	inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>SELECT RUN</b></th>';
-// 	/**
-// 	 * SERVICE TIME ROW
-// 	 */
-// 	inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>SERVICE TIME<span class="modal_display glyphicon glyphicon-info-sign" style="padding: 3px 3px 3px 3px;color: orange;cursor: pointer;" data-whatever=""></span></b></th>';
-// 	/**
-// 	 * TIME WINDOW ROW
-// 	 */
-
-// 	inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>EARLIEST TIME <span class="modal_display glyphicon glyphicon-info-sign" style="padding: 3px 3px 3px 3px;color: orange;cursor: pointer;" data-whatever=""></span></b></th>';
-
-// 	inlineQty += '<th style="vertical-align: middle;text-align: center;"><b>LATEST TIME <span class="modal_display glyphicon glyphicon-info-sign" style="padding: 3px 3px 3px 3px;color: orange;cursor: pointer;" data-whatever=""></span></b></th>';
-
-// 	inlineQty += '</tr></thead><tbody>';
-
-// 	inlineQty += '</tbody></table>';
-
-// 	inlineQty += '<div class="form-group container add_stop_row ">';
-// 	inlineQty += '<div class="row">';
-// 	inlineQty += '<div class="col-xs-3 add_stop_section"><button id="add_stop" class="form-control btn btn-primary add_stop" > ADD STOP</button></div>';
-// 	inlineQty += '</div>';
-// 	inlineQty += '</div>';
-
-
-// 	inlineQty += '</div>';
-
-// 	$('.tab-content').append(inlineQty);
-// 	$('.' + id).trigger("click");
-// 	// $('.add_stop_li').removeClass('active');
-// 	// $(".nav-pills li").children('a').first().click();
-// });
-
 function validateTimes() {
     if (service_time_array.length > 1) {
         for (var x = 0; x < service_time_array.length; x++) {
             if (service_time_array[x + 1] < service_time_array[x]) {
+                console.log('service_time_array[x + 1]', service_time_array[x + 1]);
+                console.log('service_time_array[x]', service_time_array[x]);
                 showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x + 2) + ' is before stop ' + (x + 1));
                 return false;
                 break;
@@ -486,6 +365,7 @@ $(".service_time").focusout(function() {
     } else {
         var stop_no = $(this).attr('data-stopno');
         var stop_array = stop_no.split('_');
+        console.log('stop_array', stop_array);
         var stop_id = $(this).attr('data-stopid');
         if (stop_array[1] == 0) {
             service_time_array[stop_array[0] - 1] = $(this).val();
@@ -497,31 +377,40 @@ $(".service_time").focusout(function() {
         var hours_string = (service_time.substr(0, 2));
         var hours = parseInt(service_time.substr(0, 2));
 
-        var earliest_time;
-        var latest_time;
+        var error = validateTimes();
+        //console.log('error', error);
+        if (error == false) {
+            $(this).val("");
+        } else {
+            var earliest_time;
+            var latest_time;
 
-        if (hours < 9 && hours != 0) {
-            earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
-            latest_time = service_time.replace(hours_string, '0' + (hours + 1));
-        } else if (hours == 9) {
-            earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
-            latest_time = service_time.replace(hours_string, (hours + 1));
-        } else if (hours == 10) {
-            earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
-            latest_time = service_time.replace(hours_string, (hours + 1));
-        } else if (hours > 10) {
-            earliest_time = service_time.replace(hours_string, (hours - 1));
-            latest_time = service_time.replace(hours_string, (hours + 1));
+            if (hours < 9 && hours != 0) {
+                earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
+                latest_time = service_time.replace(hours_string, '0' + (hours + 1));
+            } else if (hours == 9) {
+                earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
+                latest_time = service_time.replace(hours_string, (hours + 1));
+            } else if (hours == 10) {
+                earliest_time = service_time.replace(hours_string, '0' + (hours - 1));
+                latest_time = service_time.replace(hours_string, (hours + 1));
+            } else if (hours > 10) {
+                earliest_time = service_time.replace(hours_string, (hours - 1));
+                latest_time = service_time.replace(hours_string, (hours + 1));
+            }
+
+
+
+
+
+
+            console.log($(this).val());
+            console.log(earliest_time);
+            console.log(latest_time);
+
+            $('#earliest_time' + stop_id).val(earliest_time);
+            $('#latest_time' + stop_id).val(latest_time);
         }
-
-
-
-        console.log($(this).val());
-        console.log(earliest_time);
-        console.log(latest_time);
-
-        $('#earliest_time' + stop_id).val(earliest_time);
-        $('#latest_time' + stop_id).val(latest_time);
 
         // var error = validateTimes();
         // if (error == false) {
@@ -530,6 +419,7 @@ $(".service_time").focusout(function() {
     }
 
 });
+
 
 $(".earliest_time").focusout(function() {
     if (isNullorEmpty($(this).val())) {
@@ -1063,6 +953,12 @@ function saveRecord() {
                                 freq_record.setFieldValue('custrecord_service_freq_day_fri', 'F');
                             }
 
+                            if ($('#adhoc').is(':checked')) {
+                                freq_record.setFieldValue('custrecord_service_freq_day_adhoc', 'T');
+                            } else {
+                                freq_record.setFieldValue('custrecord_service_freq_day_adhoc', 'F');
+                            }
+
                             nlapiSubmitRecord(freq_record);
                         }
 
@@ -1163,12 +1059,12 @@ function saveRecord() {
         nlapiSetFieldValue('delete_freq', delete_freq_string)
     }
 
-    for (var i = 0; i < freq_time_current_array.length; i++) {
-        if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
-            error = true;
-            message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
-        }
-    }
+    /*    for (var i = 0; i < freq_time_current_array.length; i++) {
+            if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
+                error = true;
+                message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
+            }
+        }*/
 
     if (error == true) {
         // $(this).children('a').css('background-color', '#337ab7')

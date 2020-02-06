@@ -157,7 +157,7 @@ function onclick_back() {
 }
 
 function onclick_mainpage() {
-    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calender', 'customdeploy_sl_full_calender') + '&unlayered=T';
+    var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender') + '&unlayered=T';
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 
@@ -918,8 +918,8 @@ function saveRecord() {
                 }
             }
 
-            console.log(zee);
-            console.log(customer_id);
+            console.log('zee', zee);
+            console.log('customer_id', customer_id);
 
             service_leg_record.setFieldValue('name', table_stop_name_elem[i].value);
 
@@ -927,6 +927,22 @@ function saveRecord() {
             service_leg_record.setFieldValue('custrecord_service_leg_location_type', table_info_elem[i].getAttribute('data-addresstype'));
             if (!isNullorEmpty(table_stop_name_elem[i].getAttribute('data-ncl')) && table_stop_name_elem[i].getAttribute('data-ncl') != 0) {
                 service_leg_record.setFieldValue('custrecord_service_leg_non_cust_location', table_stop_name_elem[i].getAttribute('data-ncl'));
+                var ncl_inactiveSearch = nlapiLoadSearch('customrecord_ap_lodgment_location', 'customsearch_noncust_inactiv');
+                var newFilters = new Array();
+                newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', table_stop_name_elem[i].getAttribute('data-ncl'));
+                ncl_inactiveSearch.addFilters(newFilters);
+
+                var resultSet_ncl_inactive = ncl_inactiveSearch.runSearch();
+                var error = false;
+                resultSet_ncl_inactive.forEachResult(function(ResultSet){
+                    var ncl_name = ResultSet.getValue('name');
+                    showAlert(ncl_name + ' is inactive. Please choose another location for that stop.');
+                    error = true;
+                    return true
+                })
+                if (error == true){
+                    return false;
+                }
             }
 
             if (table_stop_name_elem[i].getAttribute('data-customeraddressid') != 0) {
@@ -974,6 +990,17 @@ function saveRecord() {
             service_leg_record.setFieldValue('custrecord_service_leg_duration', duration);
             service_leg_record.setFieldValue('custrecord_service_leg_notes', notes);
 
+            /*            if (service_leg_record.getFieldValue('custrecord_service_leg_location_type') == 2) {
+                            var ncl_record = nlapiLoadRecord('customrecord_ap_lodgment_location', service_leg_record.getFieldValue('custrecord_service_leg_non_cust_location'));
+                            var ncl_record_inactive = ncl_record.getFieldValue('isinactive');
+                            console.log('ncl_record_inactive', ncl_record_inactive);
+                            if (ncl_record_inactive == 'T') {
+                                showAlert('The stop ' + service_leg_record.getFieldValue('internalid') + ' is inactive. </br>Please choose another stop.');
+                                return false;
+                            }
+                        }
+                        return false;*/
+
             var original_service_leg_id = nlapiSubmitRecord(service_leg_record);
             // if (isNullorEmpty(old_stop_id)) {
             // 	new_service_leg_id[new_service_leg_id.length] = original_service_leg_id;
@@ -1010,6 +1037,7 @@ function saveRecord() {
                                 freq_ids_to_be_edited[freq_ids_to_be_edited.length] = freq_id;
                                 stored_zee_array[stored_zee_array.length] = stored_zee;
                                 linked_zee_array[linked_zee_array.length] = linked_zee;
+                                service_leg
                             }
                             return true;
                         });
