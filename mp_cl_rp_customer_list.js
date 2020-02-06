@@ -103,7 +103,7 @@ function pageInit() {
             service_leg_count_array = [];
             service_no_of_legs_array = [];
 
-            reivewed = false;
+            reviewed = false;
 
             service_id_array[service_id_array.length] = service_id;
             service_name_array[service_name_array.length] = service_name;
@@ -131,6 +131,8 @@ function pageInit() {
             } else {
                 reviewed = false;
             }
+
+            
         }
 
         old_customer_id = custid;
@@ -164,6 +166,7 @@ function pageInit() {
     dataSet += ']}';
     var parsedData = JSON.parse(dataSet);
     console.log(parsedData.data);
+
 
     // AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
 
@@ -644,12 +647,13 @@ $(document).on('click', '.service_summary', function() {
 
 function format(index) {
     // var json_data = data[parseInt(index)];
+    console.log('index.cust_id', index.cust_id);
     var html = '<table class="table table-responsive" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
 
     $.each(index.services, function(i, service) {
         console.log('service', service);
         if (i == 0) {
-            html += '<thead><tr style="color:white;background-color: grey;"><th style="text-align: center;"></th><th style="text-align: center;">Service Name</th><th style="text-align: center;">Description</th><th style="text-align: center;">Price</th><th class="col-sm-4" style="text-align: center;">Action</th></tr></thead>';
+            html += '<thead><tr style="color:white;background-color: grey;" data-custid = "' + index.cust_id + '"><th style="text-align: center;"></th><th style="text-align: center;">Service Name</th><th style="text-align: center;">Description</th><th style="text-align: center;">Price</th><th class="col-sm-4" style="text-align: center;">Action</th></tr></thead>';
         }
         html += '<tr class="row_service">'
         html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + service.service_id + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
@@ -781,16 +785,14 @@ $(document).on("click", ".remove_service", function(e) {
 
         for (i = 0; i < freq_toinactivate.length; i++) {
             var freq_id = freq_toinactivate[i];
-            console.log('delete leg', leg_id);
+            console.log('delete freq', freq_id);
             var freqRecord = nlapiLoadRecord('customrecord_service_freq', freq_id);
             freqRecord.setFieldValue('isinactive', 'T');
-            console.log('delete freq', freq_id);
             nlapiSubmitRecord(freqRecord);
         }
 
         $(this).prop('hidden', true);
-        //console.log($(this).attr('hidden'));
-        console.log($(this).closest('button'));
+        window.location.reload();
     }
 
 
