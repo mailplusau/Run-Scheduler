@@ -132,7 +132,7 @@ function pageInit() {
                 reviewed = false;
             }
 
-            
+
         }
 
         old_customer_id = custid;
@@ -574,60 +574,62 @@ $(document).on('click', '.service_summary', function() {
     bodyStop += '</div>';
 
     // BodyService
-    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
-    var newFilters = new Array();
-    console.log(service_id);
-    newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', service_id);
-    newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', zee);
-    //newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
+    /*    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
+        var newFilters = new Array();
+        console.log(service_id);
+        newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', service_id);
+        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', zee);
+        //newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
 
-    serviceSearch.addFilters(newFilters);
+        serviceSearch.addFilters(newFilters);
 
-    var serviceResultSet = serviceSearch.runSearch();
-    serviceResultSet.forEachResult(function(searchResult) {
-        var customer_name = searchResult.getText('custrecord_service_customer', null, "GROUP");
-        console.log(customer_name);
-        var service_type = searchResult.getText('custrecord_service', null, "GROUP");
-        var mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-        var tue = searchResult.getValue("custrecord_service_freq_day_tue", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-        var wed = searchResult.getValue("custrecord_service_freq_day_wed", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-        var thu = searchResult.getValue("custrecord_service_freq_day_thu", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-        var fri = searchResult.getValue("custrecord_service_freq_day_fri", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-        var adhoc = searchResult.getValue("custrecord_service_freq_day_adhoc", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+        var serviceResultSet = serviceSearch.runSearch();
+        serviceResultSet.forEachResult(function(searchResult) {
+            var customer_name = searchResult.getText('custrecord_service_customer', null, "GROUP");
+            console.log(customer_name);
+            var service_type = searchResult.getText('custrecord_service', null, "GROUP");
+            var mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+            var tue = searchResult.getValue("custrecord_service_freq_day_tue", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+            var wed = searchResult.getValue("custrecord_service_freq_day_wed", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+            var thu = searchResult.getValue("custrecord_service_freq_day_thu", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+            var fri = searchResult.getValue("custrecord_service_freq_day_fri", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
+            var adhoc = searchResult.getValue("custrecord_service_freq_day_adhoc", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
 
-        if (mon == 'T' && tue == 'T' && wed == 'T' && thu == 'T' && fri == 'T') {
-            frequency = 'Daily';
-        } else if (adhoc == 'T') {
-            frequency = 'ADHOC';
-        } else {
-            if (mon == 'T') {
-                frequency += 'Mon, ';
+            if (mon == 'T' && tue == 'T' && wed == 'T' && thu == 'T' && fri == 'T') {
+                frequency = 'Daily';
+            } else if (adhoc == 'T') {
+                frequency = 'ADHOC';
+            } else {
+                if (mon == 'T') {
+                    frequency += 'Mon, ';
+                }
+                if (tue == 'T') {
+                    frequency += 'Tue, ';
+                }
+                if (wed == 'T') {
+                    frequency += 'Wed, ';
+                }
+                if (thu == 'T') {
+                    frequency += 'Thu, ';
+                }
+                if (fri == 'T') {
+                    frequency += 'Fri, ';
+                }
+                frequency = frequency.substring(0, frequency.length - 2);
             }
-            if (tue == 'T') {
-                frequency += 'Tue, ';
-            }
-            if (wed == 'T') {
-                frequency += 'Wed, ';
-            }
-            if (thu == 'T') {
-                frequency += 'Thu, ';
-            }
-            if (fri == 'T') {
-                frequency += 'Fri, ';
-            }
-            frequency = frequency.substring(0, frequency.length - 2);
-        }
 
 
 
-        bodyService += '<div style="font-size: medium;"><ul style="list-style: none;"><li style="padding-top: 5px;"><span class="glyphicon glyphicon-user"></span>  ' + customer_name + '</li><li style="padding-top: 5px;"><span class="glyphicon glyphicon-list-alt"></span>  ' + service_type + '</li><li style="padding-top: 5px;">'
-        if (!isNullorEmpty(frequency)) {
-            bodyService += '<span class="glyphicon glyphicon-calendar"></span> ' + frequency + '';
-        }
-        bodyService += '</ul>';
-        return true
-    });
+            bodyService += '<div style="font-size: medium;"><ul style="list-style: none;"><li style="padding-top: 5px;"><span class="glyphicon glyphicon-user"></span>  ' + customer_name + '</li><li style="padding-top: 5px;"><span class="glyphicon glyphicon-list-alt"></span>  ' + service_type + '</li><li style="padding-top: 5px;">'
+            if (!isNullorEmpty(frequency)) {
+                bodyService += '<span class="glyphicon glyphicon-calendar"></span> ' + frequency + '';
+            }
+            bodyService += '</ul>';
+            return true
+        });
+    */
 
+    bodyService += '<div style="font-size: medium;"><ul style="list-style: none;"><li style="padding-top: 5px;"><span class="glyphicon glyphicon-user"></span>  ' + obj['customer_name'] + '</li><li style="padding-top: 5px;"><span class="glyphicon glyphicon-list-alt"></span>  ' + obj['service'] + '</li><li style="padding-top: 5px;">'
 
     bodyService += '</div></div>';
 
