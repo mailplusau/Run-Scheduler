@@ -557,6 +557,7 @@ $(document).on('click', '.service_time_button', function() {
 $(document).on('click', '.different_each_day', function() {
     zee = nlapiGetFieldValue('zee');
     if ($(this).is(':checked')) {
+        console.log('checked');
         var id = $(this).attr('data-stopid');
         var stop_no = $(this).attr('data-stopno');
         var table_id = '#services' + id;
@@ -596,6 +597,7 @@ $(document).on('click', '.different_each_day', function() {
                         }
                     }
                 })
+
             }
         } else {
             var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
@@ -662,6 +664,7 @@ $(document).on('click', '.different_each_day', function() {
 
 
     } else {
+        console.log('not checked');
         var id = $(this).attr('data-stopid');
         var table_id = '#services' + id;
         var freq_id = $(this).attr('data-freqid');
@@ -679,17 +682,24 @@ $(document).on('click', '.different_each_day', function() {
                 rows = $(table_id_rows);
             }
             console.log(rows);
+            console.log('rows.length', rows.length);
             if (rows.length == 1) {
 
             } else {
-                $(table_id).each(function(i, row) {
+                $(table_id_rows).each(function(i, row) {
+                    console.log('i', i);
+                    console.log('row', row);
                     if (i >= 1) {
                         var $row = $(row);
                         var freq_id = $row.find('.run').attr('data-freqid');
+                        console.log('freq_id', freq_id);
 
                         delete_freq_array[delete_freq_array.length] = freq_id;
                     }
-                })
+                });
+                freq_change = true;
+                $(table_id).attr('data-inactivetable', 'T');
+                console.log('freq_change', freq_change);
             }
         }
         $(table_id).addClass('hide');
@@ -853,14 +863,19 @@ function saveRecord() {
                 }
                 console.log('Rows: ' + rows);
                 console.log('Rows Length :' + rows.length);
-                if (rows.length == 1 || rows.length == 0) {
+                console.log('data-inactivetable', $('#services' + stop_id[1] + '').attr('data-inactivetable'))
+                if (rows.length == 1 || rows.length == 0 || $('#services' + stop_id[1] + '').attr('data-inactivetable') == 'T') {
                     var run = $('#' + stop_id[1]).find('#run' + stop_id[1]).val();
                     var old_run = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-oldrun');
-                    if (isNullorEmpty(freq_main_id)) {
+                    if ($('#services' + stop_id[1] + '').attr('data-inactivetable') == 'T'){
+                        var run_freq_id = null;
+                    }
+                    else if (isNullorEmpty(freq_main_id)) {
                         var run_freq_id = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-freqid');
                     } else {
                         var run_freq_id = freq_main_id;
                     }
+                    console.log('run_freq_id', run_freq_id);
 
                     console.log('service_time: ' + $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
                     var service_time = onTimeChange($('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
@@ -908,7 +923,7 @@ function saveRecord() {
                         console.log('latest_time: ' + $('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val());
                         var latest_time = onTimeChange($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val());
 
-                        console.log('latest_time: ' + $('#' + stop_id[1]).find('#latest_time' + stop_id[1]).attr('data-oldlatesttime'));
+                        console.log('oldlatest_time: ' + $('#' + stop_id[1]).find('#latest_time' + stop_id[1]).attr('data-oldlatesttime'));
                         var old_latest_time = onTimeChange($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).attr('data-oldlatesttime'));
 
                         if (freq_change == true || (run != old_run) || (service_time != old_service_time) || (earliest_time != old_earliest_time) || (latest_time != old_latest_time)) {
@@ -969,9 +984,11 @@ function saveRecord() {
                     // 
                 } else {
                     $(table_id).each(function(i, row) {
+                        console.log('i', i);
                         if (i >= 1) {
                             var $row = $(row);
                             var freq_id = $row.find('.run').attr('data-freqid');
+                            console.log('freq_id', freq_id);
 
                             var run = $row.find('.run').val();
                             var old_run = $row.find('.run').attr('data-oldrun');
@@ -1072,7 +1089,6 @@ function saveRecord() {
         exit = false;
 
     }
-
     if (exit == true) {
         return true;
     }
