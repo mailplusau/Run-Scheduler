@@ -37,6 +37,9 @@ $(window).load(function() {
     $(".se-pre-con").fadeOut("slow");
 });
 
+var runList = nlapiGetFieldValue('runlist').split(',');
+var runNameList = nlapiGetFieldValue('runnamelist').split(',');
+
 // $(document).on('click', '.close', function(e) {
 // 	console.log('inside alert close');
 // 	$(this).parent().hide();
@@ -123,6 +126,10 @@ function pageInit() {
     // $(".tab-content").css("border", 'groove');
 
     validateFrequency();
+    console.log('runList', runList);
+    console.log(runList.length);
+    console.log('runNameList', runNameList);
+    console.log(runList[1]);
 }
 
 
@@ -586,7 +593,9 @@ $(document).on('click', '.different_each_day', function() {
             if (rows.length == 1) {
 
             } else {
-                $(table_id).each(function(i, row) {
+                $(table_id_rows).each(function(i, row) {
+                    console.log('i', i);
+                    console.log('row', row);
                     if (i >= 1) {
                         var $row = $(row);
                         var freq_id = $row.find('.run').attr('data-freqid');
@@ -597,28 +606,38 @@ $(document).on('click', '.different_each_day', function() {
                         }
                     }
                 })
+                $(table_id).attr('data-inactivetable', 'F');
 
             }
         } else {
-            var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+            console.log('runlist', runList);
+            /*            var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
 
-            var newFilters_runPlan = new Array();
-            newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
+                        var newFilters_runPlan = new Array();
+                        newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
 
-            runPlanSearch.addFilters(newFilters_runPlan);
+                        runPlanSearch.addFilters(newFilters_runPlan);
 
-            var resultSet_runPlan = runPlanSearch.runSearch();
+                        var resultSet_runPlan = runPlanSearch.runSearch();
 
+
+                        var create_run_html = '';
+                        $(table_id).find("tr:not(:nth-child(1))").remove();
+
+                        var run_selection_html = '';
+                        resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+
+                            run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                            return true;
+                        });*/
 
             var create_run_html = '';
-            $(table_id).find("tr:not(:nth-child(1))").remove();
-
+            //$(table_id).find("tr:not(:nth-child(1))").remove();
             var run_selection_html = '';
-            resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
 
-                run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
-                return true;
-            });
+            for (k = 0; k < runList.length; k++) {
+                run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
+            }
 
             var row_count = 1;
 
@@ -790,22 +809,32 @@ function checkIfMultiFreq(value, unchecked) {
                     rows = $(table_id);
                 }
                 console.log(rows);
+                //console.log($('#services' + stop_id[1] + ' > tbody')[0].innerHTML);
                 if (rows.length == 1) {
 
                 } else {
+                    var daycreated = false;
                     $(table_id).each(function(i, row) {
+
+                        console.log('i', i);
+                        console.log('row', row);
                         if (i >= 1) {
                             var $row = $(row);
                             var freq_id = $row.find('.run').attr('data-freqid');
+                            console.log('freq_id', freq_id);
 
                             if (unchecked == 'T') {
                                 if ($row.find('#table_run').attr('data-day') == value) {
                                     $row.hide();
                                     delete_freq_array[delete_freq_array.length] = freq_id;
+                                    daycreated = true;
                                 }
                             } else {
                                 if ($row.find('#table_run').attr('data-day') == value) {
                                     $row.show();
+                                    console.log('show');
+                                    daycreated = true;
+
                                     var index = delete_freq_array.indexOf(freq_id);
                                     if (index > -1) {
                                         delete_freq_array.splice(index, 1);
@@ -814,9 +843,69 @@ function checkIfMultiFreq(value, unchecked) {
                             }
 
                         }
-                    })
-                }
 
+                    });
+                    console.log('daycreated', daycreated);
+                    if (daycreated == false && unchecked == 'F') {
+
+                        var newRow = $('#services' + stop_id[1] + ' > tbody')[0].insertRow();
+                        console.log('row inserted', value);
+
+                        zee = nlapiGetFieldValue('zee');
+                        /*                        var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+
+                                                var newFilters_runPlan = new Array();
+                                                newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
+
+                                                runPlanSearch.addFilters(newFilters_runPlan);
+
+                                                var resultSet_runPlan = runPlanSearch.runSearch();
+
+
+                                                var create_run_html = '';
+                                                //$(table_id).find("tr:not(:nth-child(1))").remove();
+
+                                                var run_selection_html = '';
+                                                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+
+                                                    run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                                    return true;
+                                                });*/
+                        var create_run_html = '';
+                        var run_selection_html = '';
+                        for (k = 0; k < runList.length; k++) {
+                            run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
+                        }
+
+                        var day;
+                        switch (value) {
+                            case 'mon':
+                                day = 'MONDAY';
+                                break;
+                            case 'tue':
+                                day = 'TUESDAY';
+                                break;
+                            case 'wed':
+                                day = 'WEDNESDAY';
+                                break;
+                            case 'thu':
+                                day = 'THURSDAY';
+                                break;
+                            case 'fri':
+                                day = 'FRIDAY';
+                                break;
+                        }
+
+
+                        create_run_html += '<tr><td style="vertical-align: middle;text-align: center;color: white;background-color: #607799;" class="day" data-freqid="">' + day + '</td><td><select id="table_run_mon" data-day="' + value + '" class="form-control run"  data-oldrun="" data-stopid="" data-freqid=""><option value="0"></option>';
+                        create_run_html += run_selection_html;
+                        create_run_html += '</select></td><td><input id="table_service_time" class="form-control service_time" data-stopno="" data-oldtime="" type="time" /></td><td><input id="table_earliest_time" data-oldearliesttime="" class="form-control earliest_time" data-stopno="" type="time" /></td><td><input id="table_latest_time" class="form-control latest_time" data-stopno="" data-oldlatesttime="" type="time" /></td></tr>';
+
+                        newRow.innerHTML = create_run_html;
+                        //console.log('previousRow', previousRow);
+                        //previousRow.after(create_run_html);
+                    }
+                }
             }
         });
     });
@@ -867,10 +956,9 @@ function saveRecord() {
                 if (rows.length == 1 || rows.length == 0 || $('#services' + stop_id[1] + '').attr('data-inactivetable') == 'T') {
                     var run = $('#' + stop_id[1]).find('#run' + stop_id[1]).val();
                     var old_run = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-oldrun');
-                    if ($('#services' + stop_id[1] + '').attr('data-inactivetable') == 'T'){
+                    if ($('#services' + stop_id[1] + '').attr('data-inactivetable') == 'T') {
                         var run_freq_id = null;
-                    }
-                    else if (isNullorEmpty(freq_main_id)) {
+                    } else if (isNullorEmpty(freq_main_id)) {
                         var run_freq_id = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-freqid');
                     } else {
                         var run_freq_id = freq_main_id;
@@ -1089,6 +1177,7 @@ function saveRecord() {
         exit = false;
 
     }
+    //return false;
     if (exit == true) {
         return true;
     }

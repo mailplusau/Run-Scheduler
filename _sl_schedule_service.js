@@ -204,10 +204,23 @@ function scheduleRun(request, response) {
 
         var parsedStopFreq = JSON.parse(stop_freq_json);
 
+        //Get the list of the run from the zee
+        var runList = [];
+        var runNameList = [];
         var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
 
         var newFilters_runPlan = new Array();
         newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
+        runPlanSearch.addFilters(newFilters_runPlan);
+
+        var resultSet_runPlan = runPlanSearch.runSearch();
+        resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+            runList[runList.length] = searchResult_runPlan.getValue('internalid');
+            runNameList[runNameList.length] = searchResult_runPlan.getValue('name');
+            return true;
+        });
+        nlapiLogExecution('DEBUG', 'runList', runList);
+        nlapiLogExecution('DEBUG', 'runNameList', runNameList);
 
 
 
@@ -306,7 +319,7 @@ function scheduleRun(request, response) {
                     daily_checkbox = 'checked';
                 }
 
-                if (obj_freq[y]['freq_adhoc'] == 'T'){
+                if (obj_freq[y]['freq_adhoc'] == 'T') {
                     adhoc_checkbox = 'checked';
                 }
             }
@@ -354,9 +367,6 @@ function scheduleRun(request, response) {
                     for (var y = 0; y < obj['stop_freq'].length; y++) {
                         inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                     }
-                    /*                    } else {
-                                            inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
-                                        }*/
 
                 } else {
                     inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
@@ -371,10 +381,6 @@ function scheduleRun(request, response) {
                     for (var y = 0; y < obj['stop_freq'].length; y++) {
                         inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="' + obj_freq[y]['freq_id'] + '"  data-stopno="' + (y + (i + 1)) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                     }
-                    /*
-                                        } else {
-                                            inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
-                                        }*/
                 } else {
                     inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq=""  data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                 }
@@ -413,7 +419,7 @@ function scheduleRun(request, response) {
 
             nlapiLogExecution('DEBUG', "obj['stop_freq'].length", obj['stop_freq'].length)
 
-            if (freq_length == 1) {
+            if (freq_length == 1) { //same time every day
                 tab_content += '<div class="form-group container difference_row ">';
                 tab_content += '<div class="row">';
                 tab_content += '<div class="col-xs-6 difference_section"><div class="input-group"><input type="text" readonly value="DIFFERENT TIME FOR EACH DAY?" class="form-control input-group-addon"/> <span class="input-group-addon">';
@@ -425,20 +431,28 @@ function scheduleRun(request, response) {
                 tab_content += '<div class="form-group container run_row' + obj['stop_id'] + ' ">';
                 tab_content += '<div class="row">';
                 tab_content += '<div class="col-xs-6 run_section"><div class="input-group"><span class="input-group-addon" id="run_text">SELECT RUN</span><select id="run' + obj['stop_id'] + '" class="form-control run" data-stopid="' + obj['stop_id'] + '" data-oldrun="' + obj_freq[0]['freq_run_plan'] + '" data-freqid="' + obj_freq[0]['freq_id'] + '"><option value="0"></option>';
-                runPlanSearch.addFilters(newFilters_runPlan);
+                /*                runPlanSearch.addFilters(newFilters_runPlan);
 
-                var resultSet_runPlan = runPlanSearch.runSearch();
-                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                                var resultSet_runPlan = runPlanSearch.runSearch();
+                                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
 
-                    nlapiLogExecution('DEBUG', 'obj_freq[0][freq_run_plan]', obj_freq[0]['freq_run_plan']);
-                    if (obj_freq[0]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
-                        tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
+                                    nlapiLogExecution('DEBUG', 'obj_freq[0][freq_run_plan]', obj_freq[0]['freq_run_plan']);
+                                    if (obj_freq[0]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
+                                        tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
+                                    } else {
+                                        tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                    }
+
+                                    return true;
+                                });*/
+                for (k = 0; k < runList.length; k++) {
+                    if (obj_freq[0]['freq_run_plan'] == runList[k]) {
+                        tab_content += '<option value="' + runList[k] + '" selected>' + runNameList[k] + '</option>'
                     } else {
-                        tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                        tab_content += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
                     }
+                }
 
-                    return true;
-                });
                 tab_content += '</select></div></div>';
                 tab_content += '</div>';
                 tab_content += '</div>';
@@ -548,7 +562,7 @@ function scheduleRun(request, response) {
                 tab_content += '</tr></thead><tbody>';
                 tab_content += '<tr></tr>'
                 tab_content += '</tbody></table>';
-            } else {
+            } else { // different time each day or transfer
                 tab_content += '<div class="form-group container difference_row ">';
                 tab_content += '<div class="row">';
                 tab_content += '<div class="col-xs-6 difference_section"><div class="input-group"><input type="text" readonly value="DIFFERENT FOR EACH DAY?" class="form-control input-group-addon"/> <span class="input-group-addon">';
@@ -574,16 +588,20 @@ function scheduleRun(request, response) {
 
                 tab_content += '<div class="row">';
                 tab_content += '<div class="col-xs-6 run_section"><div class="input-group"><span class="input-group-addon" id="run_text">SELECT RUN </span><select id="run' + obj['stop_id'] + '" class="form-control run" data-stopid="' + obj['stop_id'] + '" data-freqid="' + obj['stop_freq'] + '"><option value="0"></option>';
-                runPlanSearch.addFilters(newFilters_runPlan);
+                /*                runPlanSearch.addFilters(newFilters_runPlan);
 
-                var resultSet_runPlan = runPlanSearch.runSearch();
-                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                                var resultSet_runPlan = runPlanSearch.runSearch();
+                                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
 
-                    tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                    tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
 
 
-                    return true;
-                });
+                                    return true;
+                                });*/
+                for (k = 0; k < runList.length; k++) {
+                        tab_content += '<option value="' + runList[k] + '" selected>' + runNameList[k] + '</option>'
+                }
+
                 tab_content += '</select></div></div></div>';
                 // }
 
@@ -647,7 +665,7 @@ function scheduleRun(request, response) {
                     for (var y = 0; y < freq_length; y++) {
 
                         var run_selection_html = '';
-                        runPlanSearch.addFilters(newFilters_runPlan);
+/*                        runPlanSearch.addFilters(newFilters_runPlan);
 
                         var resultSet_runPlan = runPlanSearch.runSearch();
                         resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
@@ -657,7 +675,16 @@ function scheduleRun(request, response) {
                                 run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
                             }
                             return true;
-                        });
+                        });*/
+
+                        for (k = 0; k < runList.length; k++) {
+                            if (obj_freq[y]['freq_run_plan'] == runList[k]) {
+                                run_selection_html += '<option value="' + runList[k] + '" selected>' + runNameList[k] + '</option>'
+                            } else {
+                                run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
+                            }
+                        }
+
                         if (obj_freq[y]['freq_mon'] == 'T') {
                             tab_content += '<tr><td style="vertical-align: middle;text-align: center;color: white;background-color: #607799;" class="day" data-stopid="' + obj['stop_id'] + '" data-freqid="' + obj_freq[y]['freq_id'] + '">MONDAY</td><td><select id="table_run" data-day="mon" class="form-control run"  data-stopid="' + obj['stop_id'] + '" data-freqid="' + obj_freq[y]['freq_id'] + '" data-oldrun="' + obj_freq[y]['freq_run_plan'] + '"><option value="0"></option>';
                             tab_content += run_selection_html;
@@ -710,12 +737,15 @@ function scheduleRun(request, response) {
         inlineQty += tab_content;
 
         inlineQty += '</div></div>';
+        nlapiLogExecution('DEBUG', 'stop_ids', stop_ids);
 
         form.addField('stop_ids', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(stop_ids.toString());
         form.addField('customer_id', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(customer_id);
         form.addField('service_id', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('zee', 'text', 'zee').setDisplayType('hidden').setDefaultValue(zee);
         form.addField('delete_freq', 'text', 'Stop IDs').setDisplayType('hidden');
+        form.addField('runlist', 'text', 'zee').setDisplayType('hidden').setDefaultValue(runList.join());
+        form.addField('runnamelist', 'text', 'zee').setDisplayType('hidden').setDefaultValue(runNameList.join());
 
         form.addField('custpage_suitlet', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(request.getParameter('scriptid'));
         form.addField('custpage_deploy', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(request.getParameter('deployid'));
