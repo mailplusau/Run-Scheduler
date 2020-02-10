@@ -56,23 +56,6 @@ function pageInit() {
         var service_leg_freq_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
         var service_leg_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
-        /*
-                var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
-
-                var newFilters = new Array();
-                newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', service_id);
-                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
-                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_customer', null, 'is', custid);
-                legSearch.addFilters(newFilters);
-
-                var resultSetLeg_inactive = legSearch.runSearch();
-                resultSetLeg_inactive.forEachResult(function(searchResult) {
-                    var no_of_legs_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
-                    var customer = searchResult.getValue("custrecord_service_customer", null, "GROUP");
-                    console.log(no_of_legs_inactive);
-                    console.log(customer);
-                    return true
-            rp - services    });*/
 
         if (count != 0 && old_customer_id != custid) {
 

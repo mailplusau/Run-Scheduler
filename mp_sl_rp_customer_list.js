@@ -125,7 +125,7 @@ function main(request, response) {
 
     form.addField('preview_table', 'inlinehtml', '').setLayoutType('outsidebelow', 'startrow').setDefaultValue(inlineQty);
 
-    form.addButton('back', 'Back', 'onclick_back()');
+    form.addButton('back', 'Calendar View', 'onclick_back()');
     form.setScript('customscript_cl_rp_Customer_list');
     response.writePage(form);
 

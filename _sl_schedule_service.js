@@ -599,7 +599,7 @@ function scheduleRun(request, response) {
                                     return true;
                                 });*/
                 for (k = 0; k < runList.length; k++) {
-                        tab_content += '<option value="' + runList[k] + '" selected>' + runNameList[k] + '</option>'
+                    tab_content += '<option value="' + runList[k] + '" selected>' + runNameList[k] + '</option>'
                 }
 
                 tab_content += '</select></div></div></div>';
@@ -665,17 +665,17 @@ function scheduleRun(request, response) {
                     for (var y = 0; y < freq_length; y++) {
 
                         var run_selection_html = '';
-/*                        runPlanSearch.addFilters(newFilters_runPlan);
+                        /*                        runPlanSearch.addFilters(newFilters_runPlan);
 
-                        var resultSet_runPlan = runPlanSearch.runSearch();
-                        resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
-                            if (obj_freq[y]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
-                                run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
-                            } else {
-                                run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
-                            }
-                            return true;
-                        });*/
+                                                var resultSet_runPlan = runPlanSearch.runSearch();
+                                                resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                                                    if (obj_freq[y]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
+                                                        run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
+                                                    } else {
+                                                        run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                                    }
+                                                    return true;
+                                                });*/
 
                         for (k = 0; k < runList.length; k++) {
                             if (obj_freq[y]['freq_run_plan'] == runList[k]) {
@@ -777,12 +777,14 @@ function scheduleRun(request, response) {
                 nlapiSubmitRecord(freq_record);
             }
         }
-        if (role == 1000) {
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_rp_customer_list', 'customdeploy_sl_rp_customer_list', null, null);
-        } else {
-            nlapiSetRedirectURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender', null, null);
+        var zee_response = request.getParameter('zee');
+        zee_response = parseInt(zee_response);
+        var params = {
+            scriptid: 'customscript_sl_full_calendar',
+            deployid: 'customdeploy_sl_full_calender',
+            zee: zee_response
         }
-
+        nlapiSetRedirectURL('SUITELET', 'customscript_sl_rp_customer_list', 'customdeploy_sl_rp_customer_list', null, params);
     }
 }
 
