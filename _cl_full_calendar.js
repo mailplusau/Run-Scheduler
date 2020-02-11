@@ -382,7 +382,7 @@ function onclick_customerClosure() {
 	if (zee != 0) {
 
 		var params = {
-			scriptid: 'customscript_sl_full_calender',
+			scriptid: 'customscript_sl_full_calendar',
 			deployid: 'customdeploy_sl_full_calender',
 			zee: zee
 		}
@@ -681,7 +681,7 @@ $(document).on('click', '.edit_stop', function(event) {
 
 	var params = {
 		serviceid: service_id,
-		scriptid: 'customscript_sl_full_calender',
+		scriptid: 'customscript_sl_full_calendar',
 		deployid: 'customdeploy_sl_full_calender',
 		zee: zee
 	}
