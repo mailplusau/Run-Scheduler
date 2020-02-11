@@ -731,7 +731,7 @@ function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old
 
     var min_array = convertSecondsToMinutes(Math.max.apply(Math, old_stop_duration));
 
-    min_array[0] = min_array[0] + parseInt(freq_time_current_array[1]);
+    min_array[0] = parseInt(min_array[0]) + +freq_time_current_array[1];
 
     if (isNullorEmpty(old_ncl)) {
         var bg_color = '#3a87ad';
@@ -829,9 +829,11 @@ function addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_d
     }
 
     var start_time = moment().day(day_number).hours(freq_time_current_array[0]).minutes(freq_time_current_array[1]).seconds(0).format();
-    var end_time = moment().add({
-        seconds: min_array[1]
-    }).day(day_number).hours(freq_time_current_array[0]).minutes(min_array[0]).format();
+    // var end_time = moment().add({
+    //     seconds: min_array[1]
+    // }).day(day_number).hours(freq_time_current_array[0]).minutes(min_array[0]).format(); 
+    var end_time = moment().day(day_number).hours(freq_time_current_array[0]).minutes(min_array[0]).seconds(0).format();
+
 
     stop_freq_json += '"start": "' + start_time + '",';
     stop_freq_json += '"end": "' + end_time + '",';
