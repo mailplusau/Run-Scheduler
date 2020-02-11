@@ -776,6 +776,10 @@ $(document).on("click", ".remove_service", function(e) {
             nlapiSubmitRecord(freqRecord);
         }
 
+        var service_record = nlapiLoadRecord('customrecord_service', service_id);
+        service_record.setFieldValue('custrecord_service_run_scheduled', 'F');
+        nlapiSubmitRecord(service_record);
+
         $(this).prop('hidden', true);
         window.location.reload();
     }

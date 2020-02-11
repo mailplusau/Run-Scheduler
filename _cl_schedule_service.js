@@ -1017,6 +1017,11 @@ function saveRecord() {
                         if (freq_change == true || (run != old_run) || (service_time != old_service_time) || (earliest_time != old_earliest_time) || (latest_time != old_latest_time)) {
                             if (isNullorEmpty(run_freq_id)) {
                                 var freq_record = nlapiCreateRecord('customrecord_service_freq');
+
+                                var service_record = nlapiLoadRecord('customrecord_service', service_id);
+                                service_record.setFieldValue('custrecord_service_run_scheduled', 'T');
+                                nlapiSubmitRecord(service_record);
+                                
                             } else {
                                 var freq_record = nlapiLoadRecord('customrecord_service_freq', run_freq_id);
                             }
@@ -1119,6 +1124,11 @@ function saveRecord() {
                                 if (freq_change == true || (run != old_run) || (service_time != old_service_time) || (earliest_time != old_earliest_time) || (latest_time != old_latest_time)) {
                                     if (isNullorEmpty(freq_id)) {
                                         var freq_record = nlapiCreateRecord('customrecord_service_freq');
+
+                                        var service_record = nlapiLoadRecord('customrecord_service', service_id);
+                                        service_record.setFieldValue('custrecord_service_run_scheduled', 'T');
+                                        nlapiSubmitRecord(service_record);
+
                                     } else {
                                         var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_id);
                                     }
