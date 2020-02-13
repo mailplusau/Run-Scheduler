@@ -777,6 +777,41 @@ function scheduleRun(request, response) {
                 nlapiSubmitRecord(freq_record);
             }
         }
+
+        var service_id = request.getParameter('service_id');
+        var customer_id = request.getParameter('customer_id');
+        var customerScheduled = true;
+
+        nlapiLogExecution('DEBUG', 'service_id', service_id);
+        nlapiLogExecution('DEBUG', 'customer_id', customer_id);
+
+        service_record = nlapiLoadRecord('customrecord_service', service_id);
+        service_record.setFieldValue('custrecord_service_run_scheduled', 1);
+        nlapiSubmitRecord(service_record);
+
+        var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
+
+        var newFilters = new Array();
+        newFilters[newFilters.length] = new nlobjSearchFilter("entityid","CUSTRECORD_SERVICE_CUSTOMER", 'is', customer_id);
+        serviceSearch.addFilters(newFilters);
+        var resultSetService = serviceSearch.runSearch();
+        resultSetService.forEachResult(function(searchResult) {
+            var scheduleRun = searchResult.getValue("custrecord_service_run_scheduled",null,"GROUP");
+            nlapiLogExecution('DEBUG', 'scheduleRun', scheduleRun);
+            if (scheduleRun == 2) {
+                customerScheduled = false;
+                return false;
+            }
+            return true;
+        });
+        nlapiLogExecution('DEBUG', 'customerScheduled', customerScheduled);
+        if (customerScheduled == true) {
+            var customer_record = nlapiLoadRecord('customer', customer_id);
+            customer_record.setFieldValue('custentity_run_scheduled', 1);
+            nlapiSubmitRecord(customer_record);
+        }
+
+
         var zee_response = request.getParameter('zee');
         zee_response = parseInt(zee_response);
         var params = {

@@ -1018,9 +1018,9 @@ function saveRecord() {
                             if (isNullorEmpty(run_freq_id)) {
                                 var freq_record = nlapiCreateRecord('customrecord_service_freq');
 
-                                var service_record = nlapiLoadRecord('customrecord_service', service_id);
+/*                                var service_record = nlapiLoadRecord('customrecord_service', service_id);
                                 service_record.setFieldValue('custrecord_service_run_scheduled', 'T');
-                                nlapiSubmitRecord(service_record);
+                                nlapiSubmitRecord(service_record);*/
                                 
                             } else {
                                 var freq_record = nlapiLoadRecord('customrecord_service_freq', run_freq_id);
