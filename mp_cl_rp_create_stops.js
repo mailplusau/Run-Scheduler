@@ -846,6 +846,10 @@ function saveRecord() {
     var deleted_linked_zee_email = [];
     var deleted_message = [];
 
+    var transfer = false;
+    var transfer_array = [];
+    var stop_array = [];
+
     for (var i = 0; i < edit_stop_elem.length; ++i) {
         var stop_id = edit_stop_elem[i].getAttribute('data-newstop');
         var old_stop_id = table_info_elem[i].getAttribute('data-oldstop');
@@ -901,6 +905,7 @@ function saveRecord() {
 
         } else {
 
+
             if (isNullorEmpty(old_stop_id)) {
                 var service_leg_record = nlapiCreateRecord('customrecord_service_leg');
                 // service_leg_record.setFieldValue('custrecord_service_leg_franchisee', zee);
@@ -919,7 +924,7 @@ function saveRecord() {
             }
 
             console.log('zee', zee);
-            console.log('customer_id', customer_id);
+            //console.log('customer_id', customer_id);
 
             service_leg_record.setFieldValue('name', table_stop_name_elem[i].value);
 
@@ -934,13 +939,13 @@ function saveRecord() {
 
                 var resultSet_ncl_inactive = ncl_inactiveSearch.runSearch();
                 var error = false;
-                resultSet_ncl_inactive.forEachResult(function(ResultSet){
+                resultSet_ncl_inactive.forEachResult(function(ResultSet) {
                     var ncl_name = ResultSet.getValue('name');
                     showAlert(ncl_name + ' is inactive. Please choose another location for that stop.');
                     error = true;
                     return true
                 })
-                if (error == true){
+                if (error == true) {
                     return false;
                 }
             }
@@ -967,95 +972,156 @@ function saveRecord() {
             service_leg_record.setFieldValue('custrecord_service_leg_addr_lon', table_stop_name_elem[i].getAttribute('data-lng'));
             var duration = table_duration_elem[i].value;
 
-            // var split_duration = duration.split(',');
-
-
-            // var hours = parseInt(split_duration[0].split('h'));
-            // var minutes = parseInt(split_duration[1].split('m'));
-            // var seconds = parseInt(split_duration[2].split('s'));
-
-            // var hours_to_seconds = 0;
-            // var minutes_to_seconds = 0;
-
-            // if (hours > 0) {
-            // 	hours_to_seconds = hours * 60 * 60;
-            // }
-
-            // if (minutes > 0) {
-            // 	minutes_to_seconds = minutes * 60;
-            // }
-
-            // duration = hours_to_seconds + minutes_to_seconds + seconds;
-
             service_leg_record.setFieldValue('custrecord_service_leg_duration', duration);
             service_leg_record.setFieldValue('custrecord_service_leg_notes', notes);
-
-            /*            if (service_leg_record.getFieldValue('custrecord_service_leg_location_type') == 2) {
-                            var ncl_record = nlapiLoadRecord('customrecord_ap_lodgment_location', service_leg_record.getFieldValue('custrecord_service_leg_non_cust_location'));
-                            var ncl_record_inactive = ncl_record.getFieldValue('isinactive');
-                            console.log('ncl_record_inactive', ncl_record_inactive);
-                            if (ncl_record_inactive == 'T') {
-                                showAlert('The stop ' + service_leg_record.getFieldValue('internalid') + ' is inactive. </br>Please choose another stop.');
-                                return false;
-                            }
-                        }
-                        return false;*/
 
             var original_service_leg_id = nlapiSubmitRecord(service_leg_record);
             // if (isNullorEmpty(old_stop_id)) {
             // 	new_service_leg_id[new_service_leg_id.length] = original_service_leg_id;
             // }
 
+            stop_array[stop_array.length] = original_service_leg_id;
+            console.log('stop_array', stop_array);
+
             if (!isNullorEmpty(transfer_type) && transfer_type != 0) {
 
-                if (table_stop_name_elem[i].hasAttribute('data-storedzee')) {
+                transfer = true;
+                transfer_array[transfer_array.length] = i;
+                /*
+                                if (table_stop_name_elem[i].hasAttribute('data-storedzee')) {
 
 
-                    var stored_zee = table_stop_name_elem[i].getAttribute('data-storedzee');
+                                    var stored_zee = table_stop_name_elem[i].getAttribute('data-storedzee');
 
-                    if (stored_zee != linked_zee) {
+                                    if (stored_zee != linked_zee) {
 
 
-                        var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
+                                        var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
 
-                        var newFilters = new Array();
-                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_service', null, 'is', service_id);
-                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_stop', null, 'is', original_service_leg_id);
-                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_franchisee', null, 'is', stored_zee);
+                                        var newFilters = new Array();
+                                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_service', null, 'is', service_id);
+                                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_stop', null, 'is', original_service_leg_id);
+                                        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_franchisee', null, 'is', stored_zee);
 
-                        serviceLegSearch.addFilters(newFilters);
+                                        serviceLegSearch.addFilters(newFilters);
 
-                        var resultSet = serviceLegSearch.runSearch();
+                                        var resultSet = serviceLegSearch.runSearch();
 
-                        resultSet.forEachResult(function(searchResult) {
+                                        resultSet.forEachResult(function(searchResult) {
 
-                            // var stop_id = searchResult.getValue('internalid');
-                            var freq_id = searchResult.getValue('internalid');
+                                            // var stop_id = searchResult.getValue('internalid');
+                                            var freq_id = searchResult.getValue('internalid');
 
-                            if (!isNullorEmpty(freq_id)) {
+                                            if (!isNullorEmpty(freq_id)) {
 
-                                freq_ids_to_be_edited[freq_ids_to_be_edited.length] = freq_id;
-                                stored_zee_array[stored_zee_array.length] = stored_zee;
-                                linked_zee_array[linked_zee_array.length] = linked_zee;
-                                service_leg
-                            }
-                            return true;
-                        });
-                    }
-                } else {
-                    var freq_record_owner = nlapiCreateRecord('customrecord_service_freq');
-                    freq_record_owner.setFieldValue('custrecord_service_freq_franchisee', zee);
-                    freq_record_owner.setFieldValue('custrecord_service_freq_customer', customer_id);
-                    freq_record_owner.setFieldValue('custrecord_service_freq_service', service_id);
-                    freq_record_owner.setFieldValue('custrecord_service_freq_stop', original_service_leg_id);
-                    nlapiSubmitRecord(freq_record_owner);
+                                                freq_ids_to_be_edited[freq_ids_to_be_edited.length] = freq_id;
+                                                stored_zee_array[stored_zee_array.length] = stored_zee;
+                                                linked_zee_array[linked_zee_array.length] = linked_zee;
+                                            }
+                                            return true;
+                                        });
+                                    }
+                                } else {
+                                    //create the frequency record for the zee who owns the customer
+                                    var freq_record_owner = nlapiCreateRecord('customrecord_service_freq');
+                                    freq_record_owner.setFieldValue('custrecord_service_freq_franchisee', zee);
+                                    freq_record_owner.setFieldValue('custrecord_service_freq_customer', customer_id);
+                                    freq_record_owner.setFieldValue('custrecord_service_freq_service', service_id);
+                                    freq_record_owner.setFieldValue('custrecord_service_freq_stop', original_service_leg_id);
+                                    nlapiSubmitRecord(freq_record_owner);
 
-                    freq_ids_to_be_created[freq_ids_to_be_created.length] = original_service_leg_id;
-                    freq_ids_to_be_created_linked_zee[freq_ids_to_be_created_linked_zee.length] = linked_zee;
-                }
+                                    freq_ids_to_be_created[freq_ids_to_be_created.length] = original_service_leg_id;
+                                    freq_ids_to_be_created_linked_zee[freq_ids_to_be_created_linked_zee.length] = linked_zee;*/
+                //}
             }
         }
     }
+
+    var transfer_stop = [];
+    var transfer_zee = [];
+    var transfer_freq_edit_or_create = [];
+    if (transfer == true) {
+
+        var linked_zee;
+        for (var y = 0; y < transfer_array.length; y++) {
+            for (var i = 0; i < edit_stop_elem.length; i++) {
+                var stop_id = stop_array[i];
+                var edit_or_create = [];
+                var old_stop = table_info_elem[i].hasAttribute('data-oldstop');
+                if (!isNullorEmpty(old_stop)) {
+                    var stored_zee = table_stop_name_elem[i].getAttribute('data-storedzee');
+                    //console.log('stored_zee', stored_zee);
+                    console.log('service_id', service_id);
+                    console.log('stop_id', stop_id);
+
+                    var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
+
+                    var newFilters = new Array();
+                    newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_service', null, 'anyOf', service_id);
+                    newFilters[newFilters.length] = new nlobjSearchFilter("internalid","CUSTRECORD_SERVICE_FREQ_STOP", 'anyOf', stop_id);
+                    //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_franchisee', null, 'any', stored_zee);
+
+                    serviceLegSearch.addFilters(newFilters);
+
+                    var resultSet = serviceLegSearch.runSearch();
+
+                    var freq_id_array = [];
+
+                    resultSet.forEachResult(function(searchResult) {
+
+                        // var stop_id = searchResult.getValue('internalid');
+                        var freq_id = searchResult.getValue('internalid');
+
+                        if (!isNullorEmpty(freq_id)) {
+                            freq_id_array[freq_id_array.length] = freq_id;
+                            /*stored_zee_array[stored_zee_array.length] = stored_zee;
+                            linked_zee_array[linked_zee_array.length] = linked_zee;*/
+                        }
+                        return true;
+                    });
+                    edit_or_create = freq_id_array;
+                } else {
+                    edit_or_create = 'create';
+                }
+
+                if (i < transfer_array[y]) {
+                    transfer_stop[transfer_stop.length] = stop_id;
+                    transfer_zee[transfer_zee.length] = zee;
+                    transfer_freq_edit_or_create[transfer_freq_edit_or_create.length] = edit_or_create;
+                } else if (i == transfer_array[y]) {
+                    linked_zee = table_stop_name_elem[i].getAttribute('data-linkedzee');
+                    transfer_stop[transfer_stop.length] = stop_id;
+                    transfer_zee[transfer_zee.length] = zee;
+                    transfer_freq_edit_or_create[transfer_freq_edit_or_create.length] = edit_or_create;
+
+                    transfer_stop[transfer_stop.length] = stop_id;
+                    transfer_zee[transfer_zee.length] = linked_zee;
+                    transfer_freq_edit_or_create[transfer_freq_edit_or_create.length] = edit_or_create;
+                } else if (i > transfer_array[y]) {
+                    transfer_stop[transfer_stop.length] = stop_id;
+                    transfer_zee[transfer_zee.length] = linked_zee;
+                    transfer_freq_edit_or_create[transfer_freq_edit_or_create.length] = edit_or_create;
+                }
+
+            }
+        }
+
+    }
+
+    console.log('transfer_stop', transfer_stop);
+    console.log('transfer_zee', transfer_zee);
+    console.log('transfer_freq_edit_or_create', transfer_freq_edit_or_create);
+
+    var transfer_stop_string = transfer_stop.join();
+    var transfer_zee_string = transfer_zee.join();
+    var transfer_freq_edit_or_create_string = transfer_freq_edit_or_create.join();
+
+    console.log('freq_ids_to_be_edited', freq_ids_to_be_edited);
+    console.log('stored_zee_array', stored_zee_array);
+    console.log('linked_zee_array', linked_zee_array);
+
+    console.log('freq_ids_to_be_created', freq_ids_to_be_created);
+    console.log('freq_ids_to_be_created_linked_zee', freq_ids_to_be_created_linked_zee);
 
     var freq_edited_string = freq_ids_to_be_edited.join();
     var stored_string = stored_zee_array.join();
@@ -1088,7 +1154,13 @@ function saveRecord() {
     nlapiSetFieldValue('custpage_old_stop', old_stop_string);
     nlapiSetFieldValue('custpage_updated_stop_zee', updated_stop_zee_string);
     nlapiSetFieldValue('new_service_leg_id_string', new_service_leg_id_string);
+    nlapiSetFieldValue('custpage_transfer', transfer);
+    nlapiSetFieldValue('custpage_transfer_stop', transfer_stop_string);
+    nlapiSetFieldValue('custpage_transfer_zee', transfer_zee_string);
+    nlapiSetFieldValue('custpage_transfer_freq_edit_or_create', transfer_freq_edit_or_create_string);
 
+
+    //return false;
     return true;
 }
 
