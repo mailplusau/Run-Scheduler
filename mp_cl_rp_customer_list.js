@@ -27,6 +27,7 @@ function pageInit() {
     var old_service_id;
     var old_entity_id;
     var old_company_name;
+    var old_scheduled;
 
     var count = 0;
     var customer_count = 0;
@@ -35,11 +36,10 @@ function pageInit() {
     var service_name_array = [];
     var service_descp_array = [];
     var service_price_array = [];
+    var service_scheduled_array = [];
     var service_freq_count_array = [];
     var service_leg_count_array = [];
     var service_no_of_legs_array = [];
-
-    var reviewed = false;
 
     var dataSet = '{"data":[';
 
@@ -48,19 +48,23 @@ function pageInit() {
         var custid = searchResult.getValue("custrecord_service_customer", null, "GROUP");
         var entityid = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
         var companyname = searchResult.getValue("companyname", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
+        var scheduled = searchResult.getValue("custentity_run_scheduled", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
+        console.log('scheduled', scheduled);
 
         var service_id = searchResult.getValue("internalid", null, "GROUP");
         var service_name = searchResult.getText('custrecord_service', null, "GROUP");
         var service_descp = searchResult.getValue('custrecord_service_description', null, "GROUP");
         var service_price = searchResult.getValue("custrecord_service_price", null, "GROUP");
+        var service_scheduled = searchResult.getValue("custrecord_service_run_scheduled", null, "GROUP");
+
         var service_leg_freq_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
         var service_leg_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
-        
+
         if (count != 0 && old_customer_id != custid) {
 
 
-            dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","reviewed": "' + reviewed + '",'
+            dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '",'
 
             dataSet += '"services": ['
 
@@ -69,7 +73,7 @@ function pageInit() {
 
                 dataSet += '{';
 
-                dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '","service_id": "' + service_id_array[i] + '"'
+                dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '","service_id": "' + service_id_array[i] + '"'
 
                 dataSet += '},'
             }
@@ -82,38 +86,41 @@ function pageInit() {
             service_name_array = [];
             service_descp_array = [];
             service_price_array = [];
+            service_scheduled_array = [];
             service_freq_count_array = [];
             service_leg_count_array = [];
             service_no_of_legs_array = [];
 
-            reviewed = false;
+            /*scheduled = false;*/
 
             service_id_array[service_id_array.length] = service_id;
             service_name_array[service_name_array.length] = service_name;
             service_descp_array[service_descp_array.length] = service_descp;
             service_price_array[service_price_array.length] = service_price;
+            service_scheduled_array[service_scheduled_array.length] = service_scheduled;
             service_freq_count_array[service_freq_count_array.length] = service_leg_freq_count;
             service_leg_count_array[service_leg_count_array.length] = service_leg_count;
             service_no_of_legs_array[service_no_of_legs_array.length] = no_of_legs;
 
-            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
-                reviewed = true;
-            } else {
-                reviewed = false;
-            }
+            /*            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
+                            scheduled = true;
+                        } else {
+                            scheduled = false;
+                        }*/
         } else {
             service_id_array[service_id_array.length] = service_id;
             service_name_array[service_name_array.length] = service_name;
             service_descp_array[service_descp_array.length] = service_descp;
             service_price_array[service_price_array.length] = service_price;
+            service_scheduled_array[service_scheduled_array.length] = service_scheduled;
             service_freq_count_array[service_freq_count_array.length] = service_leg_freq_count;
             service_leg_count_array[service_leg_count_array.length] = service_leg_count;
             service_no_of_legs_array[service_no_of_legs_array.length] = no_of_legs;
-            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
-                reviewed = true;
-            } else {
-                reviewed = false;
-            }
+            /*            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
+                            scheduled = true;
+                        } else {
+                            scheduled = false;
+                        }*/
 
 
         }
@@ -122,13 +129,14 @@ function pageInit() {
         old_service_id = service_id;
         old_entity_id = entityid;
         old_company_name = companyname;
+        old_scheduled = scheduled;
 
         count++;
         return true;
     });
 
     if (count > 0) {
-        dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","reviewed": "' + reviewed + '",'
+        dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '",'
 
         dataSet += '"services": ['
 
@@ -137,7 +145,7 @@ function pageInit() {
 
             dataSet += '{';
 
-            dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '","service_id": "' + service_id_array[i] + '"'
+            dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '","service_id": "' + service_id_array[i] + '"'
 
             dataSet += '},'
         }
@@ -147,6 +155,7 @@ function pageInit() {
 
     dataSet = dataSet.substring(0, dataSet.length - 1);
     dataSet += ']}';
+    console.log(dataSet);
     var parsedData = JSON.parse(dataSet);
     console.log(parsedData.data);
 
@@ -177,7 +186,7 @@ function pageInit() {
             "columnDefs": [{
 
                 "render": function(data, type, row) {
-                    if (data.reviewed == 'true') {
+                    if (data.scheduled == 1) {
                         return '<img src="https://1048144.app.netsuite.com/core/media/media.nl?id=1990778&c=1048144&h=e7f4f60576de531265f7" height="25" width="25">';
                     }
                 },
@@ -459,31 +468,6 @@ $(document).on('click', '.service_summary', function() {
     var obj = parsedStopFreq.data[0];
     console.log('obj', obj);
     var frequency = '';
-    /*    if (obj_freq[y]['freq_mon'] == 'T' && obj_freq[y]['freq_tue'] == 'T' && obj_freq[y]['freq_wed'] == 'T' && obj_freq[y]['freq_thu'] == 'T' && obj_freq[y]['freq_fri'] == 'T') {
-            frequency = 'Daily';
-        } else if (obj_freq[y]['freq_adhoc'] == 'T') {
-            frequency = 'ADHOC';
-        } else {
-            if (obj_freq[y]['freq_mon'] == 'T') {
-                frequency += '<Mon, >'
-            }
-            if (obj_freq[y]['freq_tue'] == 'T') {
-                frequency += '<Tue, >'
-            }
-            if (obj_freq[y]['freq_wed'] == 'T') {
-                frequency += '<Wed, >'
-            }
-            if (obj_freq[y]['freq_thu'] == 'T') {
-                frequency += '<Thu, >'
-            }
-            if (obj_freq[y]['freq_fri'] == 'T') {
-                frequency += '<Fri, >'
-            }
-            frequency = frequency.substring(0, frequency.length - 2);
-        }*/
-
-
-
 
     bodyStop += '<ol class="list-group">';
     console.log('parsedStopFreq.data.length', parsedStopFreq.data.length);
@@ -648,6 +632,7 @@ function format(index) {
         var service_freq_count;
         var service_freq_count_active;
         var count = 0;
+        var service_scheduled;
         $.each(service, function(key, value) {
             if (key == "leg_count") {
                 service_leg_count = parseInt(value);
@@ -661,50 +646,62 @@ function format(index) {
                 no_of_legs = parseInt(value);
             }
 
+            if (key == "service_scheduled") {
+                service_scheduled = value;
+                console.log('service_scheduled', service_scheduled);
+            }
+
             console.log(key)
 
             service_leg_count_active = service_leg_count;
             service_freq_count_active = service_freq_count;
 
 
+            /*            if (key == "service_id") {
+                            console.log('value', value);
+                            var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
+
+                            var newFilters = new Array();
+                            newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'anyof', value);
+                            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
+                            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', service.custid);
+                            legSearch.addFilters(newFilters);
+
+                            var resultSetLeg_inactive = legSearch.runSearch();
+                            resultSetLeg_inactive.forEachResult(function(searchResult) {
+                                var service_leg_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
+                                var service_freq_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
+                                var serv_id = searchResult.getValue("internalid", null, "GROUP");
+                                console.log('service_leg_count_inactive', service_leg_count_inactive);
+                                console.log('service_freq_count_inactive', service_freq_count_inactive);
+                                console.log('serv_id', serv_id);
+
+                                service_leg_count_active = service_leg_count - service_leg_count_inactive;
+                                service_freq_count_active = service_freq_count - service_freq_count_inactive;
+                                console.log('service_leg_count_active', service_leg_count_active);
+                                console.log('service_freq_count_active', service_freq_count_active);
+                                count++;
+                                return true
+                            });
+                            console.log('count', count);
+                            console.log('service_leg_count_active', service_leg_count_active);
+                            console.log('service_freq_count_active', service_freq_count_active);
+                            //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
+                            if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
+                                html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
+                            } else {
+                                html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                            }*/
             if (key == "service_id") {
-                console.log('value', value);
-                var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
-
-                var newFilters = new Array();
-                newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'anyof', value);
-                //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
-                //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', service.custid);
-                legSearch.addFilters(newFilters);
-
-                var resultSetLeg_inactive = legSearch.runSearch();
-                resultSetLeg_inactive.forEachResult(function(searchResult) {
-                    var service_leg_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
-                    var service_freq_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
-                    var serv_id = searchResult.getValue("internalid", null, "GROUP");
-                    console.log('service_leg_count_inactive', service_leg_count_inactive);
-                    console.log('service_freq_count_inactive', service_freq_count_inactive);
-                    console.log('serv_id', serv_id);
-
-                    service_leg_count_active = service_leg_count - service_leg_count_inactive;
-                    service_freq_count_active = service_freq_count - service_freq_count_inactive;
-                    console.log('service_leg_count_active', service_leg_count_active);
-                    console.log('service_freq_count_active', service_freq_count_active);
-                    count++;
-                    return true
-                });
-                console.log('count', count);
-                console.log('service_leg_count_active', service_leg_count_active);
-                console.log('service_freq_count_active', service_freq_count_active);
                 //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
-                if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
+                if (service_scheduled == 1) {
                     html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
+                } else if (service_scheduled == 2) {
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 } else {
                     html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 }
-
-
-            } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs") {
+            } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs" || key == "service_scheduled") {
 
             } else {
                 html += '<td style="text-align: center;">' + value + '</td>';
@@ -777,7 +774,7 @@ $(document).on("click", ".remove_service", function(e) {
         }
 
         var service_record = nlapiLoadRecord('customrecord_service', service_id);
-        service_record.setFieldValue('custrecord_service_run_scheduled', 'F');
+        service_record.setFieldValue('custrecord_service_run_scheduled', 2);
         nlapiSubmitRecord(service_record);
 
         $(this).prop('hidden', true);
