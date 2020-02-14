@@ -361,9 +361,10 @@ function createStops(request, response) {
             resultSet.forEachResult(function(searchResult_serviceLeg) {
                 var service_leg_id = searchResult_serviceLeg.getValue("internalid");
                 var service_leg_name = searchResult_serviceLeg.getValue("name");
-                var service_leg_number = searchResult_serviceLeg.getValue("custrecord_service_leg_number");
+                var service_leg_number = searchResult_serviceLeg.getValue("custrecord_service_leg_number");               
                 var service_leg_transfer_type = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_type");
                 var service_leg_transfer_type_text = searchResult_serviceLeg.getText("custrecord_service_leg_trf_type");
+                var service_leg_zee = searchResult_serviceLeg.getValue("custrecord_service_leg_franchisee");
                 var service_leg_linked_zee = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_franchisee");
                 var service_leg_ncl = searchResult_serviceLeg.getValue("custrecord_service_leg_non_cust_location");
                 var service_leg_addr_id = searchResult_serviceLeg.getValue("custrecord_service_leg_addr");
@@ -402,7 +403,7 @@ function createStops(request, response) {
                 inlineQty += '<td><textarea type="text" readonly class="form-control table_info" data-addresstype="' + service_leg_location_type + '"data-oldstop="' + service_leg_id + '" value="' + service_leg_location_type_text + '">' + display_html + '</textarea>';
 
                 inlineQty += '<input type="hidden" readonly class="form-control table_stop_name" data-oldvalue="' + service_leg_name + '" value="' + service_leg_name + '" data-customeraddressid="' + service_leg_addr_id + '" data-postbox="' + service_leg_postal + '" data-addr1="' + service_leg_addr1 + '" data-addr2="' +
-                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-storedzee="' + service_leg_linked_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
+                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-storedzee="' + service_leg_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
 
                 inlineQty += '<td><input type="text" readonly class="form-control table_duration" data-oldstop="' + service_leg_duration + '" value="' + service_leg_duration + '" /></td>'
 
@@ -611,8 +612,7 @@ function createStops(request, response) {
                 }
 
             }
-        }
-        else{
+        } else {
             nlapiLogExecution('DEBUG', 'else', 'else');
 
         }

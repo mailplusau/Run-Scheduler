@@ -1051,18 +1051,31 @@ function saveRecord() {
                 console.log('old_stop', old_stop);
                 if (!isNullorEmpty(old_stop)) {
                     var stored_zee = table_stop_name_elem[i].getAttribute('data-storedzee');
+                    var linked_zee = table_stop_name_elem[i].getAttribute('data-linkedzee');
                     //console.log('stored_zee', stored_zee);
                     console.log('service_id', service_id);
                     console.log('stop_id', stop_id);
+                    console.log('stored_zee', stored_zee);
+                    console.log('linked_zee', linked_zee);
 
                     var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
 
                     var newFilters = new Array();
                     newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_service', null, 'anyOf', service_id);
-                    newFilters[newFilters.length] = new nlobjSearchFilter("internalid","CUSTRECORD_SERVICE_FREQ_STOP", 'anyOf', stop_id);
-                    //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_franchisee', null, 'any', stored_zee);
+                    newFilters[newFilters.length] = new nlobjSearchFilter("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", 'anyOf', stop_id);
+                    newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_franchisee', null, 'any', stored_zee);
 
-                    serviceLegSearch.addFilters(newFilters);
+                    var filterExpression = [
+                        [
+                            ['custrecord_service_freq_franchisee', null, 'any', stored_zee],
+                            "OR", ['custrecord_service_freq_franchisee', null, 'any', linked_zee]
+                        ],
+                        "AND", ["isinactive", "is", "F"],
+                        "AND", ['custrecord_service_freq_service', 'anyOf', service_id],
+                        "AND", ["internalid", "CUSTRECORD_SERVICE_FREQ_STOP", 'anyOf', stop_id]
+                    ]
+
+                    serviceLegSearch.setFilterExpression(filterExpression);
 
                     var resultSet = serviceLegSearch.runSearch();
 
@@ -1072,12 +1085,12 @@ function saveRecord() {
 
                         // var stop_id = searchResult.getValue('internalid');
                         var freq_id = searchResult.getValue('internalid');
+                        var zee = searchResult.getValue('custrecord_service_freq_franchisee');
 
-                        if (!isNullorEmpty(freq_id)) {
+                        if (zee == stored_zee) {
                             freq_id_array[freq_id_array.length] = freq_id;
-                            /*stored_zee_array[stored_zee_array.length] = stored_zee;
-                            linked_zee_array[linked_zee_array.length] = linked_zee;*/
                         }
+                        
                         return true;
                     });
                     edit_or_create = freq_id_array;

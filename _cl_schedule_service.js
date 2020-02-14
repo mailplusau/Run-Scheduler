@@ -37,8 +37,8 @@ $(window).load(function() {
     $(".se-pre-con").fadeOut("slow");
 });
 
-var runList = nlapiGetFieldValue('runlist').split(',');
-var runNameList = nlapiGetFieldValue('runnamelist').split(',');
+/*var runList = nlapiGetFieldValue('runlist').split(',');
+var runNameList = nlapiGetFieldValue('runnamelist').split(',');*/
 
 // $(document).on('click', '.close', function(e) {
 // 	console.log('inside alert close');
@@ -126,10 +126,10 @@ function pageInit() {
     // $(".tab-content").css("border", 'groove');
 
     validateFrequency();
-    console.log('runList', runList);
+/*    console.log('runList', runList);
     console.log(runList.length);
     console.log('runNameList', runNameList);
-    console.log(runList[1]);
+    console.log(runList[1]);*/
 }
 
 
@@ -570,6 +570,7 @@ $(document).on('click', '.different_each_day', function() {
         var table_id = '#services' + id;
         var loaded_multifreq = $(this).attr('data-multifreq');
         var freq_id = $(this).attr('data-freqid');
+        var zee_id = $(this).attr('data-zee');
         if (!isNullorEmpty(freq_id)) {
             delete_freq_array[delete_freq_array.length] = freq_id;
         }
@@ -610,7 +611,7 @@ $(document).on('click', '.different_each_day', function() {
 
             }
         } else {
-            console.log('runlist', runList);
+            //console.log('runlist', runList);
             /*            var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
 
                         var newFilters_runPlan = new Array();
@@ -634,10 +635,40 @@ $(document).on('click', '.different_each_day', function() {
             var create_run_html = '';
             //$(table_id).find("tr:not(:nth-child(1))").remove();
             var run_selection_html = '';
+            /*            if (!isNullorEmpty(obj['transfer_type'])) {
+                            var linked_zee = obj['transfer_zee'];
+                            console.log('linked_zee', linked_zee);
+                            var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+                            var newFilters_runPlan = new Array();
+                            newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', linked_zee);
+                            runPlanSearch.addFilters(newFilters_runPlan);
 
-            for (k = 0; k < runList.length; k++) {
-                run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
-            }
+                            var resultSet_runPlan = runPlanSearch.runSearch();
+                            resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                                run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                return true;
+                            });
+                        } else {
+                            console.log('zee');
+                            for (k = 0; k < runList.length; k++) {
+                                run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
+                            }
+                        }*/
+            var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+            var newFilters_runPlan = new Array();
+            newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee_id);
+            runPlanSearch.addFilters(newFilters_runPlan);
+
+            var resultSet_runPlan = runPlanSearch.runSearch();
+            resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                if (obj_freq[0]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
+                    tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
+                } else {
+                    tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                }
+
+                return true;
+            });
 
             var row_count = 1;
 
@@ -798,6 +829,7 @@ function checkIfMultiFreq(value, unchecked) {
         $(this).find(".nav-tabs li").each(function(index, element) {
             var stop_id = $(this).children('a').attr('href');
             stop_id = stop_id.split('#');
+            var zee_id = $(this).children('a').attr('data-zee');
             if (!isNullorEmpty(stop_id[1])) {
 
                 // To check if a new stop has been created. -1 = NO / 0 = YES
@@ -873,9 +905,40 @@ function checkIfMultiFreq(value, unchecked) {
                                                 });*/
                         var create_run_html = '';
                         var run_selection_html = '';
-                        for (k = 0; k < runList.length; k++) {
-                            run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
-                        }
+                        /*                        if (!isNullorEmpty(obj['transfer_type'])) {
+                                                    var linked_zee = obj['transfer_zee'];
+                                                    console.log('linked_zee', linked_zee);
+                                                    var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+                                                    var newFilters_runPlan = new Array();
+                                                    newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', linked_zee);
+                                                    runPlanSearch.addFilters(newFilters_runPlan);
+
+                                                    var resultSet_runPlan = runPlanSearch.runSearch();
+                                                    resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                                                        run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                                                        return true;
+                                                    });
+                                                } else {
+                                                    console.log('zee');
+                                                    for (k = 0; k < runList.length; k++) {
+                                                        run_selection_html += '<option value="' + runList[k] + '">' + runNameList[k] + '</option>'
+                                                    }
+                                                }*/
+                        var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+                        var newFilters_runPlan = new Array();
+                        newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee_id);
+                        runPlanSearch.addFilters(newFilters_runPlan);
+
+                        var resultSet_runPlan = runPlanSearch.runSearch();
+                        resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                            if (obj_freq[0]['freq_run_plan'] == searchResult_runPlan.getValue('internalid')) {
+                                tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '" selected>' + searchResult_runPlan.getValue('name') + '</option>'
+                            } else {
+                                tab_content += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>'
+                            }
+
+                            return true;
+                        });
 
                         var day;
                         switch (value) {
@@ -1018,10 +1081,10 @@ function saveRecord() {
                             if (isNullorEmpty(run_freq_id)) {
                                 var freq_record = nlapiCreateRecord('customrecord_service_freq');
 
-/*                                var service_record = nlapiLoadRecord('customrecord_service', service_id);
-                                service_record.setFieldValue('custrecord_service_run_scheduled', 'T');
-                                nlapiSubmitRecord(service_record);*/
-                                
+                                /*                                var service_record = nlapiLoadRecord('customrecord_service', service_id);
+                                                                service_record.setFieldValue('custrecord_service_run_scheduled', 'T');
+                                                                nlapiSubmitRecord(service_record);*/
+
                             } else {
                                 var freq_record = nlapiLoadRecord('customrecord_service_freq', run_freq_id);
                             }
