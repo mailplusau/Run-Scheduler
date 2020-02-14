@@ -591,10 +591,10 @@ function createStops(request, response) {
                 nlapiLogExecution('DEBUG', 'transfer_freq_edit_or_create_array[i]', transfer_freq_edit_or_create_array[i]);
                 if (transfer_freq_edit_or_create_array[i] == 'create') {
                     var transfer_record = nlapiCreateRecord('customrecord_service_freq');
-                    transfer_record.setFieldValue('custrecord_service_freq_franchisee', transfer_zee[i]);
+                    transfer_record.setFieldValue('custrecord_service_freq_franchisee', transfer_zee_array[i]);
                     transfer_record.setFieldValue('custrecord_service_freq_customer', customer_id);
                     transfer_record.setFieldValue('custrecord_service_freq_service', service_id);
-                    transfer_record.setFieldValue('custrecord_service_freq_stop', transfer_stop[i]);
+                    transfer_record.setFieldValue('custrecord_service_freq_stop', transfer_stop_array[i]);
                     nlapiSubmitRecord(transfer_record);
                 } else {
                     for (var y = 0; y < transfer_freq_edit_or_create_array.length; y++) {

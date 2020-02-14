@@ -98,7 +98,7 @@ $('.collapse').on('shown.bs.collapse', function() {
 
 $('.collapse').on('hide.bs.collapse', function() {
     $("#container").css({
-        "padding-top": "80px"
+        "padding-top": "create_stops80px"
     });
 })
 
@@ -1047,7 +1047,8 @@ function saveRecord() {
             for (var i = 0; i < edit_stop_elem.length; i++) {
                 var stop_id = stop_array[i];
                 var edit_or_create = [];
-                var old_stop = table_info_elem[i].hasAttribute('data-oldstop');
+                var old_stop = table_info_elem[i].getAttribute('data-oldstop');
+                console.log('old_stop', old_stop);
                 if (!isNullorEmpty(old_stop)) {
                     var stored_zee = table_stop_name_elem[i].getAttribute('data-storedzee');
                     //console.log('stored_zee', stored_zee);
