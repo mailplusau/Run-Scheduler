@@ -1,8 +1,8 @@
 /**
  * Module Description
  * 
- * NSVersion    Date            			Author         
- * 1.00       	2018-07-17 16:43:59   		ankith.ravindran
+ * NSVersion    Date                        Author         
+ * 1.00         2018-07-17 16:43:59         ankith.ravindran
  *
  * Description: To create stops based on the service selected for each customer. Enter the stop address, time spent at that stop as well as notes related to that stop.      
  * 
@@ -72,7 +72,7 @@ function createStops(request, response) {
 
 
         form.addField('custpage_customer_id', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(customer_id);
-        form.addField('custpage_service_leg_customer', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(entity_id + ' ' + company_name);
+        form.addField('custpage_service_leg_customer','text','Customer ID').setDisplayType('hidden').setDefaultValue(entity_id + ' ' + company_name);
         form.addField('custpage_service_id', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('custpage_suitlet', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.scriptid);
         form.addField('custpage_deploy', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.deployid);
@@ -89,11 +89,6 @@ function createStops(request, response) {
         form.addField('custpage_old_stop', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('custpage_updated_stop_zee', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('new_service_leg_id_string', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_transfer', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_transfer_stop', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_transfer_zee', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_transfer_freq_edit_or_create', 'text', 'Service ID').setDisplayType('hidden');
-
 
         /**
          * Description - Get all the AP Lodgement locations for this franchisee
@@ -361,10 +356,9 @@ function createStops(request, response) {
             resultSet.forEachResult(function(searchResult_serviceLeg) {
                 var service_leg_id = searchResult_serviceLeg.getValue("internalid");
                 var service_leg_name = searchResult_serviceLeg.getValue("name");
-                var service_leg_number = searchResult_serviceLeg.getValue("custrecord_service_leg_number");               
+                var service_leg_number = searchResult_serviceLeg.getValue("custrecord_service_leg_number");
                 var service_leg_transfer_type = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_type");
                 var service_leg_transfer_type_text = searchResult_serviceLeg.getText("custrecord_service_leg_trf_type");
-                var service_leg_zee = searchResult_serviceLeg.getValue("custrecord_service_leg_franchisee");
                 var service_leg_linked_zee = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_franchisee");
                 var service_leg_ncl = searchResult_serviceLeg.getValue("custrecord_service_leg_non_cust_location");
                 var service_leg_addr_id = searchResult_serviceLeg.getValue("custrecord_service_leg_addr");
@@ -403,7 +397,7 @@ function createStops(request, response) {
                 inlineQty += '<td><textarea type="text" readonly class="form-control table_info" data-addresstype="' + service_leg_location_type + '"data-oldstop="' + service_leg_id + '" value="' + service_leg_location_type_text + '">' + display_html + '</textarea>';
 
                 inlineQty += '<input type="hidden" readonly class="form-control table_stop_name" data-oldvalue="' + service_leg_name + '" value="' + service_leg_name + '" data-customeraddressid="' + service_leg_addr_id + '" data-postbox="' + service_leg_postal + '" data-addr1="' + service_leg_addr1 + '" data-addr2="' +
-                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-storedzee="' + service_leg_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
+                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-storedzee="' + service_leg_linked_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
 
                 inlineQty += '<td><input type="text" readonly class="form-control table_duration" data-oldstop="' + service_leg_duration + '" value="' + service_leg_duration + '" /></td>'
 
@@ -459,11 +453,6 @@ function createStops(request, response) {
         var updated_stop_string = request.getParameter('custpage_updated_stop');
         var old_stop_string = request.getParameter('custpage_old_stop');
         var updated_stop_zee_string = request.getParameter('custpage_updated_stop_zee');
-
-        var transfer = request.getParameter('custpage_transfer');
-        var transfer_stop_string = request.getParameter('custpage_transfer_stop');
-        var transfer_zee_string = request.getParameter('custpage_transfer_zee');
-        var transfer_freq_edit_or_create_string = request.getParameter('custpage_transfer_freq_edit_or_create');
         // var new_service_leg_id_string = request.getParameter('new_service_leg_id_string');
         // var zee = request.getParameter('custpage_zee');
 
@@ -475,19 +464,13 @@ function createStops(request, response) {
         nlapiLogExecution('DEBUG', 'old_stop_string', old_stop_string);
         nlapiLogExecution('DEBUG', 'updated_stop_zee_string', updated_stop_zee_string);
 
-        nlapiLogExecution('DEBUG', 'transfer', transfer);
-
-        nlapiLogExecution('DEBUG', 'transfer_stop_string', transfer_stop_string);
-        nlapiLogExecution('DEBUG', 'transfer_zee_string', transfer_zee_string);
-        nlapiLogExecution('DEBUG', 'transfer_freq_edit_or_create_string', transfer_freq_edit_or_create_string);
-
         // if (!isNullorEmpty(new_service_leg_id_string)) {
-        // 	var new_service_leg_id = new_service_leg_id_string.split(',');
-        // 	for (var i = 0; i < new_service_leg_id.length; i++) {
-        // 		var service_leg_record = nlapiLoadRecord('customrecord_service_leg', new_service_leg_id[i]);
-        // 		service_leg_record.setFieldValue('custrecord_service_leg_franchisee', parseInt(zee));
-        // 		nlapiSubmitRecord(service_leg_record);
-        // 	}
+        //  var new_service_leg_id = new_service_leg_id_string.split(',');
+        //  for (var i = 0; i < new_service_leg_id.length; i++) {
+        //      var service_leg_record = nlapiLoadRecord('customrecord_service_leg', new_service_leg_id[i]);
+        //      service_leg_record.setFieldValue('custrecord_service_leg_franchisee', parseInt(zee));
+        //      nlapiSubmitRecord(service_leg_record);
+        //  }
 
         // }
 
@@ -545,77 +528,40 @@ function createStops(request, response) {
             }
         }
 
-        /*        if (!isNullorEmpty(freq_edited) && !isNullorEmpty(stored_zee) && !isNullorEmpty(linked_zee)) {
+        if (!isNullorEmpty(freq_edited) && !isNullorEmpty(stored_zee) && !isNullorEmpty(linked_zee)) {
 
-                    var freq_edited_array = freq_edited.split(',');
-                    var stored_zee_array = stored_zee.split(',');
-                    var linked_zee_array = linked_zee.split(',');
+            var freq_edited_array = freq_edited.split(',');
+            var stored_zee_array = stored_zee.split(',');
+            var linked_zee_array = linked_zee.split(',');
 
-                    for (var i = 0; i < freq_edited_array.length; i++) {
-                        var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_edited_array[i]);
+            for (var i = 0; i < freq_edited_array.length; i++) {
+                var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_edited_array[i]);
 
-                        freq_record.setFieldValue('custrecord_service_freq_franchisee', linked_zee_array[i]);
+                freq_record.setFieldValue('custrecord_service_freq_franchisee', linked_zee_array[i]);
 
-                        nlapiSubmitRecord(freq_record);
-                    }
-                }
-
-
-                if (!isNullorEmpty(freq_created) && !isNullorEmpty(freq_created_zees)) {
-
-                    var freq_created_array = freq_created.split(',');
-                    var freq_created_zees_array = freq_created_zees.split(',');
-
-                    for (var i = 0; i < freq_created_array.length; i++) {
-                        var freq_record = nlapiCreateRecord('customrecord_service_freq');
-                        freq_record.setFieldValue('custrecord_service_freq_franchisee', freq_created_zees_array[i]);
-                        freq_record.setFieldValue('custrecord_service_freq_customer', customer_id);
-                        freq_record.setFieldValue('custrecord_service_freq_service', service_id);
-                        freq_record.setFieldValue('custrecord_service_freq_stop', freq_created_array[i]);
-                        nlapiSubmitRecord(freq_record);
-                    }
-
-
-                }
-        */
-        if (transfer == 'true') {
-            var transfer_stop_array = transfer_stop_string.split(',');
-            var transfer_zee_array = transfer_zee_string.split(',');
-            var transfer_freq_edit_or_create_array = transfer_freq_edit_or_create_string.split(',');
-
-            nlapiLogExecution('DEBUG', 'transfer_stop_array', transfer_stop_array);
-            //nlapiLogExecution('DEBUG', 'transfer_zee_array', transfer_zee_array);
-            nlapiLogExecution('DEBUG', 'transfer_zee_array[0]', transfer_zee_array[0]);
-            nlapiLogExecution('DEBUG', 'transfer_freq_edit_or_create_array', transfer_freq_edit_or_create_array);
-
-            for (var i = 0; i < transfer_stop_array.length; i++) {
-                nlapiLogExecution('DEBUG', 'transfer_freq_edit_or_create_array[i]', transfer_freq_edit_or_create_array[i]);
-                if (transfer_freq_edit_or_create_array[i] == 'create') {
-                    var transfer_record = nlapiCreateRecord('customrecord_service_freq');
-                    transfer_record.setFieldValue('custrecord_service_freq_franchisee', transfer_zee_array[i]);
-                    transfer_record.setFieldValue('custrecord_service_freq_customer', customer_id);
-                    transfer_record.setFieldValue('custrecord_service_freq_service', service_id);
-                    transfer_record.setFieldValue('custrecord_service_freq_stop', transfer_stop_array[i]);
-                    nlapiSubmitRecord(transfer_record);
-                } else {
-                    for (var y = 0; y < transfer_freq_edit_or_create_array.length; y++) {
-                        var freq_id = transfer_freq_edit_or_create_array[y];
-                        nlapiLogExecution('DEBUG', 'freq_id', freq_id);
-                        nlapiLogExecution('DEBUG', 'transfer_zee[y]', transfer_zee_array[y]);
-                        var transfer_record = nlapiLoadRecord('customrecord_service_freq', freq_id);
-                        transfer_record.setFieldValue('custrecord_service_freq_franchisee', transfer_zee_array[y]);
-                        transfer_record.setFieldValue('custrecord_service_freq_customer', customer_id);
-                        transfer_record.setFieldValue('custrecord_service_freq_service', service_id);
-                        transfer_record.setFieldValue('custrecord_service_freq_stop', transfer_stop_array[y]);
-                        nlapiSubmitRecord(transfer_record);
-                    }
-                }
-
+                nlapiSubmitRecord(freq_record);
             }
-        } else {
-            nlapiLogExecution('DEBUG', 'else', 'else');
+        }
+
+
+        if (!isNullorEmpty(freq_created) && !isNullorEmpty(freq_created_zees)) {
+
+            var freq_created_array = freq_created.split(',');
+            var freq_created_zees_array = freq_created_zees.split(',');
+
+            for (var i = 0; i < freq_created_array.length; i++) {
+                var freq_record = nlapiCreateRecord('customrecord_service_freq');
+                freq_record.setFieldValue('custrecord_service_freq_franchisee', freq_created_zees_array[i]);
+                freq_record.setFieldValue('custrecord_service_freq_customer', customer_id);
+                freq_record.setFieldValue('custrecord_service_freq_service', service_id);
+                freq_record.setFieldValue('custrecord_service_freq_stop', freq_created_array[i]);
+                nlapiSubmitRecord(freq_record);
+            }
+
 
         }
+
+
 
         var params = {
             customerid: customer_id,

@@ -747,7 +747,12 @@ $(document).on("click", ".remove_service", function(e) {
         var resultSet = serviceLegSearch.runSearch();
         var leg_toinactivate = [];
         var freq_toinactivate = [];
+        var count = 0;
+        var customer_id;
         resultSet.forEachResult(function(searchResult) {
+            if (count == 0){
+                customer_id = searchResult.getValue("custrecord_service_leg_customer");
+            }
             if (leg_toinactivate[leg_toinactivate.length - 1] != searchResult.getValue('internalid')) {
                 leg_toinactivate[leg_toinactivate.length] = searchResult.getValue('internalid');
             }
@@ -777,7 +782,10 @@ $(document).on("click", ".remove_service", function(e) {
         service_record.setFieldValue('custrecord_service_run_scheduled', 2);
         nlapiSubmitRecord(service_record);
 
-        $(this).prop('hidden', true);
+        var customer_record = nlapiLoadRecord('customer', customer_id);
+        customer_record.setFieldValue('custentity_run_scheduled', 2);
+        nlapiSubmitRecord(customer_record);
+        //$(this).prop('hidden', true);
         window.location.reload();
     }
 
