@@ -13,7 +13,7 @@
 
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 var ctx = nlapiGetContext();
@@ -72,14 +72,14 @@ function createStops(request, response) {
 
 
         form.addField('custpage_customer_id', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(customer_id);
-        form.addField('custpage_service_leg_customer','text','Customer ID').setDisplayType('hidden').setDefaultValue(entity_id + ' ' + company_name);
+        form.addField('custpage_service_leg_customer', 'text', 'Customer ID').setDisplayType('hidden').setDefaultValue(entity_id + ' ' + company_name);
         form.addField('custpage_service_id', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('custpage_suitlet', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.scriptid);
         form.addField('custpage_deploy', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(params.deployid);
         form.addField('custpage_zee', 'textarea', 'zee').setDisplayType('hidden').setDefaultValue(zee);
-        form.addField('custpage_freq_created', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_freq_created_zees', 'text', 'Service ID').setDisplayType('hidden');
-        form.addField('custpage_freq_edited', 'text', 'Service ID').setDisplayType('hidden');
+        //form.addField('custpage_freq_created', 'text', 'Service ID').setDisplayType('hidden');
+        //form.addField('custpage_freq_created_zees', 'text', 'Service ID').setDisplayType('hidden');
+        //form.addField('custpage_freq_edited', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('custpage_stored_zee', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('custpage_linked_zee', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('custpage_deleted_stop', 'text', 'Service ID').setDisplayType('hidden');
@@ -89,6 +89,7 @@ function createStops(request, response) {
         form.addField('custpage_old_stop', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('custpage_updated_stop_zee', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('new_service_leg_id_string', 'text', 'Service ID').setDisplayType('hidden');
+        //form.addField('custpage_transfer', 'text', 'Service ID').setDisplayType('hidden');
 
         /**
          * Description - Get all the AP Lodgement locations for this franchisee
@@ -123,7 +124,7 @@ function createStops(request, response) {
 
         var resultSet_addresses = searched_address.runSearch();
 
-        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
+        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg_2');
 
         var newFilters = new Array();
         newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_service', null, 'is', service_id);
@@ -144,6 +145,8 @@ function createStops(request, response) {
          * Description - To add all the API's to the begining of the page
          */
         var inlineQty = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2060796&c=1048144&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2060797&c=1048144&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script><link type="text/css" rel="stylesheet" href="https://1048144.app.netsuite.com/core/media/media.nl?id=2090583&c=1048144&h=a0ef6ac4e28f91203dfe&_xt=.css"><link href="https://1048144.app.netsuite.com/core/media/media.nl?id=2292066&c=1048144&h=c91c35bfd9670a7ee512&_xt=.css" rel="stylesheet"><script src="https://1048144.app.netsuite.com/core/media/media.nl?id=2292065&c=1048144&h=5c70d98090661029c8b2&_xt=.js"></script>';
+
+        /*        var inlineQty = '<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"><script src="//code.jquery.com/jquery-1.11.0.min.js"></script><link type="text/css" rel="stylesheet" href="https://cdn.datatables.net/1.10.13/css/jquery.dataTables.min.css"><link href="//netdna.bootstrapcdn.com/bootstrap/3.3.2/css/bootstrap.min.css" rel="stylesheet"><script src="//netdna.bootstrapcdn.com/bootstrap/3.3.2/js/bootstrap.min.js"></script><link rel="stylesheet" href="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2060796&h=9ee6accfd476c9cae718&_xt=.css"/><script src="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2060797&h=ef2cda20731d146b5e98&_xt=.js"></script><link type="text/css" rel="stylesheet" href="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2090583&h=a0ef6ac4e28f91203dfe&_xt=.css"><script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script><link type="text/css" rel="stylesheet" href="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2090583&h=a0ef6ac4e28f91203dfe&_xt=.css"><link href="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2292066&h=c91c35bfd9670a7ee512&_xt=.css" rel="stylesheet"><script src="https://1048144-sb3.app.netsuite.com/core/media/media.nl?id=2292065&h=5c70d98090661029c8b2&_xt=.js"></script>';*/
 
         inlineQty += '<ol class="breadcrumb" style="margin-left: 0px !important;position: absolute;">';
         inlineQty += '<li>Run Scheduler</li>';
@@ -351,8 +354,10 @@ function createStops(request, response) {
 
 
         var count = 0;
+        var transfer_stop_linked_array = [];
 
         if (serviceLegResult.length != 0) {
+
             resultSet.forEachResult(function(searchResult_serviceLeg) {
                 var service_leg_id = searchResult_serviceLeg.getValue("internalid");
                 var service_leg_name = searchResult_serviceLeg.getValue("name");
@@ -375,6 +380,11 @@ function createStops(request, response) {
                 var service_leg_location_type_text = searchResult_serviceLeg.getText("custrecord_service_leg_location_type");
                 var service_leg_duration = searchResult_serviceLeg.getValue("custrecord_service_leg_duration");
                 var service_leg_notes = searchResult_serviceLeg.getValue("custrecord_service_leg_notes");
+                var service_leg_transfer_stop_linked = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_linked_stop");
+
+                if (!isNullorEmpty(service_leg_transfer_stop_linked)) {
+                    transfer_stop_linked_array[transfer_stop_linked_array.length] = service_leg_transfer_stop_linked;
+                }
 
                 inlineQty += '<tr>';
 
@@ -424,6 +434,8 @@ function createStops(request, response) {
 
 
         form.addField('preview_table', 'inlinehtml', '').setLayoutType('startrow').setDefaultValue(inlineQty);
+        nlapiLogExecution('DEBUG', 'transfer_stop_linked_array', transfer_stop_linked_array);
+        form.addField('custpage_transfer_stop_linked', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_stop_linked_array);
 
 
         form.addSubmitButton('Submit & Next');
@@ -455,6 +467,9 @@ function createStops(request, response) {
         var updated_stop_zee_string = request.getParameter('custpage_updated_stop_zee');
         // var new_service_leg_id_string = request.getParameter('new_service_leg_id_string');
         // var zee = request.getParameter('custpage_zee');
+
+        /*        var transfer_string = request.getParameter('custpage_transfer');
+                var transfer_array = transfer_string.split(',');*/
 
 
         nlapiLogExecution('DEBUG', 'deleted_stop_string', deleted_stop_string);
@@ -528,38 +543,38 @@ function createStops(request, response) {
             }
         }
 
-        if (!isNullorEmpty(freq_edited) && !isNullorEmpty(stored_zee) && !isNullorEmpty(linked_zee)) {
+        /*        if (!isNullorEmpty(freq_edited) && !isNullorEmpty(stored_zee) && !isNullorEmpty(linked_zee)) {
 
-            var freq_edited_array = freq_edited.split(',');
-            var stored_zee_array = stored_zee.split(',');
-            var linked_zee_array = linked_zee.split(',');
+                    var freq_edited_array = freq_edited.split(',');
+                    var stored_zee_array = stored_zee.split(',');
+                    var linked_zee_array = linked_zee.split(',');
 
-            for (var i = 0; i < freq_edited_array.length; i++) {
-                var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_edited_array[i]);
+                    for (var i = 0; i < freq_edited_array.length; i++) {
+                        var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_edited_array[i]);
 
-                freq_record.setFieldValue('custrecord_service_freq_franchisee', linked_zee_array[i]);
+                        freq_record.setFieldValue('custrecord_service_freq_franchisee', linked_zee_array[i]);
 
-                nlapiSubmitRecord(freq_record);
-            }
-        }
-
-
-        if (!isNullorEmpty(freq_created) && !isNullorEmpty(freq_created_zees)) {
-
-            var freq_created_array = freq_created.split(',');
-            var freq_created_zees_array = freq_created_zees.split(',');
-
-            for (var i = 0; i < freq_created_array.length; i++) {
-                var freq_record = nlapiCreateRecord('customrecord_service_freq');
-                freq_record.setFieldValue('custrecord_service_freq_franchisee', freq_created_zees_array[i]);
-                freq_record.setFieldValue('custrecord_service_freq_customer', customer_id);
-                freq_record.setFieldValue('custrecord_service_freq_service', service_id);
-                freq_record.setFieldValue('custrecord_service_freq_stop', freq_created_array[i]);
-                nlapiSubmitRecord(freq_record);
-            }
+                        nlapiSubmitRecord(freq_record);
+                    }
+                }
 
 
-        }
+                if (!isNullorEmpty(freq_created) && !isNullorEmpty(freq_created_zees)) {
+
+                    var freq_created_array = freq_created.split(',');
+                    var freq_created_zees_array = freq_created_zees.split(',');
+
+                    for (var i = 0; i < freq_created_array.length; i++) {
+                        var freq_record = nlapiCreateRecord('customrecord_service_freq');
+                        freq_record.setFieldValue('custrecord_service_freq_franchisee', freq_created_zees_array[i]);
+                        freq_record.setFieldValue('custrecord_service_freq_customer', customer_id);
+                        freq_record.setFieldValue('custrecord_service_freq_service', service_id);
+                        freq_record.setFieldValue('custrecord_service_freq_stop', freq_created_array[i]);
+                        nlapiSubmitRecord(freq_record);
+                    }
+
+
+                }*/
 
 
 

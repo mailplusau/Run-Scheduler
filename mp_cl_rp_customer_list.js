@@ -1,6 +1,7 @@
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    console.log('SANDBOX');
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 //To show loader while the page is laoding
@@ -17,7 +18,7 @@ var table;
 function pageInit() {
 
     //Search: RP - Services
-    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
+    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services_2');
 
     var addFilterExpression = new nlobjSearchFilter('custrecord_service_franchisee', null, 'anyof', nlapiGetFieldValue('zee'));
     serviceSearch.addFilter(addFilterExpression);
@@ -726,9 +727,15 @@ $(document).on("change", ".zee_dropdown", function(e) {
     var zee = $(this).val();
 
     var url = baseURL + "/app/site/hosting/scriptlet.nl?script=735&deploy=1&compid=1048144";
+    if (nlapiGetContext().getEnvironment() == "SANDBOX") {
+        var url = baseURL + "/app/site/hosting/scriptlet.nl?script=735&deploy=1";
+
+    }
+    console.log('baseURL', baseURL);
+    console.log('url', url);
 
     url += "&zee=" + zee + "";
-
+    console.log('url', url);
     window.location.href = url;
 });
 
@@ -750,7 +757,7 @@ $(document).on("click", ".remove_service", function(e) {
         var count = 0;
         var customer_id;
         resultSet.forEachResult(function(searchResult) {
-            if (count == 0){
+            if (count == 0) {
                 customer_id = searchResult.getValue("custrecord_service_leg_customer");
             }
             if (leg_toinactivate[leg_toinactivate.length - 1] != searchResult.getValue('internalid')) {

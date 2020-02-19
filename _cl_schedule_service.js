@@ -12,7 +12,7 @@
  */
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 var delete_freq_array = [];
@@ -99,6 +99,7 @@ $(document).on('click', '#alert .close', function(e) {
     $(this).parent().hide();
 });
 
+
 function onclick_back() {
     var params = {
         serviceid: nlapiGetFieldValue('service_id'),
@@ -123,8 +124,30 @@ function pageInit() {
     // $(".tab-content").css("border", 'groove');
 
     validateFrequency();
+
+
+    /*    $(".nav-tabs li a").each(function(){
+            var stop = $(this);
+            var stop_id = $(this).attr('href');
+            stop_id = stop_id.split('#');
+            stop_id = stop_id[1];
+            console.log('stop_id', stop_id);
+            for (i = 0; i < transfer_stop_linked.length; i++){
+                if (stop_id == transfer_stop_linked[i]){
+                    console.log('stop', stop);
+                    stop.find('#servicetime' + stop_id + '').prop('readonly',true);
+                }
+            }
+
+        })*/
 }
 
+var transfer_stop_linked = nlapiGetFieldValue('custpage_transfer_stop_linked');
+transfer_stop_linked = transfer_stop_linked.split(',');
+var transfer_type = nlapiGetFieldValue('custpage_transfer_type');
+transfer_type = transfer_type.split(',');
+console.log('transfer_stop_linked', transfer_stop_linked);
+console.log('transfer_type', transfer_type);
 
 $(".nav-tabs").on("click", "li a", function(e) {
     var main_stop = $(this).attr('href');
@@ -153,6 +176,7 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 //$(this).children('a').css('background-color', '#8080809c');
                 console.log('inside active tab');
                 stop_id = stop_id.split('#');
+                console.log('stop_id[1]', stop_id[1]);
                 if (!isNullorEmpty(stop_id[1])) {
                     var table_id = '#services' + stop_id[1] + ' > tbody > tr';
                     var rows;
@@ -168,6 +192,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                         var service_time = $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val();
                         var earliest_time = ($('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).val());
                         var latest_time = ($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val());
+
+
+
 
                         var message = '';
 
@@ -205,10 +232,18 @@ $(".nav-tabs").on("click", "li a", function(e) {
                             console.log('inside 1');
                             console.log(main_stop_det);
                             main_stop_det.tab('show');
+
                             var main_stop_id = main_stop.split('#');
                             console.log('old_stored_run', old_stored_run);
                             if (isNullorEmpty(old_stored_run)) {
                                 $('#' + main_stop_id[1]).find('#run' + main_stop_id[1]).val(stored_run);
+                            }
+                            for (i = 0; i < transfer_stop_linked.length; i++) {
+                                if (main_stop_id[1] == transfer_stop_linked[i] && transfer_type[i] == 1) {
+                                    $('#' + main_stop_id[1]).find('#service_time' + main_stop_id[1]).prop('readonly', true);
+                                    $('#' + main_stop_id[1]).find('#earliest_time' + main_stop_id[1]).prop('readonly', true);
+                                    $('#' + main_stop_id[1]).find('#latest_time' + main_stop_id[1]).prop('readonly', true);
+                                }
                             }
                             exit = false;
 
@@ -283,7 +318,13 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 if (isNullorEmpty(old_stored_run)) {
                     $('#' + stop_id[1]).find('#run' + stop_id[1]).val(stored_run);
                 }
-                // $(this).children('a').css('background-color', '#337ab7');
+                for (i = 0; i < transfer_stop_linked.length; i++) {
+                    if (stop_id[1] == transfer_stop_linked[i] && transfer_type[i] == 1) {
+                        $('#' + stop_id[1]).find('#service_time' + stop_id[1]).prop('readonly', true);
+                        $('#' + stop_id[1]).find('#earliest_time' + main_stop_id[1]).prop('readonly', true);
+                        $('#' + stop_id[1]).find('#latest_time' + main_stop_id[1]).prop('readonly', true);
+                    }
+                }
 
             }
             console.log('exit 1' + exit);
@@ -833,7 +874,7 @@ function checkIfMultiFreq(value, unchecked) {
 
                         var resultSet_runPlan = runPlanSearch.runSearch();
                         resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
-                                run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>';
+                            run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>';
 
                             return true;
                         });

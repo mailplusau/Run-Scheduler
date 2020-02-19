@@ -13,7 +13,7 @@
 
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 var ctx = nlapiGetContext();
@@ -172,7 +172,7 @@ function runPlanner(request, response) {
             nlapiLogExecution('DEBUG', 'zee', zee);
             nlapiLogExecution('DEBUG', 'run', run);
 
-            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all_2');
+            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all_2_3');
 
             var newFilters = new Array();
             newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'anyof', zee);
@@ -195,6 +195,7 @@ function runPlanner(request, response) {
             var service_descp_array = [];
             var old_customer_id_array = [];
             var old_customer_text_array = [];
+            var old_customer_zee_array = [];
             var old_run_plan_array = [];
             var old_run_plan_text_array = [];
             var old_closing_day = [];
@@ -213,6 +214,7 @@ function runPlanner(request, response) {
             var service_text;
             var customer_id;
             var customer_text;
+            var customer_zee;
             var ncl;
             var freq_id;
             var freq_mon;
@@ -238,6 +240,7 @@ function runPlanner(request, response) {
             var old_service_text;
             var old_customer_id;
             var old_customer_text;
+            var old_customer_zee;
             var old_ncl;
             var old_freq_id = [];
             var old_freq_mon;
@@ -268,6 +271,7 @@ function runPlanner(request, response) {
                 service_text = searchResult.getText('custrecord_service_leg_service', null, "GROUP");
                 customer_id = searchResult.getValue('custrecord_service_leg_customer', null, "GROUP");
                 customer_text = searchResult.getText('custrecord_service_leg_customer', null, "GROUP");
+                customer_zee = searchResult.getValue("partner","CUSTRECORD_SERVICE_LEG_CUSTOMER","GROUP");
                 customer_id_text = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_LEG_CUSTOMER", "GROUP");
                 customer_name_text = searchResult.getValue("companyname", "CUSTRECORD_SERVICE_LEG_CUSTOMER", "GROUP");
                 ncl = searchResult.getValue('custrecord_service_leg_non_cust_location', null, "GROUP");
@@ -341,7 +345,7 @@ function runPlanner(request, response) {
 
                 if (stop_count != 0 && old_stop_name != stop_name) {
                     if (!isNullorEmpty(old_freq_id.length)) {
-                        stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                        stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
 
                         old_stop_name = null;
                         old_stop_lat;
@@ -353,6 +357,7 @@ function runPlanner(request, response) {
                         service_name_array = [];
                         old_customer_id_array = [];
                         old_customer_text_array = [];
+                        old_customer_zee_array = [];
                         old_freq_id = [];
                         old_run_plan_array = [];
                         old_run_plan_text_array = [];
@@ -391,6 +396,7 @@ function runPlanner(request, response) {
                         service_name_array[service_name_array.length] = service_text;
                         old_customer_id_array[old_customer_id_array.length] = customer_id;
                         old_customer_text_array[old_customer_text_array.length] = customer_id_text + ' ' + customer_name_text;
+                        old_customer_zee_array[old_customer_zee_array.length] = customer_zee;
                         old_run_plan_array[old_run_plan_array.length] = freq_run_plan;
                         old_run_plan_text_array[old_run_plan_text_array.length] = freq_run_plan_text;
                         old_closing_day[old_closing_day.length] = closing_day;
@@ -402,7 +408,7 @@ function runPlanner(request, response) {
                     var result = arraysEqual(freq, old_freq);
                     if (old_service_time != freq_time_current && stop_count != 0) {
                         if (!isNullorEmpty(old_freq_id.length)) {
-                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
 
                             old_stop_name = null;
                             old_service_time = null;
@@ -413,6 +419,7 @@ function runPlanner(request, response) {
                             service_name_array = [];
                             old_customer_id_array = [];
                             old_customer_text_array = [];
+                            old_customer_zee_array = [];
                             old_run_plan_array = [];
                             old_run_plan_text_array = [];
                             old_freq_id = [];
@@ -450,6 +457,7 @@ function runPlanner(request, response) {
                             service_name_array[service_name_array.length] = service_text;
                             old_customer_id_array[old_customer_id_array.length] = customer_id;
                             old_customer_text_array[old_customer_text_array.length] = customer_id_text + ' ' + customer_name_text;
+                            old_customer_zee_array[old_customer_zee_array.length] = customer_zee;
                             old_run_plan_array[old_run_plan_array.length] = freq_run_plan;
                             old_run_plan_text_array[old_run_plan_text_array.length] = freq_run_plan_text;
                             old_closing_day[old_closing_day.length] = closing_day;
@@ -458,7 +466,7 @@ function runPlanner(request, response) {
                         }
                     } else if (result == false && stop_count != 0) {
                         if (!isNullorEmpty(old_freq_id.length)) {
-                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
 
 
                             old_stop_name = null;
@@ -472,6 +480,7 @@ function runPlanner(request, response) {
                             service_name_array = [];
                             old_customer_id_array = [];
                             old_customer_text_array = [];
+                            old_customer_zee_array = [];
                             old_run_plan_array = [];
                             old_run_plan_text_array = [];
                             old_freq_id = [];
@@ -509,6 +518,7 @@ function runPlanner(request, response) {
                             service_name_array[service_name_array.length] = service_text;
                             old_customer_id_array[old_customer_id_array.length] = customer_id;
                             old_customer_text_array[old_customer_text_array.length] = customer_id_text + ' ' + customer_name_text;
+                            old_customer_zee_array[old_customer_zee_array.length] = customer_zee;
                             old_run_plan_array[old_run_plan_array.length] = freq_run_plan;
                             old_run_plan_text_array[old_run_plan_text_array.length] = freq_run_plan_text;
                             old_closing_day[old_closing_day.length] = closing_day;
@@ -521,6 +531,7 @@ function runPlanner(request, response) {
                         service_name_array[service_name_array.length] = service_text;
                         old_customer_id_array[old_customer_id_array.length] = customer_id;
                         old_customer_text_array[old_customer_text_array.length] = customer_id_text + ' ' + customer_name_text;
+                        old_customer_zee_array[old_customer_zee_array.length] = customer_zee;
                         old_run_plan_array[old_run_plan_array.length] = freq_run_plan;
                         old_run_plan_text_array[old_run_plan_text_array.length] = freq_run_plan_text;
                         old_closing_day[old_closing_day.length] = closing_day;
@@ -565,7 +576,7 @@ function runPlanner(request, response) {
             });
 
             if (stop_count > 0) {
-                stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
 
                 stop_freq_json = stop_freq_json.substring(0, stop_freq_json.length - 1);
             }
@@ -725,7 +736,7 @@ function getDate() {
 }
 
 
-function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri) {
+function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri) {
     var stop_freq_json = '';
     var freq_time_current_array = old_freq_time_current.split(':');
 
@@ -740,23 +751,23 @@ function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old
     }
     if (old_freq_mon == 'T') {
         var day_number = 1;
-        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
+        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
     }
     if (old_freq_tue == 'T') {
         var day_number = 2;
-        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
+        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
     }
     if (old_freq_wed == 'T') {
         var day_number = 3;
-        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
+        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
     }
     if (old_freq_thu == 'T') {
         var day_number = 4;
-        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
+        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
     }
     if (old_freq_fri == 'T') {
         var day_number = 5;
-        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
+        stop_freq_json += addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array);
     }
 
     if (old_freq_mon == 'F' && old_freq_tue == 'F' && old_freq_wed == 'F' && old_freq_thu == 'F' && old_freq_fri == 'F') {
@@ -782,6 +793,7 @@ function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old
         for (var i = 0; i < service_id_array.length; i++) {
             stop_freq_json += '{';
             stop_freq_json += '"customer_id": "' + old_customer_id_array[i] + '",';
+            stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",'; 
             stop_freq_json += '"customer_notes": "' + old_service_notes[i] + '",';
             stop_freq_json += '"customer_text": "' + old_customer_text_array[i] + '",';
             stop_freq_json += '"run_plan": "' + old_run_plan_array[i] + '",';
@@ -798,7 +810,7 @@ function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old
 }
 
 
-function addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array) {
+function addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri, bg_color, freq_time_current_array, min_array) {
     var date = moment().day(day_number).date();
     var month = moment().day(day_number).month();
     var year = moment().day(day_number).year();
@@ -849,6 +861,7 @@ function addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_d
         // nlapiLogExecution('DEBUG', 'closing day', old_closing_day[i]);
         stop_freq_json += '{';
         stop_freq_json += '"customer_id": "' + old_customer_id_array[i] + '",';
+        stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",';        
         stop_freq_json += '"customer_notes": "' + old_service_notes[i] + '",';
         if (date_of_week >= old_closing_day[i] && date_of_week < old_opening_day[i]) {
             stop_freq_json += '"customer_text": "CLOSED - ' + old_customer_text_array[i] + '",';
