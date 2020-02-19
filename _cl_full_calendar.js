@@ -32,7 +32,7 @@ var freqs_start_array = [];
 
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-	baseURL = 'https://system.sandbox.netsuite.com';
+	baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 $(window).load(function() {
@@ -72,8 +72,6 @@ $(document).on('click', '#alert .close', function(e) {
 
 function pageInit() {
 
-	AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
-	AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
 	AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
 	$('.services_selected_class').selectator({
 		keepOpen: true,

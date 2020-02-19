@@ -12,7 +12,7 @@
  */
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 var delete_freq_array = [];
@@ -153,6 +153,7 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 //$(this).children('a').css('background-color', '#8080809c');
                 console.log('inside active tab');
                 stop_id = stop_id.split('#');
+                console.log('stop_id[1]', stop_id[1]);
                 if (!isNullorEmpty(stop_id[1])) {
                     var table_id = '#services' + stop_id[1] + ' > tbody > tr';
                     var rows;
@@ -205,6 +206,7 @@ $(".nav-tabs").on("click", "li a", function(e) {
                             console.log('inside 1');
                             console.log(main_stop_det);
                             main_stop_det.tab('show');
+
                             var main_stop_id = main_stop.split('#');
                             console.log('old_stored_run', old_stored_run);
                             if (isNullorEmpty(old_stored_run)) {
