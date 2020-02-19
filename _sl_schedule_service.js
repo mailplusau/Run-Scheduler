@@ -75,6 +75,9 @@ function scheduleRun(request, response) {
         var freq_id_count = 0;
         var freq_count = 0;
         var stop_freq_json = '{ "data": [';
+
+        var transfer_stop_linked_array = [];
+        var transfer_type_array = [];
         resultSet.forEachResult(function(searchResult) {
             var stop_id = searchResult.getValue('internalid');
             var stop_name = searchResult.getValue('name');
@@ -84,7 +87,9 @@ function scheduleRun(request, response) {
             var service_leg_addr_id = searchResult.getValue("custrecord_service_leg_addr");
             var transfer_type = searchResult.getValue("custrecord_service_leg_trf_type");
             var transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee");
+            var transfer_stop_linked = searchResult.getValue("custrecord_service_leg_trf_linked_stop");
             var operation_zee = searchResult.getValue("custrecord_service_leg_franchisee");
+            var operation_zee_name = searchResult.getText("custrecord_service_leg_franchisee");
             var freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", null);
             var freq_mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_STOP", null);
             var freq_tue = searchResult.getValue("custrecord_service_freq_day_tue", "CUSTRECORD_SERVICE_FREQ_STOP", null);
@@ -97,6 +102,11 @@ function scheduleRun(request, response) {
             var freq_time_end = searchResult.getValue("custrecord_service_freq_time_end", "CUSTRECORD_SERVICE_FREQ_STOP", null);
             var freq_run_plan = searchResult.getValue("custrecord_service_freq_run_plan", "CUSTRECORD_SERVICE_FREQ_STOP", null);
 
+            if (!isNullorEmpty(transfer_stop_linked)) {
+                transfer_stop_linked_array[transfer_stop_linked_array.length] = transfer_stop_linked;
+                transfer_type_array[transfer_type_array.length] = transfer_type;
+            }
+
             if (stop_count == 0) {
                 stop_freq_json += '{"stop_id": "' + stop_id + '",';
                 stop_freq_json += '"stop_name": "' + stop_name + '",';
@@ -105,8 +115,10 @@ function scheduleRun(request, response) {
                 stop_freq_json += '"stop_ncl_id": "' + service_leg_ncl + '",';
                 stop_freq_json += '"stop_addr_id": "' + service_leg_addr_id + '",';
                 stop_freq_json += '"transfer_type": "' + transfer_type + '",';
+                stop_freq_json += '"transfer_stop_linked": "' + transfer_stop_linked + '",';
                 stop_freq_json += '"transfer_zee": "' + transfer_zee + '",';
                 stop_freq_json += '"operation_zee": "' + operation_zee + '",';
+                stop_freq_json += '"operation_zee_name": "' + operation_zee_name + '",';
                 stop_freq_json += '"stop_freq": [';
                 stop_freq_json += '{"freq_id": "' + freq_id + '",';
                 stop_freq_json += '"freq_mon": "' + freq_mon + '",';
@@ -168,8 +180,10 @@ function scheduleRun(request, response) {
                     stop_freq_json += '"stop_ncl_id": "' + service_leg_ncl + '",';
                     stop_freq_json += '"stop_addr_id": "' + service_leg_addr_id + '",';
                     stop_freq_json += '"transfer_type": "' + transfer_type + '",';
+                    stop_freq_json += '"transfer_stop_linked": "' + transfer_stop_linked + '",';
                     stop_freq_json += '"transfer_zee": "' + transfer_zee + '",';
                     stop_freq_json += '"operation_zee": "' + operation_zee + '",';
+                    stop_freq_json += '"operation_zee_name": "' + operation_zee_name + '",';
                     stop_freq_json += '"stop_freq": [';
                     stop_freq_json += '{"freq_id": "' + freq_id + '",';
                     stop_freq_json += '"freq_mon": "' + freq_mon + '",';
@@ -364,7 +378,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
+                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = 'active';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
             } else {
@@ -383,7 +397,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq=""  data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
+                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = '';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
 
@@ -744,6 +758,8 @@ function scheduleRun(request, response) {
         form.addField('service_id', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('zee', 'text', 'zee').setDisplayType('hidden').setDefaultValue(zee);
         form.addField('delete_freq', 'text', 'Stop IDs').setDisplayType('hidden');
+        form.addField('custpage_transfer_stop_linked', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_stop_linked_array);
+        form.addField('custpage_transfer_type', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_type_array);
 
         form.addField('custpage_suitlet', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(request.getParameter('scriptid'));
         form.addField('custpage_deploy', 'textarea', 'Latitude').setDisplayType('hidden').setDefaultValue(request.getParameter('deployid'));

@@ -250,10 +250,11 @@ $(document).on('click', '.edit_transfer_stop', function(e) {
     var stop_duration = $(this).closest('tr').find('.table_duration').val();
     var stop_name = $(this).closest('tr').find('.table_stop_name').val();
     var ncl = $(this).closest('tr').find('.table_stop_name').attr('data-ncl');
+    var notes = $(this).closest('tr').find('.table_stop_name').attr('data-notes');
     var transfer_type = $(this).closest('tr').find('.table_stop_name').attr('data-transfertype');
     var transfer_linked_zee = $(this).closest('tr').find('.table_stop_name').attr('data-linkedzee');
     var customer_address = $(this).closest('tr').find('.table_stop_name').attr('data-customeraddressid');
-
+    var duration = $(this).closest('tr').find('.table_duration').val();
 
     $('#edit_old_stop').attr('data-rowid', $(this).attr('data-newstop'))
 
@@ -292,7 +293,18 @@ $(document).on('click', '.edit_transfer_stop', function(e) {
     $('#transfer_type').val(transfer_type);
     $('#zee').val(transfer_linked_zee);
 
+    var duration = secondsToHms(stop_duration);
 
+    var split_duration = duration.split(',');
+    var hours = parseInt(split_duration[0].split('h'));
+    var minutes = parseInt(split_duration[1].split('m'));
+    var seconds = parseInt(split_duration[2].split('s'));
+
+    $('#duration-hours').val(hours);
+    $('#duration-minutes').val(minutes);
+    $('#duration-seconds').val(seconds);
+    console.log('stop_name', stop_name);
+    $('#stop_notes').val(notes);
     $('#stop_name').val(stop_name);
     $('#duration').val(stop_duration);
 
@@ -531,72 +543,14 @@ $(document).on('click', '#add_new_stop', function(e) {
         if (transfer_position == 1) {
             var new_row = '<tr><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
             $('#services tr:eq(' + row_number + ')').before(new_row);
-            /*            console.log('transfer position before');
-                        var transfer_row = '<tr class="hide"><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
-                        console.log('row_number', row_number);
-                        console.log('$(#services tr:eq( + row_number - 1 + )', $('#services tr:eq(' + (row_number - 1) + ')'));
-                        $('#services tr:eq(' + row_number + ')').before(transfer_row);*/
 
         } else {
             var new_row = '<tr><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><<td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
             $('#services tr:eq(' + row_number + ')').after(new_row);
-            /*            console.log('transfer position after');
-                        var transfer_row = '<tr class="hide"><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
-                        console.log('row_number', row_number);
-                        console.log('$(#services tr:eq( + row_number + 1 + )', $('#services tr:eq(' + (row_number + 1) + ')'));
-                        $('#services tr:eq(' + row_number + ')').after(transfer_row);*/
         }
     }
 
     $('#services tr:eq(' + row_number + ')').find('.first_col').append(' <button class="btn btn-default btn-sm move_up glyphicon glyphicon-arrow-up" type="button" data-toggle="tooltip" data-placement="right" title="Move Up"></button><button class="btn btn-default btn-sm move_down glyphicon glyphicon-arrow-down" type="button" data-toggle="tooltip" data-placement="right" title="Move Down"></button>');
-
-    /*    console.log($('#services tr:eq(' + row_number + ')').find('.table_stop_name').attr('data-transfertype'));
-        if (!isNullorEmpty($('#services tr:eq(' + row_number + ')').find('.table_stop_name').attr('data-transfertype'))) {
-            console.log('transfer');
-            var transfer_row_number = row_number - 1;
-            console.log('transfer_row_number', transfer_row_number);
-
-
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').removeClass('glyphicon-log-out');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').removeClass('btn-success');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').addClass('glyphicon-pencil');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').addClass('btn-warning');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').addClass('edit_stop');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.add_stop').removeClass('add_stop');
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_duration').val(duration);
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_info').val(display_html);
-            //console.log($('#services tr:eq(' + row_number + ')').find('.table_info').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_info').attr('data-addresstype', $('option:selected', '#address_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-notes', $('#stop_notes').val());
-            // $('#services tr:eq(' + row_number + ')').find('.table_info').attr('data-oldstop', null);
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').val($('#stop_name').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-ncl', $('option:selected', '#ncl_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-transfertype', $('option:selected', '#transfer_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-linkedzee', $('option:selected', '#zee').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-customeraddressid', $('option:selected', '#customer_address_type').val());
-            if ($('option:selected', '#address_type').val() == 1) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr1', $('option:selected', '#customer_address_type').attr('data-addr1'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr2', $('option:selected', '#customer_address_type').attr('data-addr2'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-city', $('option:selected', '#customer_address_type').attr('data-city'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-state', $('option:selected', '#customer_address_type').attr('data-state'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-zip', $('option:selected', '#customer_address_type').attr('data-postcode'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lat', $('option:selected', '#customer_address_type').attr('data-lat'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lng', $('option:selected', '#customer_address_type').attr('data-lng'));
-            } else if ($('option:selected', '#address_type').val() == 2) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr1', $('option:selected', '#ncl_type').attr('data-addr1'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr2', $('option:selected', '#ncl_type').attr('data-addr2'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-city', $('option:selected', '#ncl_type').attr('data-city'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-state', $('option:selected', '#ncl_type').attr('data-state'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-zip', $('option:selected', '#ncl_type').attr('data-postcode'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lat', $('option:selected', '#ncl_type').attr('data-lat'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lng', $('option:selected', '#ncl_type').attr('data-lng'));
-            }
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-postbox', $('#stop_name').attr('data-postbox'));
-
-            if (isNullorEmpty($('#services tr:eq(' + transfer_row_number + ')').find('.first_col').find('.delete_stop'))) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.first_col').append(' <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop="' + transfer_row_number + '"></button>');
-            }
-        }*/
 
     updateRowCount();
     reset_all();
@@ -725,61 +679,13 @@ $(document).on('click', '#edit_old_stop', function(e) {
         if (transfer_position == 1) {
             var new_row = '<tr><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
             $('#services tr:eq(' + row_number + ')').before(new_row);
-            /*            console.log('transfer position before');
-                        var transfer_row = '<tr hide><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
-                        console.log('$(#services tr:eq( + row_number - 1 + )', $('#services tr:eq(' + row_number - 1 + ')'));
-                        $('#services tr:eq(' + row_number - 1 + ')').before(transfer_row);*/
 
         } else {
             var new_row = '<tr><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><<td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
             $('#services tr:eq(' + row_number + ')').after(new_row);
-            /*            console.log('transfer position after');
-                        var transfer_row = '<tr hide><td class="first_col"><button class="btn btn-success btn-sm transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Add Transfer" data-newstop=""></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop=""></button></td><td><textarea readonly class="form-control table_info"></textarea><input type="hidden" readonly class="form-control table_stop_name" /></td><td><input type="text" readonly class="form-control table_duration" data-oldstop="" value="" /></td></tr>';
-                        console.log('$(#services tr:eq( + row_number + 1 + )', $('#services tr:eq(' + row_number + 1 + ')'));
-                        $('#services tr:eq(' + row_number + 1 + ')').after(transfer_row);*/
         }
 
     }
-
-    /*    console.log($('#services tr:eq(' + row_number + ')').find('.table_stop_name').attr('data-transfertype'));
-        if (!isNullorEmpty($('#services tr:eq(' + row_number + ')').find('.table_stop_name').attr('data-transfertype'))) {
-            console.log('transfer');
-            var transfer_row_number = row_number - 1;
-            console.log('transfer_row_number', transfer_row_number);
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_duration').val(duration);
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_info').val(display_html);
-            //console.log($('#services tr:eq(' + row_number + ')').find('.table_info').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_info').attr('data-addresstype', $('option:selected', '#address_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-notes', $('#stop_notes').val());
-            // $('#services tr:eq(' + row_number + ')').find('.table_info').attr('data-oldstop', null);
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').val($('#stop_name').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-ncl', $('option:selected', '#ncl_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-transfertype', $('option:selected', '#transfer_type').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-linkedzee', $('option:selected', '#zee').val());
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-customeraddressid', $('option:selected', '#customer_address_type').val());
-            if ($('option:selected', '#address_type').val() == 1) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr1', $('option:selected', '#customer_address_type').attr('data-addr1'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr2', $('option:selected', '#customer_address_type').attr('data-addr2'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-city', $('option:selected', '#customer_address_type').attr('data-city'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-state', $('option:selected', '#customer_address_type').attr('data-state'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-zip', $('option:selected', '#customer_address_type').attr('data-postcode'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lat', $('option:selected', '#customer_address_type').attr('data-lat'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lng', $('option:selected', '#customer_address_type').attr('data-lng'));
-            } else if ($('option:selected', '#address_type').val() == 2) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr1', $('option:selected', '#ncl_type').attr('data-addr1'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-addr2', $('option:selected', '#ncl_type').attr('data-addr2'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-city', $('option:selected', '#ncl_type').attr('data-city'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-state', $('option:selected', '#ncl_type').attr('data-state'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-zip', $('option:selected', '#ncl_type').attr('data-postcode'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lat', $('option:selected', '#ncl_type').attr('data-lat'));
-                $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-lng', $('option:selected', '#ncl_type').attr('data-lng'));
-            }
-            $('#services tr:eq(' + transfer_row_number + ')').find('.table_stop_name').attr('data-postbox', $('#stop_name').attr('data-postbox'));
-
-            if (isNullorEmpty($('#services tr:eq(' + transfer_row_number + ')').find('.first_col').find('.delete_stop'))) {
-                $('#services tr:eq(' + transfer_row_number + ')').find('.first_col').append(' <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="" data-newstop="' + transfer_row_number + '"></button>');
-            }*/
-    //}
 
     updateRowCount();
     reset_all();
@@ -1151,6 +1057,8 @@ function saveRecord() {
             if (!isNullorEmpty(transfer_type) && transfer_type != 0 && !isNullorEmpty(service_leg_record_transfer)) {
                 console.log('editing transfer stop');
                 service_leg_record_transfer.setFieldValue('name', table_stop_name_elem[i].value);
+
+                service_leg_record_transfer.setFieldValue('custrecord_service_leg_franchisee', linked_zee);
 
                 service_leg_record_transfer.setFieldValue('custrecord_service_leg_number', (i + 1));
                 service_leg_record_transfer.setFieldValue('custrecord_service_leg_location_type', table_info_elem[i].getAttribute('data-addresstype'));
