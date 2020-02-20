@@ -434,7 +434,9 @@ function createStops(request, response) {
 
 
         form.addField('preview_table', 'inlinehtml', '').setLayoutType('startrow').setDefaultValue(inlineQty);
-        nlapiLogExecution('DEBUG', 'transfer_stop_linked_array', transfer_stop_linked_array);
+        transfer_stop_linked_array = transfer_stop_linked_array.join();
+        nlapiLogExecution('DEBUG', 'transfer_stop_linked_array.join', transfer_stop_linked_array);
+
         form.addField('custpage_transfer_stop_linked', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_stop_linked_array);
 
 

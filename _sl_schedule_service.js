@@ -378,7 +378,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
+                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] +'" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = 'active';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
             } else {
@@ -397,7 +397,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq=""  data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
+                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] +'"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = '';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
 
@@ -437,7 +437,7 @@ function scheduleRun(request, response) {
                 tab_content += '<div class="form-group container difference_row ">';
                 tab_content += '<div class="row">';
                 tab_content += '<div class="col-xs-6 difference_section"><div class="input-group"><input type="text" readonly value="DIFFERENT TIME FOR EACH DAY?" class="form-control input-group-addon"/> <span class="input-group-addon">';
-                tab_content += '<input type="checkbox" id="different_each_day" class=" different_each_day" data-stopno="' + (i + 1) + '" data-freqid="' + obj_freq[0]['freq_id'] + '" data-stopid="' + obj['stop_id'] + '" />';
+                tab_content += '<input type="checkbox" id="different_each_day" class="different_each_day" data-stopno="' + (i + 1) + '" data-freqid="' + obj_freq[0]['freq_id'] + '" data-stopid="' + obj['stop_id'] + '" data-operationzee="' + obj['operation_zee'] + '" />';
                 tab_content += '</span></div></div>';
                 tab_content += '</div>';
                 tab_content += '</div>';
@@ -581,7 +581,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     tab_content += '<input type="checkbox" id="different_each_day" class=" different_each_day" data-stopno="' + (i + 1) + '" data-multifreq="T" data-stopid="' + obj['stop_id'] + '" checked/>';
                                 }*/
-                tab_content += '<input type="checkbox" id="different_each_day" class=" different_each_day" data-stopno="' + (i + 1) + '" data-multifreq="T" data-stopid="' + obj['stop_id'] + '" checked/>';
+                tab_content += '<input type="checkbox" id="different_each_day" class=" different_each_day" data-stopno="' + (i + 1) + '" data-multifreq="T" data-stopid="' + obj['stop_id'] + '" data-operationzee="' + obj['operation_zee'] + '" checked/>';
 
 
                 tab_content += '</span></div></div>';
@@ -630,7 +630,7 @@ function scheduleRun(request, response) {
                 tab_content += '<div class="hide form-group container time_row' + obj['stop_id'] + ' ">';
 
                 tab_content += '<div class="row">';
-                tab_content += '<div class="col-xs-6 service_time_section"><div class="input-group"><span class="input-group-addon" id="service_time_text">SERVICE TIME</span><input id="service_time' + obj['stop_id'] + '" class="form-control service_time" type="time" data-stopid="' + obj['stop_id'] + '" /></div></div>';
+                tab_content += '<div class="col-xs-6 service_time_section"><div class="input-group"><span class="input-group-addon" id="service_time_text">SERVICE TIME</span><input id="service_time' + obj['stop_id'] + '" class="form-control service_time" type="time" data-stopid="' + obj['stop_id'] + '" data-stopno="' + (i + 1) + '" /></div></div>';
                 tab_content += '</div>';
                 tab_content += '</div>';
 
@@ -643,8 +643,8 @@ function scheduleRun(request, response) {
 
 
                 tab_content += '<div class="row">';
-                tab_content += '<div class="col-xs-3 earliest_time_section"><div class="input-group"><span class="input-group-addon" id="earliest_time_text">EARLIEST TIME</span><input id="earliest_time' + obj['stop_id'] + '" class="form-control earliest_time" type="time" data-stopid="' + obj['stop_id'] + '" /></div></div>';
-                tab_content += '<div class="col-xs-3 latest_time_section"><div class="input-group"><span class="input-group-addon" id="latest_time_text">LATEST TIME</span><input id="latest_time' + obj['stop_id'] + '" class="form-control latest_time" type="time" data-stopid="' + obj['stop_id'] + '" /></div></div>';
+                tab_content += '<div class="col-xs-3 earliest_time_section"><div class="input-group"><span class="input-group-addon" id="earliest_time_text">EARLIEST TIME</span><input id="earliest_time' + obj['stop_id'] + '" class="form-control earliest_time" type="time" data-stopid="' + obj['stop_id'] + '" data-stopno="' + (i + 1) + '" /></div></div>';
+                tab_content += '<div class="col-xs-3 latest_time_section"><div class="input-group"><span class="input-group-addon" id="latest_time_text">LATEST TIME</span><input id="latest_time' + obj['stop_id'] + '" class="form-control latest_time" type="time" data-stopid="' + obj['stop_id'] + '" data-stopno="' + (i + 1) + '"/></div></div>';
                 tab_content += '</div>';
                 tab_content += '</div>';
 
@@ -758,6 +758,9 @@ function scheduleRun(request, response) {
         form.addField('service_id', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('zee', 'text', 'zee').setDisplayType('hidden').setDefaultValue(zee);
         form.addField('delete_freq', 'text', 'Stop IDs').setDisplayType('hidden');
+
+        transfer_stop_linked_array = transfer_stop_linked_array.join();
+        transfer_type_array = transfer_type_array.join();
         form.addField('custpage_transfer_stop_linked', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_stop_linked_array);
         form.addField('custpage_transfer_type', 'text', 'Service ID').setDisplayType('hidden').setDefaultValue(transfer_type_array);
 

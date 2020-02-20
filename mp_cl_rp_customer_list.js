@@ -355,6 +355,8 @@ $(document).on('click', '.service_summary', function() {
         var transfer_type = searchResult.getValue("custrecord_service_leg_trf_type");
         var transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee");
         var freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", null);
+        var operation_zee = searchResult.getValue("custrecord_service_leg_franchisee");
+        var operation_zee_name = searchResult.getText("custrecord_service_leg_franchisee");
         var freq_mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_STOP", null);
         var freq_tue = searchResult.getValue("custrecord_service_freq_day_tue", "CUSTRECORD_SERVICE_FREQ_STOP", null);
         var freq_wed = searchResult.getValue("custrecord_service_freq_day_wed", "CUSTRECORD_SERVICE_FREQ_STOP", null);
@@ -377,6 +379,8 @@ $(document).on('click', '.service_summary', function() {
             stop_freq_json += '"stop_addr_id": "' + service_leg_addr_id + '",';
             stop_freq_json += '"transfer_type": "' + transfer_type + '",';
             stop_freq_json += '"transfer_zee": "' + transfer_zee + '",';
+            stop_freq_json += '"operation_zee": "' + operation_zee + '",';
+            stop_freq_json += '"operation_zee_name": "' + operation_zee_name + '",';
             stop_freq_json += '"stop_freq": [';
             stop_freq_json += '{"freq_id": "' + freq_id + '",';
             stop_freq_json += '"freq_mon": "' + freq_mon + '",';
@@ -431,6 +435,8 @@ $(document).on('click', '.service_summary', function() {
                 stop_freq_json += '"stop_addr_id": "' + service_leg_addr_id + '",';
                 stop_freq_json += '"transfer_type": "' + transfer_type + '",';
                 stop_freq_json += '"transfer_zee": "' + transfer_zee + '",';
+                stop_freq_json += '"operation_zee": "' + operation_zee + '",';
+                stop_freq_json += '"operation_zee_name": "' + operation_zee_name + '",';
                 stop_freq_json += '"stop_freq": [';
                 stop_freq_json += '{"freq_id": "' + freq_id + '",';
                 stop_freq_json += '"freq_mon": "' + freq_mon + '",';
@@ -476,7 +482,7 @@ $(document).on('click', '.service_summary', function() {
         var freq_array = [null, null, null, null, null, null];
         var obj = parsedStopFreq.data[i];
         //console.log('obj_i', obj);
-        bodyStop += '<li><h5>' + obj['stop_name'] + '</h5>';
+        bodyStop += '<li><h5>' + obj['stop_name'] + '<span style="font-style:oblique; color:gray; font-size: x-small;"> ' + obj['operation_zee_name'] + '</span></h5>';
         var obj_freq = obj['stop_freq'];
         for (y = 0; y < obj_freq.length; y++) {
             if (obj_freq[y]['freq_mon'] == 'T') {
