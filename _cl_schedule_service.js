@@ -290,13 +290,7 @@ $(".nav-tabs").on("click", "li a", function(e) {
                                         $(this).children('a').tab('show');
                                         //$(this).find('.different_each_day').prop('checked', true);
                                         for (y = 0; y < transfer_stop_linked.length; y++) {
-                                            if (main_stop_id[1] == transfer_stop_linked[y]) {
-                                                /*$row.find('#table_service_time').val(service_time);
-                                                $row.find('#table_earliest_time').val(earliest_time);
-                                                $row.find('#table_latest_time').val(latest_time);
-                                                $row.find('#table_service_time').prop('readonly', true);
-                                                $row.find('#table_earliest_time').prop('readonly', true);
-                                                $row.find('#table_latest_time').prop('readonly', true);*/
+                                            if (main_stop_id[1] == transfer_stop_linked[y] && transfer_type[i] == 1) {
                                                 transfer_different_each_day = true;
                                                 console.log('transfer_different_each_day', transfer_different_each_day);
                                             }
@@ -338,8 +332,10 @@ $(".nav-tabs").on("click", "li a", function(e) {
                     }
                 }
                 if (!isNullorEmpty(transfer_different_each_day) && transfer_different_each_day == true) {
-                    console.log('check different each day');
-                    $('#' + stop_id[1] + '').find('.different_each_day').click();
+                    if ($('#' + stop_id[1] + '').find('.different_each_day').is(':checked') == false) {
+                        console.log('click different each day');
+                        $('#' + stop_id[1] + '').find('.different_each_day').click();
+                    }
                     var table_id = '#services' + stop_id[1] + ' > tbody > tr';
                     console.log('$(table_id)', $(table_id));
                     if (!isNullorEmpty($(table_id))) {
@@ -431,7 +427,7 @@ function uncheckDailyAdhocFreq() {
     $('#adhoc').prop('checked', false);
 }
 
-$(".service_time").focusout(function() {
+$(".tab-pane").on('focusout', '.service_time', function() {
     console.log('focusout');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
@@ -500,7 +496,8 @@ $(".service_time").focusout(function() {
 });
 
 
-$(".earliest_time").focusout(function() {
+$(".tab-pane").on('focusout', '.earliest_time', function() {
+    console.log('focusout earliest_time');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
         $(this).focus();
@@ -522,7 +519,8 @@ $(".earliest_time").focusout(function() {
 
 });
 
-$(".latest_time").focusout(function() {
+$(".tab-pane").on('focusout', '.latest_time', function() {
+    console.log('focusout latest_time');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
         $(this).focus();
@@ -850,6 +848,7 @@ function checkIfMultiFreq(value, unchecked) {
             var stop_id = $(this).children('a').attr('href');
             stop_id = stop_id.split('#');
             var zee_id = $(this).children('a').attr('data-zee');
+            var operation_zee = $(this).children('a').attr('data-operationzee');
             if (!isNullorEmpty(stop_id[1])) {
 
                 // To check if a new stop has been created. -1 = NO / 0 = YES
@@ -908,7 +907,7 @@ function checkIfMultiFreq(value, unchecked) {
                         var run_selection_html = '';
                         var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
                         var newFilters_runPlan = new Array();
-                        newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
+                        newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', operation_zee);
                         runPlanSearch.addFilters(newFilters_runPlan);
 
                         var resultSet_runPlan = runPlanSearch.runSearch();
@@ -943,8 +942,12 @@ function checkIfMultiFreq(value, unchecked) {
                         create_run_html += '</select></td><td><input id="table_service_time" class="form-control service_time" data-stopno="" data-oldtime="" type="time" /></td><td><input id="table_earliest_time" data-oldearliesttime="" class="form-control earliest_time" data-stopno="" type="time" /></td><td><input id="table_latest_time" class="form-control latest_time" data-stopno="" data-oldlatesttime="" type="time" /></td></tr>';
 
                         newRow.innerHTML = create_run_html;
+                        newRow.className = 'newrow';
                         //console.log('previousRow', previousRow);
                         //previousRow.after(create_run_html);
+                    }
+                    else if (daycreated == false && unchecked == 'T') {
+                        $('.newrow').hide();
                     }
                 }
             }

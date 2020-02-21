@@ -24,6 +24,8 @@ var deleted_service_ids = [];
 var deleted_job_ids = [];
 var add_row = false;
 
+var edited_stop_array = [];
+
 if (role == 1000) {
     //Franchisee
     zee = ctx.getUser();
@@ -38,6 +40,7 @@ var app = angular.module('myApp', []);
 app.controller('myCtrl', function($scope) {
 
 });
+
 $(document).on('click', '#create_new', function(e) {
     var params = {
         custid: parseInt(nlapiGetFieldValue('custpage_customer_id')),
@@ -124,15 +127,6 @@ $('.collapse').on('hide.bs.collapse', function() {
         "padding-top": "80px"
     });
 })
-
-/*$(document).on('click', '.instruction_button', function() {
-    $(".container").css({
-        "padding-top": "150px"
-    });
-
-});*/
-
-
 
 $('#exampleModal').on('show.bs.modal', function(event) {
     var button = $(event).relatedTarget // Button that triggered the modal
@@ -256,7 +250,8 @@ $(document).on('click', '.edit_transfer_stop', function(e) {
     var customer_address = $(this).closest('tr').find('.table_stop_name').attr('data-customeraddressid');
     var duration = $(this).closest('tr').find('.table_duration').val();
 
-    $('#edit_old_stop').attr('data-rowid', $(this).attr('data-newstop'))
+    $('#edit_old_stop').attr('data-rowid', $(this).attr('data-newstop'));
+    $('#edit_old_stop').attr('data-oldstop', $(this).attr('data-oldstop'));
 
     $('.address_type_row').removeClass('hide');
     $('#address_type').val(address_type);
@@ -320,7 +315,9 @@ $(document).on('click', '.edit_stop', function(e) {
     var customer_address = $(this).closest('tr').find('.table_stop_name').attr('data-customeraddressid');
     var duration = $(this).closest('tr').find('.table_duration').val();
 
-    $('#edit_old_stop').attr('data-rowid', $(this).attr('data-newstop'))
+    $('#edit_old_stop').attr('data-rowid', $(this).attr('data-newstop'));
+    $('#edit_old_stop').attr('data-oldstop', $(this).attr('data-oldstop'));
+
 
     $('.address_type_row').removeClass('hide');
     $('#address_type').val(address_type);
@@ -425,7 +422,7 @@ $(document).on('click', '#add_new_stop', function(e) {
     var table_stop_name_elem = document.getElementsByClassName("table_stop_name");
     var table_duration_elem = document.getElementsByClassName("table_duration");
     var table_notes_elem = document.getElementsByClassName("table_notes");
-    var edited_stop_id = $(this).attr('data-rowid');
+    var row_number = $(this).attr('data-rowid');
 
     var duration = $('#duration').val();
 
@@ -476,7 +473,7 @@ $(document).on('click', '#add_new_stop', function(e) {
 
     duration = hours_to_seconds + minutes_to_seconds + seconds;
 
-    var row_number = edited_stop_id;
+    //var row_number = edited_stop_id;
 
     // console.log(row_number)
 
@@ -565,9 +562,10 @@ $(document).on('click', '#edit_old_stop', function(e) {
     var table_stop_name_elem = document.getElementsByClassName("table_stop_name");
     var table_duration_elem = document.getElementsByClassName("table_duration");
     var table_notes_elem = document.getElementsByClassName("table_notes");
-    var edited_stop_id = $(this).attr('data-rowid');
+    var row_number = $(this).attr('data-rowid');
+    var edited_stop_id = $(this).attr('data-oldstop');
 
-    var row_number = edited_stop_id;
+    //var row_number = edited_stop_id;
 
     var display_html = '';
 
@@ -689,6 +687,9 @@ $(document).on('click', '#edit_old_stop', function(e) {
 
     updateRowCount();
     reset_all();
+
+    edited_stop_array[edited_stop_array.length] = edited_stop_id;
+    console.log('edited_stop_array', edited_stop_array);
 
 
 
@@ -843,6 +844,7 @@ function saveRecord() {
     zee = parseInt(nlapiGetFieldValue('custpage_zee'));
 
     console.log('zee', zee);
+    console.log('edited_stop_array', edited_stop_array);
 
     var return_value = validateLegsNumber();
     console.log('return value', return_value);
@@ -850,7 +852,6 @@ function saveRecord() {
         showAlert('Please enter a minimum of 2 stops');
         return false;
     }
-
 
     var customer_id = nlapiGetFieldValue('custpage_customer_id');
     var service_id = nlapiGetFieldValue('custpage_service_id');
@@ -901,14 +902,6 @@ function saveRecord() {
         var old_value = table_stop_name_elem[i].getAttribute('data-oldvalue');
         var notes = table_stop_name_elem[i].getAttribute('data-notes');
 
-        /*        var linked_stop = false;
-
-                for (var k = 0; k < transfer_stop_linked.length; k++) {
-                    if (!isNullorEmpty(old_stop_id) && old_stop_id == transfer_stop_linked[k]) {
-                        linked_stop = true;
-                    }
-                }*/
-
         if (delete_stop_elem[i].value == 'T' && !isNullorEmpty(delete_stop_id)) {
 
             var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
@@ -955,7 +948,6 @@ function saveRecord() {
         } else {
             //console.log('linked_stop', linked_stop);
             var transfer_created = false;
-            //if (linked_stop == false) {
             console.log('transfer_type', transfer_type);
             console.log('old_stop_id', old_stop_id);
 
@@ -976,18 +968,31 @@ function saveRecord() {
                     service_leg_record_transfer.setFieldValue('custrecord_service_leg_service', service_id);
                 }
             } else if (!isNullorEmpty(old_stop_id)) {
-                var service_leg_record = nlapiLoadRecord('customrecord_service_leg', old_stop_id);
-                if (!isNullorEmpty(transfer_type) && transfer_type != 0) {
-                    transfer_array[transfer_array.length] = i;
-                    transfer_zee_array[transfer_zee_array.length] = linked_zee;
-                    var transfer_stop_linked_id = service_leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop');
-                    console.log('transfer_stop_linked_id', transfer_stop_linked_id);
-                    if (!isNullorEmpty(transfer_stop_linked_id)) {
-                        var service_leg_record_transfer = nlapiLoadRecord('customrecord_service_leg', transfer_stop_linked_id);
+                var edited = false;
+                for (k = 0; k < edited_stop_array.length; k++) {
+                    if (old_stop_id == edited_stop_array[k]) {
+                        var edited = true;
+                        var service_leg_record = nlapiLoadRecord('customrecord_service_leg', old_stop_id);
+                        if (!isNullorEmpty(transfer_type) && transfer_type != 0) {
+                            transfer_array[transfer_array.length] = i;
+                            transfer_zee_array[transfer_zee_array.length] = linked_zee;
+                            var transfer_stop_linked_id = service_leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop');
+                            console.log('transfer_stop_linked_id', transfer_stop_linked_id);
+                            if (!isNullorEmpty(transfer_stop_linked_id)) {
+                                var service_leg_record_transfer = nlapiLoadRecord('customrecord_service_leg', transfer_stop_linked_id);
+                            }
+                        }
                     }
                 }
+
+            }
+            console.log('edited', edited);
+            if (edited == false) {
+                stop_array[stop_array.length] = old_stop_id;
+                continue;
             }
 
+            //Array with the stop of which the name has changed
             if (old_value != table_stop_name_elem[i].value && !isNullorEmpty(old_value)) {
                 updated_stop_array[updated_stop_array.length] = table_stop_name_elem[i].value;
                 old_stop_array[old_stop_array.length] = old_value;
@@ -995,9 +1000,6 @@ function saveRecord() {
                     updated_stop_zee[updated_stop_zee.length] = linked_zee;
                 }
             }
-
-            //console.log('zee', zee);
-            //console.log('customer_id', customer_id);
 
             service_leg_record.setFieldValue('name', table_stop_name_elem[i].value);
 
@@ -1211,8 +1213,8 @@ function saveRecord() {
     //nlapiSetFieldValue('custpage_transfer', transfer_array);
 
 
-    return true;
-    //return false;
+    //return true;
+    return false;
 }
 
 function validateLegsNumber() {

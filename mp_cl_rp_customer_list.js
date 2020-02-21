@@ -330,7 +330,7 @@ $(document).on('click', '.service_summary', function() {
     var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all');
     var newFilters = new Array();
     newFilters[newFilters.length] = new nlobjSearchFilter('internalid', 'custrecord_service_leg_service', 'is', service_id);
-    newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
+    newFilters[newFilters.length] = new nlobjSearchFilter("partner","CUSTRECORD_SERVICE_LEG_CUSTOMER", 'is', zee);
     newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
 
     serviceLegSearch.addFilters(newFilters);

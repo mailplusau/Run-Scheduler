@@ -390,9 +390,9 @@ function createStops(request, response) {
 
                 if (isNullorEmpty(service_leg_transfer_type)) {
 
-                    inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_stop glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit Stop" data-newstop="' + (count + 1) + '"></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="' + service_leg_id + '" data-newstop="' + (count + 1) + '"></button><input type="hidden" class="delete_stop_input" value="F" data-stopid="' + service_leg_id + '" /> <button class="btn btn-default btn-sm move_up glyphicon glyphicon-arrow-up" type="button" data-toggle="tooltip" data-placement="right" title="Move Up"></button><button class="btn btn-default btn-sm move_down glyphicon glyphicon-arrow-down" type="button" data-toggle="tooltip" data-placement="right" title="Move Down"></button></td>';
+                    inlineQty += '<td class="first_col"><button class="btn btn-warning btn-sm edit_stop glyphicon glyphicon-pencil" type="button" data-toggle="tooltip" data-placement="right" title="Edit Stop" data-newstop="' + (count + 1) + '" data-oldstop="' + service_leg_id + '"></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="' + service_leg_id + '" data-newstop="' + (count + 1) + '"></button><input type="hidden" class="delete_stop_input" value="F" data-stopid="' + service_leg_id + '" /> <button class="btn btn-default btn-sm move_up glyphicon glyphicon-arrow-up" type="button" data-toggle="tooltip" data-placement="right" title="Move Up"></button><button class="btn btn-default btn-sm move_down glyphicon glyphicon-arrow-down" type="button" data-toggle="tooltip" data-placement="right" title="Move Down"></button></td>';
                 } else {
-                    inlineQty += '<td class="first_col"><input class="btn btn-warning btn-sm edit_stop" type="hidden" data-newstop="' + (count + 1) + '"></button><button class="btn btn-warning btn-sm edit_transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Edit Transfer Stop" data-newstop="' + (count + 1) + '"></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="' + service_leg_id + '" data-newstop="' + (count + 1) + '"></button><input type="hidden" class="delete_stop_input" value="F" data-stopid="' + service_leg_id + '" /> <button class="btn btn-default btn-sm move_up glyphicon glyphicon-arrow-up" type="button" data-toggle="tooltip" data-placement="right" title="Move Up"></button><button class="btn btn-default btn-sm move_down glyphicon glyphicon-arrow-down" type="button" data-toggle="tooltip" data-placement="right" title="Move Down"></button></td>';
+                    inlineQty += '<td class="first_col"><input class="btn btn-warning btn-sm edit_stop" type="hidden" data-newstop="' + (count + 1) + '"data-oldstop="' + service_leg_id + '"></button><button class="btn btn-warning btn-sm edit_transfer_stop glyphicon glyphicon-transfer" type="button" data-toggle="tooltip" data-placement="right" title="Edit Transfer Stop" data-newstop="' + (count + 1) + '" data-oldstop="' + service_leg_id + '"></button> <button class="btn btn-danger btn-sm delete_stop glyphicon glyphicon-trash" type="button" data-toggle="tooltip" data-placement="right" title="Delete Stop" data-oldstop="' + service_leg_id + '" data-newstop="' + (count + 1) + '"></button><input type="hidden" class="delete_stop_input" value="F" data-stopid="' + service_leg_id + '" /> <button class="btn btn-default btn-sm move_up glyphicon glyphicon-arrow-up" type="button" data-toggle="tooltip" data-placement="right" title="Move Up"></button><button class="btn btn-default btn-sm move_down glyphicon glyphicon-arrow-down" type="button" data-toggle="tooltip" data-placement="right" title="Move Down"></button></td>';
                 }
 
                 var display_html = '';
@@ -544,41 +544,6 @@ function createStops(request, response) {
                 nlapiSendEmail(409635, zee_email, 'Service Leg Deletetion', message, null);
             }
         }
-
-        /*        if (!isNullorEmpty(freq_edited) && !isNullorEmpty(stored_zee) && !isNullorEmpty(linked_zee)) {
-
-                    var freq_edited_array = freq_edited.split(',');
-                    var stored_zee_array = stored_zee.split(',');
-                    var linked_zee_array = linked_zee.split(',');
-
-                    for (var i = 0; i < freq_edited_array.length; i++) {
-                        var freq_record = nlapiLoadRecord('customrecord_service_freq', freq_edited_array[i]);
-
-                        freq_record.setFieldValue('custrecord_service_freq_franchisee', linked_zee_array[i]);
-
-                        nlapiSubmitRecord(freq_record);
-                    }
-                }
-
-
-                if (!isNullorEmpty(freq_created) && !isNullorEmpty(freq_created_zees)) {
-
-                    var freq_created_array = freq_created.split(',');
-                    var freq_created_zees_array = freq_created_zees.split(',');
-
-                    for (var i = 0; i < freq_created_array.length; i++) {
-                        var freq_record = nlapiCreateRecord('customrecord_service_freq');
-                        freq_record.setFieldValue('custrecord_service_freq_franchisee', freq_created_zees_array[i]);
-                        freq_record.setFieldValue('custrecord_service_freq_customer', customer_id);
-                        freq_record.setFieldValue('custrecord_service_freq_service', service_id);
-                        freq_record.setFieldValue('custrecord_service_freq_stop', freq_created_array[i]);
-                        nlapiSubmitRecord(freq_record);
-                    }
-
-
-                }*/
-
-
 
         var params = {
             customerid: customer_id,

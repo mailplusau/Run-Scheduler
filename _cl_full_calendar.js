@@ -40,6 +40,7 @@ $(window).load(function() {
     $(".se-pre-con").fadeOut("slow");;
 });
 
+
 $(document).on('change', '.zee_dropdown', function(event) {
     var zee = $(this).val();
 
@@ -71,9 +72,6 @@ $(document).on('click', '#alert .close', function(e) {
 });
 
 function pageInit() {
-    $(function() {
-        $('[data-toggle="tooltip"]').tooltip()
-    });
 
     AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
     $('.services_selected_class').selectator({
@@ -266,25 +264,17 @@ function pageInit() {
                         console.log('event.services[x].customer_zee', event.services[x].customer_zee);
                         console.log('zee', zee);
                         if (event.services[x].customer_zee != zee) {
-                            body += '<tr style="color:#ad3a3a;"><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
+                            body += '<tr style="color:#ad3a3a;"><td><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="You are not allowed to edit because you are not the owner of this customer."><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td></span><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
                         } else {
                             body += '<tr style="color:#ad3a3a;"><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
                         }
                     } else {
                         if (event.services[x].customer_zee != zee) {
-                            body += '<tr><td><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="Disabled tooltip"><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td></span><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</span></td><td style="max-width:500px; word-break: normal;">' + event.services[x].customer_notes + '</td></tr>';
-                            $(function() {
-                                $('[data-toggle="tooltip"]').tooltip()
-                            });
+                            body += '<tr><td><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="You are not allowed to edit because you are not the owner of this customer."><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td></span><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</span></td><td style="max-width:500px; word-break: normal;">' + event.services[x].customer_notes + '</td></tr>';
                         } else {
                             body += '<tr><td><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '"></button></td><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td style="max-width:500px; word-break: normal;">' + event.services[x].customer_notes + '</td></tr>';
                         }
                     }
-                    $(function() {
-                        $('[data-toggle="tooltip"]').tooltip()
-                    })
-
-
                 }
 
                 body += '</tbody></table>'
@@ -375,6 +365,12 @@ function pageInit() {
 
     }
 }
+
+$('#myModal').on('show.bs.modal', function(event) {
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
+})
 
 function AddJavascript(jsname, pos) {
     var tag = document.getElementsByTagName(pos)[0];
