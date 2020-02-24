@@ -143,11 +143,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
     var old_stored_run;
     var stored_run;
     var transfer_different_each_day;
-    var service_time_array = [];
-    var earliest_time_array = [];
-    var latest_time_array = [];
-
-    //$(this).css('background-color', '#8080809c');
+    var service_time_each_day_array = [];
+    var earliest_time_each_day_array = [];
+    var latest_time_each_day_array = [];
 
     var exit = true;
     $(".tabs").each(function() {
@@ -295,9 +293,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                                                 console.log('transfer_different_each_day', transfer_different_each_day);
                                             }
                                         }
-                                        service_time_array[service_time_array.length] = service_time;
-                                        earliest_time_array[earliest_time_array.length] = earliest_time;
-                                        latest_time_array[latest_time_array.length] = latest_time;
+                                        service_time_each_day_array[service_time_each_day_array.length] = service_time;
+                                        earliest_time_each_day_array[earliest_time_each_day_array.length] = earliest_time;
+                                        latest_time_each_day_array[latest_time_each_day_array.length] = latest_time;
 
                                     }
 
@@ -337,7 +335,7 @@ $(".nav-tabs").on("click", "li a", function(e) {
                         $('#' + stop_id[1] + '').find('.different_each_day').click();
                     }
                     var table_id = '#services' + stop_id[1] + ' > tbody > tr';
-                    console.log('$(table_id)', $(table_id));
+                    //console.log('$(table_id)', $(table_id));
                     if (!isNullorEmpty($(table_id))) {
                         rows = $(table_id);
                         console.log('rows.length', rows.length);
@@ -345,9 +343,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                     $(table_id).each(function(i, row) {
                         if (i > 0) {
                             var $row = $(row);
-                            $row.find('#table_service_time').val(service_time_array[i - 1]);
-                            $row.find('#table_earliest_time').val(earliest_time_array[i - 1]);
-                            $row.find('#table_latest_time').val(latest_time_array[i - 1]);
+                            $row.find('#table_service_time').val(service_time_each_day_array[i - 1]);
+                            $row.find('#table_earliest_time').val(earliest_time_each_day_array[i - 1]);
+                            $row.find('#table_latest_time').val(latest_time_each_day_array[i - 1]);
                             $row.find('#table_service_time').prop('readonly', true);
                             $row.find('#table_earliest_time').prop('readonly', true);
                             $row.find('#table_latest_time').prop('readonly', true);
@@ -439,16 +437,19 @@ $(".tab-pane").on('focusout', '.service_time', function() {
         var stop_array = stop_no.split('_');
         console.log('stop_array', stop_array);
         var stop_id = $(this).attr('data-stopid');
-        if (stop_array[1] == 0) {
-            service_time_array[stop_array[0] - 1] = $(this).val();
-        } else {
-            service_time_array[stop_array[1] - 1] = $(this).val();
+        if (this.id != 'table_service_time') {
+            if (stop_array[1] == 0) {
+                service_time_array[stop_array[0] - 1] = $(this).val();
+            } else {
+                service_time_array[stop_array[1] - 1] = $(this).val();
+            }
         }
 
         var service_time = $(this).val();
         var hours_string = (service_time.substr(0, 2));
         var hours = parseInt(service_time.substr(0, 2));
 
+        console.log('service_time_array', service_time_array);
         var error = validateTimes();
         //console.log('error', error);
         if (error == false) {
@@ -945,8 +946,7 @@ function checkIfMultiFreq(value, unchecked) {
                         newRow.className = 'newrow';
                         //console.log('previousRow', previousRow);
                         //previousRow.after(create_run_html);
-                    }
-                    else if (daycreated == false && unchecked == 'T') {
+                    } else if (daycreated == false && unchecked == 'T') {
                         $('.newrow').hide();
                     }
                 }
@@ -957,7 +957,7 @@ function checkIfMultiFreq(value, unchecked) {
 
 
 function saveRecord() {
-
+    console.log('SAVING RECORD');
 
     var customer_id = nlapiGetFieldValue('customer_id');
     var service_id = nlapiGetFieldValue('service_id');
@@ -1200,13 +1200,6 @@ function saveRecord() {
         var delete_freq_string = delete_freq_array.join();
         nlapiSetFieldValue('delete_freq', delete_freq_string)
     }
-
-    /*    for (var i = 0; i < freq_time_current_array.length; i++) {
-            if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
-                error = true;
-                message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
-            }
-        }*/
 
     if (error == true) {
         // $(this).children('a').css('background-color', '#337ab7')

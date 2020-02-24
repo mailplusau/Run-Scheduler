@@ -88,6 +88,7 @@ function scheduleRun(request, response) {
             var transfer_type = searchResult.getValue("custrecord_service_leg_trf_type");
             var transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee");
             var transfer_stop_linked = searchResult.getValue("custrecord_service_leg_trf_linked_stop");
+            var transfer_app_service_leg_no = searchResult.getValue("custrecord_service_leg_trf_leg");
             var operation_zee = searchResult.getValue("custrecord_service_leg_franchisee");
             var operation_zee_name = searchResult.getText("custrecord_service_leg_franchisee");
             var freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", null);
@@ -102,7 +103,9 @@ function scheduleRun(request, response) {
             var freq_time_end = searchResult.getValue("custrecord_service_freq_time_end", "CUSTRECORD_SERVICE_FREQ_STOP", null);
             var freq_run_plan = searchResult.getValue("custrecord_service_freq_run_plan", "CUSTRECORD_SERVICE_FREQ_STOP", null);
 
-            if (!isNullorEmpty(transfer_stop_linked)) {
+            nlapiLogExecution('DEBUG','transfer_app_service_leg_no',transfer_app_service_leg_no);
+
+            if (!isNullorEmpty(transfer_stop_linked) && transfer_app_service_leg_no == 1) {
                 transfer_stop_linked_array[transfer_stop_linked_array.length] = transfer_stop_linked;
                 transfer_type_array[transfer_type_array.length] = transfer_type;
             }
