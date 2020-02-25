@@ -18,7 +18,7 @@ var table;
 function pageInit() {
 
     //Search: RP - Services
-    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services_2');
+    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
 
     var addFilterExpression = new nlobjSearchFilter('custrecord_service_franchisee', null, 'anyof', nlapiGetFieldValue('zee'));
     serviceSearch.addFilter(addFilterExpression);

@@ -124,7 +124,7 @@ function createStops(request, response) {
 
         var resultSet_addresses = searched_address.runSearch();
 
-        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg_2');
+        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
 
         var newFilters = new Array();
         newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_service', null, 'is', service_id);

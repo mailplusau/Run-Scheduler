@@ -172,7 +172,7 @@ function runPlanner(request, response) {
             nlapiLogExecution('DEBUG', 'zee', zee);
             nlapiLogExecution('DEBUG', 'run', run);
 
-            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all_2_3');
+            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all_2');
 
             var newFilters = new Array();
             newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'anyof', zee);
