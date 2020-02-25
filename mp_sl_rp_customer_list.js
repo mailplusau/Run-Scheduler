@@ -30,7 +30,7 @@ var ctx = nlapiGetContext();
 
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-  baseURL = 'https://system.sandbox.netsuite.com';
+  baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 
@@ -125,8 +125,8 @@ function main(request, response) {
 
     form.addField('preview_table', 'inlinehtml', '').setLayoutType('outsidebelow', 'startrow').setDefaultValue(inlineQty);
 
-    form.addButton('back', 'Back', 'onclick_back()');
-    form.setScript('customscript_cl_rp_Customer_list');
+    form.addButton('back', 'Calendar View', 'onclick_back()');
+    form.setScript('customscript_cl_rp_customer_list');
     response.writePage(form);
 
   } else {

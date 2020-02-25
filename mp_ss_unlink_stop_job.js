@@ -43,6 +43,10 @@ function main() {
         var leg_id = searchResult.getValue("internalid");
         var job_id = searchResult.getValue("internalid", "CUSTRECORD159", null);
         var freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", null);
+        nlapiLogExecution('DEBUG', 'count', count);
+        nlapiLogExecution('DEBUG', 'leg_id', leg_id);
+        nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
+
         if (count == 0) {
             if (!isNullorEmpty(job_id)) {
                 job_id_array[0] = job_id;
@@ -74,6 +78,9 @@ function main() {
                     nlapiLogExecution('DEBUG', 'freq_id_array[i]', freq_id_array[i]);
                     nlapiDeleteRecord('customrecord_service_freq', freq_id_array[i]);
                 }
+                var legRecord = nlapiLoadRecord('customrecord_service_leg', old_leg_id);
+                legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
+                var old_leg_id = nlapiSubmitRecord('legRecord');
                 nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
                 nlapiDeleteRecord('customrecord_service_leg', old_leg_id);
 
@@ -90,12 +97,14 @@ function main() {
             }
         }
         old_leg_id = leg_id;
+        nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
         count++;
         return true;
 
     });
 
     if (count > 0) {
+        nlapiLogExecution('DEBUG', 'last one');
         for (i = 0; i < job_id_array.length; i++) {
             nlapiLogExecution('DEBUG', 'job_id_array[i]', job_id_array[i]);
             var jobRecord = nlapiLoadRecord('customrecord_job', job_id_array[i]);
@@ -107,6 +116,9 @@ function main() {
             nlapiLogExecution('DEBUG', 'freq_id_array[i]', freq_id_array[i]);
             nlapiDeleteRecord('customrecord_service_freq', freq_id_array[i]);
         }
+        var legRecord = nlapiLoadRecord('customrecord_service_leg', old_leg_id);
+        legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
+        var old_leg_id = nlapiSubmitRecord('legRecord');
         nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
         nlapiDeleteRecord('customrecord_service_leg', old_leg_id);
     }

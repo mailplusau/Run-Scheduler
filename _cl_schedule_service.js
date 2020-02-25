@@ -12,7 +12,7 @@
  */
 var baseURL = 'https://1048144.app.netsuite.com';
 if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-    baseURL = 'https://system.sandbox.netsuite.com';
+    baseURL = 'https://1048144-sb3.app.netsuite.com';
 }
 
 var delete_freq_array = [];
@@ -38,8 +38,8 @@ $(window).load(function() {
 });
 
 // $(document).on('click', '.close', function(e) {
-// 	console.log('inside alert close');
-// 	$(this).parent().hide();
+//  console.log('inside alert close');
+//  $(this).parent().hide();
 // });
 /*
 $(document).on('click', '.instruction_button', function() {
@@ -90,7 +90,7 @@ function showAlert(message) {
     // $('#alert').show();
     // goToByScroll('alert');
     // setInterval(function() {
-    // 	$("#alert .close").click();
+    //  $("#alert .close").click();
     // }, 5000);
 }
 
@@ -98,6 +98,7 @@ function showAlert(message) {
 $(document).on('click', '#alert .close', function(e) {
     $(this).parent().hide();
 });
+
 
 function onclick_back() {
     var params = {
@@ -125,6 +126,12 @@ function pageInit() {
     validateFrequency();
 }
 
+var transfer_stop_linked = nlapiGetFieldValue('custpage_transfer_stop_linked');
+transfer_stop_linked = transfer_stop_linked.split(',');
+var transfer_type = nlapiGetFieldValue('custpage_transfer_type');
+transfer_type = transfer_type.split(',');
+console.log('transfer_stop_linked', transfer_stop_linked);
+console.log('transfer_type', transfer_type);
 
 $(".nav-tabs").on("click", "li a", function(e) {
     var main_stop = $(this).attr('href');
@@ -135,7 +142,10 @@ $(".nav-tabs").on("click", "li a", function(e) {
     var error = false;
     var old_stored_run;
     var stored_run;
-    //$(this).css('background-color', '#8080809c');
+    var transfer_different_each_day;
+    var service_time_each_day_array = [];
+    var earliest_time_each_day_array = [];
+    var latest_time_each_day_array = [];
 
     var exit = true;
     $(".tabs").each(function() {
@@ -153,6 +163,8 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 //$(this).children('a').css('background-color', '#8080809c');
                 console.log('inside active tab');
                 stop_id = stop_id.split('#');
+                var main_stop_id = main_stop.split('#');
+                console.log('stop_id[1]', stop_id[1]);
                 if (!isNullorEmpty(stop_id[1])) {
                     var table_id = '#services' + stop_id[1] + ' > tbody > tr';
                     var rows;
@@ -168,6 +180,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                         var service_time = $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val();
                         var earliest_time = ($('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).val());
                         var latest_time = ($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val());
+
+                        console.log('service_time', service_time);
+
 
                         var message = '';
 
@@ -205,10 +220,21 @@ $(".nav-tabs").on("click", "li a", function(e) {
                             console.log('inside 1');
                             console.log(main_stop_det);
                             main_stop_det.tab('show');
+
                             var main_stop_id = main_stop.split('#');
                             console.log('old_stored_run', old_stored_run);
                             if (isNullorEmpty(old_stored_run)) {
                                 $('#' + main_stop_id[1]).find('#run' + main_stop_id[1]).val(stored_run);
+                            }
+                            for (i = 0; i < transfer_stop_linked.length; i++) {
+                                if (main_stop_id[1] == transfer_stop_linked[i] && transfer_type[i] == 1) {
+                                    $('#' + main_stop_id[1]).find('#service_time' + main_stop_id[1]).val(service_time);
+                                    $('#' + main_stop_id[1]).find('#earliest_time' + main_stop_id[1]).val(earliest_time);
+                                    $('#' + main_stop_id[1]).find('#latest_time' + main_stop_id[1]).val(latest_time);
+                                    $('#' + main_stop_id[1]).find('#service_time' + main_stop_id[1]).prop('readonly', true);
+                                    $('#' + main_stop_id[1]).find('#earliest_time' + main_stop_id[1]).prop('readonly', true);
+                                    $('#' + main_stop_id[1]).find('#latest_time' + main_stop_id[1]).prop('readonly', true);
+                                }
                             }
                             exit = false;
 
@@ -227,6 +253,8 @@ $(".nav-tabs").on("click", "li a", function(e) {
                                     var service_time = ($row.find('#table_service_time').val());
                                     var earliest_time = ($row.find('#table_earliest_time').val());
                                     var latest_time = ($row.find('#table_latest_time').val());
+
+
                                     console.log(run);
                                     var error = false;
                                     var message = '';
@@ -256,10 +284,18 @@ $(".nav-tabs").on("click", "li a", function(e) {
                                         showAlert(message);
                                         exit = false;
                                     } else {
-
                                         console.log('inside 2');
                                         $(this).children('a').tab('show');
-                                        // $(this).children('a').css('background-color', '#8080809c')
+                                        //$(this).find('.different_each_day').prop('checked', true);
+                                        for (y = 0; y < transfer_stop_linked.length; y++) {
+                                            if (main_stop_id[1] == transfer_stop_linked[y] && transfer_type[i] == 1) {
+                                                transfer_different_each_day = true;
+                                                console.log('transfer_different_each_day', transfer_different_each_day);
+                                            }
+                                        }
+                                        service_time_each_day_array[service_time_each_day_array.length] = service_time;
+                                        earliest_time_each_day_array[earliest_time_each_day_array.length] = earliest_time;
+                                        latest_time_each_day_array[latest_time_each_day_array.length] = latest_time;
 
                                     }
 
@@ -283,7 +319,39 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 if (isNullorEmpty(old_stored_run)) {
                     $('#' + stop_id[1]).find('#run' + stop_id[1]).val(stored_run);
                 }
-                // $(this).children('a').css('background-color', '#337ab7');
+                for (i = 0; i < transfer_stop_linked.length; i++) {
+                    if (stop_id[1] == transfer_stop_linked[i] && transfer_type[i] == 1) {
+                        $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val(service_time);
+                        $('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).val(earliest_time);
+                        $('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val(latest_time);
+                        $('#' + stop_id[1]).find('#service_time' + stop_id[1]).prop('readonly', true);
+                        $('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).prop('readonly', true);
+                        $('#' + stop_id[1]).find('#latest_time' + stop_id[1]).prop('readonly', true);
+                    }
+                }
+                if (!isNullorEmpty(transfer_different_each_day) && transfer_different_each_day == true) {
+                    if ($('#' + stop_id[1] + '').find('.different_each_day').is(':checked') == false) {
+                        console.log('click different each day');
+                        $('#' + stop_id[1] + '').find('.different_each_day').click();
+                    }
+                    var table_id = '#services' + stop_id[1] + ' > tbody > tr';
+                    //console.log('$(table_id)', $(table_id));
+                    if (!isNullorEmpty($(table_id))) {
+                        rows = $(table_id);
+                        console.log('rows.length', rows.length);
+                    }
+                    $(table_id).each(function(i, row) {
+                        if (i > 0) {
+                            var $row = $(row);
+                            $row.find('#table_service_time').val(service_time_each_day_array[i - 1]);
+                            $row.find('#table_earliest_time').val(earliest_time_each_day_array[i - 1]);
+                            $row.find('#table_latest_time').val(latest_time_each_day_array[i - 1]);
+                            $row.find('#table_service_time').prop('readonly', true);
+                            $row.find('#table_earliest_time').prop('readonly', true);
+                            $row.find('#table_latest_time').prop('readonly', true);
+                        }
+                    })
+                }
 
             }
             console.log('exit 1' + exit);
@@ -333,22 +401,22 @@ function validateTimes() {
         }
     }
     // if (earliest_time_array.length > 1) {
-    // 	for (var x = 0; x < earliest_time_array.length; x++) {
-    // 		console.log(earliest_time_array[x]);
-    // 		if(earliest_time_array[x+1] < earliest_time_array[x]){
-    // 			showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
-    // 			break;
-    // 		}
-    // 	}
+    //  for (var x = 0; x < earliest_time_array.length; x++) {
+    //      console.log(earliest_time_array[x]);
+    //      if(earliest_time_array[x+1] < earliest_time_array[x]){
+    //          showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
+    //          break;
+    //      }
+    //  }
     // }
     // if (latest_time_array.length > 1) {
-    // 	for (var x = 0; x < latest_time_array.length; x++) {
-    // 		console.log(latest_time_array[x]);
-    // 		if(latest_time_array[x+1] < latest_time_array[x]){
-    // 			showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
-    // 			break;
-    // 		}
-    // 	}
+    //  for (var x = 0; x < latest_time_array.length; x++) {
+    //      console.log(latest_time_array[x]);
+    //      if(latest_time_array[x+1] < latest_time_array[x]){
+    //          showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
+    //          break;
+    //      }
+    //  }
     // }
 }
 
@@ -357,26 +425,31 @@ function uncheckDailyAdhocFreq() {
     $('#adhoc').prop('checked', false);
 }
 
-$(".service_time").focusout(function() {
+$(".tab-pane").on('focusout', '.service_time', function() {
+    console.log('focusout');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
         $(this).focus();
         return false;
     } else {
         var stop_no = $(this).attr('data-stopno');
+        console.log('stop_no', stop_no);
         var stop_array = stop_no.split('_');
         console.log('stop_array', stop_array);
         var stop_id = $(this).attr('data-stopid');
-        if (stop_array[1] == 0) {
-            service_time_array[stop_array[0] - 1] = $(this).val();
-        } else {
-            service_time_array[stop_array[1] - 1] = $(this).val();
+        if (this.id != 'table_service_time') {
+            if (stop_array[1] == 0) {
+                service_time_array[stop_array[0] - 1] = $(this).val();
+            } else {
+                service_time_array[stop_array[1] - 1] = $(this).val();
+            }
         }
 
         var service_time = $(this).val();
         var hours_string = (service_time.substr(0, 2));
         var hours = parseInt(service_time.substr(0, 2));
 
+        console.log('service_time_array', service_time_array);
         var error = validateTimes();
         //console.log('error', error);
         if (error == false) {
@@ -398,30 +471,34 @@ $(".service_time").focusout(function() {
                 earliest_time = service_time.replace(hours_string, (hours - 1));
                 latest_time = service_time.replace(hours_string, (hours + 1));
             }
-
-
-
-
-
-
+            console.log('this.id', this.id);
             console.log($(this).val());
             console.log(earliest_time);
             console.log(latest_time);
 
-            $('#earliest_time' + stop_id).val(earliest_time);
-            $('#latest_time' + stop_id).val(latest_time);
+            if (this.id == 'table_service_time') {
+                //console.log('$(this).closest(tr)', $(this).closest('tr'));
+                var $tr = $(this).closest('tr');
+                $tr.find('.earliest_time').val(earliest_time);
+                $tr.find('.latest_time').val(latest_time);
+            } else {
+                console.log('ok');
+                $('#earliest_time' + stop_id).val(earliest_time);
+                $('#latest_time' + stop_id).val(latest_time);
+            }
         }
 
         // var error = validateTimes();
         // if (error == false) {
-        // 	$(this).val("");
+        //  $(this).val("");
         // }
     }
 
 });
 
 
-$(".earliest_time").focusout(function() {
+$(".tab-pane").on('focusout', '.earliest_time', function() {
+    console.log('focusout earliest_time');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
         $(this).focus();
@@ -443,7 +520,8 @@ $(".earliest_time").focusout(function() {
 
 });
 
-$(".latest_time").focusout(function() {
+$(".tab-pane").on('focusout', '.latest_time', function() {
+    console.log('focusout latest_time');
     if (isNullorEmpty($(this).val())) {
         showAlert('Please Enter the Time or Select AM/PM');
         $(this).focus();
@@ -556,6 +634,7 @@ $(document).on('click', '.service_time_button', function() {
 //If Different For Each Day is checked
 $(document).on('click', '.different_each_day', function() {
     zee = nlapiGetFieldValue('zee');
+    var operation_zee = $(this).attr('data-operationzee');
     if ($(this).is(':checked')) {
         var id = $(this).attr('data-stopid');
         var stop_no = $(this).attr('data-stopno');
@@ -601,7 +680,7 @@ $(document).on('click', '.different_each_day', function() {
             var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
 
             var newFilters_runPlan = new Array();
-            newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', zee);
+            newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', operation_zee);
 
             runPlanSearch.addFilters(newFilters_runPlan);
 
@@ -769,6 +848,8 @@ function checkIfMultiFreq(value, unchecked) {
         $(this).find(".nav-tabs li").each(function(index, element) {
             var stop_id = $(this).children('a').attr('href');
             stop_id = stop_id.split('#');
+            var zee_id = $(this).children('a').attr('data-zee');
+            var operation_zee = $(this).children('a').attr('data-operationzee');
             if (!isNullorEmpty(stop_id[1])) {
 
                 // To check if a new stop has been created. -1 = NO / 0 = YES
@@ -780,22 +861,32 @@ function checkIfMultiFreq(value, unchecked) {
                     rows = $(table_id);
                 }
                 console.log(rows);
+                //console.log($('#services' + stop_id[1] + ' > tbody')[0].innerHTML);
                 if (rows.length == 1) {
 
                 } else {
+                    var daycreated = false;
                     $(table_id).each(function(i, row) {
+
+                        console.log('i', i);
+                        console.log('row', row);
                         if (i >= 1) {
                             var $row = $(row);
                             var freq_id = $row.find('.run').attr('data-freqid');
+                            console.log('freq_id', freq_id);
 
                             if (unchecked == 'T') {
                                 if ($row.find('#table_run').attr('data-day') == value) {
                                     $row.hide();
                                     delete_freq_array[delete_freq_array.length] = freq_id;
+                                    daycreated = true;
                                 }
                             } else {
                                 if ($row.find('#table_run').attr('data-day') == value) {
                                     $row.show();
+                                    console.log('show');
+                                    daycreated = true;
+
                                     var index = delete_freq_array.indexOf(freq_id);
                                     if (index > -1) {
                                         delete_freq_array.splice(index, 1);
@@ -804,9 +895,61 @@ function checkIfMultiFreq(value, unchecked) {
                             }
 
                         }
-                    })
-                }
 
+                    });
+                    console.log('daycreated', daycreated);
+                    if (daycreated == false && unchecked == 'F') {
+
+                        var newRow = $('#services' + stop_id[1] + ' > tbody')[0].insertRow();
+                        console.log('row inserted', value);
+
+                        zee = nlapiGetFieldValue('zee');
+                        var create_run_html = '';
+                        var run_selection_html = '';
+                        var runPlanSearch = nlapiLoadSearch('customrecord_run_plan', 'customsearch_app_run_plan_active');
+                        var newFilters_runPlan = new Array();
+                        newFilters_runPlan[newFilters_runPlan.length] = new nlobjSearchFilter('custrecord_run_franchisee', null, 'is', operation_zee);
+                        runPlanSearch.addFilters(newFilters_runPlan);
+
+                        var resultSet_runPlan = runPlanSearch.runSearch();
+                        resultSet_runPlan.forEachResult(function(searchResult_runPlan) {
+                            run_selection_html += '<option value="' + searchResult_runPlan.getValue('internalid') + '">' + searchResult_runPlan.getValue('name') + '</option>';
+
+                            return true;
+                        });
+
+                        var day;
+                        switch (value) {
+                            case 'mon':
+                                day = 'MONDAY';
+                                break;
+                            case 'tue':
+                                day = 'TUESDAY';
+                                break;
+                            case 'wed':
+                                day = 'WEDNESDAY';
+                                break;
+                            case 'thu':
+                                day = 'THURSDAY';
+                                break;
+                            case 'fri':
+                                day = 'FRIDAY';
+                                break;
+                        }
+
+
+                        create_run_html += '<tr><td style="vertical-align: middle;text-align: center;color: white;background-color: #607799;" class="day" data-freqid="">' + day + '</td><td><select id="table_run_mon" data-day="' + value + '" class="form-control run"  data-oldrun="" data-stopid="" data-freqid=""><option value="0"></option>';
+                        create_run_html += run_selection_html;
+                        create_run_html += '</select></td><td><input id="table_service_time" class="form-control service_time" data-stopno="" data-oldtime="" type="time" /></td><td><input id="table_earliest_time" data-oldearliesttime="" class="form-control earliest_time" data-stopno="" type="time" /></td><td><input id="table_latest_time" class="form-control latest_time" data-stopno="" data-oldlatesttime="" type="time" /></td></tr>';
+
+                        newRow.innerHTML = create_run_html;
+                        newRow.className = 'newrow';
+                        //console.log('previousRow', previousRow);
+                        //previousRow.after(create_run_html);
+                    } else if (daycreated == false && unchecked == 'T') {
+                        $('.newrow').hide();
+                    }
+                }
             }
         });
     });
@@ -814,7 +957,7 @@ function checkIfMultiFreq(value, unchecked) {
 
 
 function saveRecord() {
-
+    console.log('SAVING RECORD');
 
     var customer_id = nlapiGetFieldValue('customer_id');
     var service_id = nlapiGetFieldValue('service_id');
@@ -864,7 +1007,6 @@ function saveRecord() {
 
                     console.log('service_time: ' + $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
                     var service_time = onTimeChange($('#' + stop_id[1]).find('#service_time' + stop_id[1]).val());
-
                     var earliest_time = ($('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).val());
                     var latest_time = ($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).val());
 
@@ -1059,13 +1201,6 @@ function saveRecord() {
         nlapiSetFieldValue('delete_freq', delete_freq_string)
     }
 
-    /*    for (var i = 0; i < freq_time_current_array.length; i++) {
-            if (freq_time_current_array[i + 1] < freq_time_current_array[i]) {
-                error = true;
-                message += 'The service time of Stop ' + (i + 2) + ' should exceed the service time of Stop ' + (i + 1);
-            }
-        }*/
-
     if (error == true) {
         // $(this).children('a').css('background-color', '#337ab7')
         showAlert(message);
@@ -1169,7 +1304,7 @@ function convertTo24Hour(time) {
         time = time.replace('12', '0');
     }
     // if (time.indexOf('AM') != -1 && hours < 10) {
-    // 	time = time.replace(hours, ('0' + hours));
+    //  time = time.replace(hours, ('0' + hours));
     // }
     if (time.indexOf('PM') != -1 && hours < 12) {
         console.log(hours + 12)

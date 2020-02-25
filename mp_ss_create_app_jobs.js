@@ -2,7 +2,7 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-01-24 09:24:01
+ * @Last Modified time: 2020-02-18 15:31:39
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -114,6 +114,7 @@ function main() {
             var service_leg_name = searchResult.getValue("name", null, "GROUP");
             var service_leg_zee = searchResult.getValue("custrecord_service_leg_franchisee", null, "GROUP");
             var service_leg_customer = searchResult.getValue("custrecord_service_leg_customer", null, "GROUP");
+            var service_leg_customer_text = searchResult.getText("custrecord_service_leg_customer", null, "GROUP");
             var service_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
             var service_leg_service = searchResult.getValue("custrecord_service_leg_service", null, "GROUP");
             var service_leg_service_text = searchResult.getText("custrecord_service_leg_service", null, "GROUP");
@@ -216,7 +217,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc,service_leg_customer_text);
                         } else {
 
                             var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
@@ -236,7 +237,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc,service_leg_customer_text);
                         }
                     }
                 }
@@ -300,16 +301,21 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     service_leg_addr_state,
     service_leg_addr_postcode,
     service_leg_addr_lat,
-    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type,service_freq_adhoc) {
+    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc,service_leg_customer_text) {
     var app_job_rec = nlapiCreateRecord('customrecord_job');
     app_job_rec.setFieldValue('custrecord_job_franchisee', service_leg_zee);
     nlapiLogExecution('DEBUG', 'Adhoc Value', service_freq_adhoc);
-    if(service_freq_adhoc == 'T'){
-        app_job_rec.setFieldValue('custrecord_app_job_stop_name', 'ADHOC - ' + service_leg_name);
+    if (service_freq_adhoc == 'T') {
+        if (service_leg_location_type == 2) {
+            app_job_rec.setFieldValue('custrecord_app_job_stop_name', 'ADHOC - ' + service_leg_name + ' - ' + service_leg_customer_text);
+        } else {
+            app_job_rec.setFieldValue('custrecord_app_job_stop_name', 'ADHOC - ' + service_leg_name);
+        }
+
     } else {
-       app_job_rec.setFieldValue('custrecord_app_job_stop_name', service_leg_name); 
+        app_job_rec.setFieldValue('custrecord_app_job_stop_name', service_leg_name);
     }
-    
+
     app_job_rec.setFieldValue('custrecord_job_customer', service_leg_customer);
     app_job_rec.setFieldValue('custrecord_job_source', 6);
     app_job_rec.setFieldValue('custrecord_job_service', service_id);
