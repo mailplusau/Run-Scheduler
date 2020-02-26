@@ -381,8 +381,9 @@ function createStops(request, response) {
                 var service_leg_duration = searchResult_serviceLeg.getValue("custrecord_service_leg_duration");
                 var service_leg_notes = searchResult_serviceLeg.getValue("custrecord_service_leg_notes");
                 var service_leg_transfer_stop_linked = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_linked_stop");
+                var service_leg_trf_leg = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_leg");
 
-                if (!isNullorEmpty(service_leg_transfer_stop_linked)) {
+                if (!isNullorEmpty(service_leg_transfer_stop_linked) && service_leg_trf_leg == 2) {
                     transfer_stop_linked_array[transfer_stop_linked_array.length] = service_leg_transfer_stop_linked;
                 }
 
