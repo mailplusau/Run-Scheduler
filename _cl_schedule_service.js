@@ -228,7 +228,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                             }
                             for (i = 0; i < transfer_stop_linked.length; i++) {
                                 if (main_stop_id[1] == transfer_stop_linked[i]) {
-                                    $('#' + main_stop_id[1]).find('#run' + main_stop_id[1]).val('');
+                                    if (isNullorEmpty(old_stored_run)) {
+                                        $('#' + main_stop_id[1]).find('#run' + main_stop_id[1]).val('');
+                                    }
                                     if (transfer_type[i] == 1) {
                                         $('#' + main_stop_id[1]).find('#service_time' + main_stop_id[1]).val(service_time);
                                         $('#' + main_stop_id[1]).find('#earliest_time' + main_stop_id[1]).val(earliest_time);
@@ -325,7 +327,9 @@ $(".nav-tabs").on("click", "li a", function(e) {
                 //FOR THE SECOND PART OF A TRANSFER THE RUN IS NOT PREFILLED AND IF FACE TO FACE, THE TIMES ARE NOT EDITABLED (SAME AS THE TIMES OF THE FIRST PART OF THE TRANSFER)
                 for (i = 0; i < transfer_stop_linked.length; i++) {
                     if (stop_id[1] == transfer_stop_linked[i]) {
-                        $('#' + stop_id[1]).find('#run' + stop_id[1]).val('');
+                        if (isNullorEmpty(old_stored_run)) {
+                            $('#' + stop_id[1]).find('#run' + stop_id[1]).val('');
+                        }
                         if (transfer_type[i] == 1) {
                             $('#' + stop_id[1]).find('#service_time' + stop_id[1]).val(service_time);
                             $('#' + stop_id[1]).find('#earliest_time' + stop_id[1]).val(earliest_time);
