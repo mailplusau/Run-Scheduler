@@ -259,6 +259,8 @@ function runPlanner(request, response) {
             var old_freq = [];
 
             var stop_freq_json = '{ "data": [';
+            var stop_freq_json_2 = '';
+            var stop_freq_json_3 = '';
 
             resultSet.forEachResult(function(searchResult) {
                 stop_id = searchResult.getValue('internalid', null, "GROUP");
@@ -271,22 +273,22 @@ function runPlanner(request, response) {
                 service_text = searchResult.getText('custrecord_service_leg_service', null, "GROUP");
                 customer_id = searchResult.getValue('custrecord_service_leg_customer', null, "GROUP");
                 customer_text = searchResult.getText('custrecord_service_leg_customer', null, "GROUP");
-                customer_zee = searchResult.getValue("partner","CUSTRECORD_SERVICE_LEG_CUSTOMER","GROUP");
+                customer_zee = searchResult.getValue("partner", "CUSTRECORD_SERVICE_LEG_CUSTOMER", "GROUP");
                 customer_id_text = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_LEG_CUSTOMER", "GROUP");
                 customer_name_text = searchResult.getValue("companyname", "CUSTRECORD_SERVICE_LEG_CUSTOMER", "GROUP");
                 ncl = searchResult.getValue('custrecord_service_leg_non_cust_location', null, "GROUP");
-/*
-                if (!isNullorEmpty(stop_notes)) {
-                    if (isNullorEmpty(ncl)) {
-                        stop_notes = '</br><b>Stop Notes</b> - ' + stop_notes + '</br>';
-                    } else {
-                        // stop_notes = '</br><b>Stop Notes</b> - '+customer_name_text + ' : ' + stop_notes + '</br>';
-                        stop_notes = '<b>Stop Notes</b> - ' + stop_notes + '</br>';
-                    }
+                /*
+                                if (!isNullorEmpty(stop_notes)) {
+                                    if (isNullorEmpty(ncl)) {
+                                        stop_notes = '</br><b>Stop Notes</b> - ' + stop_notes + '</br>';
+                                    } else {
+                                        // stop_notes = '</br><b>Stop Notes</b> - '+customer_name_text + ' : ' + stop_notes + '</br>';
+                                        stop_notes = '<b>Stop Notes</b> - ' + stop_notes + '</br>';
+                                    }
 
-                } else {
-                    stop_notes = '';
-                }*/
+                                } else {
+                                    stop_notes = '';
+                                }*/
 
                 freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
                 freq_mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
@@ -344,8 +346,15 @@ function runPlanner(request, response) {
 
 
                 if (stop_count != 0 && old_stop_name != stop_name) {
+
                     if (!isNullorEmpty(old_freq_id.length)) {
-                        stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                        if (stop_freq_json_2.length > 900000) {
+                            stop_freq_json_3 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                        } else if (stop_freq_json.length > 900000) {
+                            stop_freq_json_2 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                        } else {
+                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                        }
 
                         old_stop_name = null;
                         old_stop_lat;
@@ -408,8 +417,13 @@ function runPlanner(request, response) {
                     var result = arraysEqual(freq, old_freq);
                     if (old_service_time != freq_time_current && stop_count != 0) {
                         if (!isNullorEmpty(old_freq_id.length)) {
-                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
-
+                            if (stop_freq_json_2.length > 900000) {
+                                stop_freq_json_3 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            } else if (stop_freq_json.length > 900000) {
+                                stop_freq_json_2 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            } else {
+                                stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            }
                             old_stop_name = null;
                             old_service_time = null;
                             old_stop_id = [];
@@ -466,7 +480,13 @@ function runPlanner(request, response) {
                         }
                     } else if (result == false && stop_count != 0) {
                         if (!isNullorEmpty(old_freq_id.length)) {
-                            stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            if (stop_freq_json_2.length > 900000) {
+                                stop_freq_json_3 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            } else if (stop_freq_json.length > 900000) {
+                                stop_freq_json_2 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            } else {
+                                stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                            }
 
 
                             old_stop_name = null;
@@ -576,19 +596,30 @@ function runPlanner(request, response) {
             });
 
             if (stop_count > 0) {
-                stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                if (stop_freq_json_2.length > 900000) {
+                    stop_freq_json_3 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                    stop_freq_json_3 = stop_freq_json_3.substring(0, stop_freq_json_3.length - 1);
+                } else if (stop_freq_json.length > 900000) {
+                    stop_freq_json_2 += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
+                    stop_freq_json_2 = stop_freq_json_2.substring(0, stop_freq_json_2.length - 1);
+                } else {
+                    stop_freq_json += updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old_stop_id, old_closing_day, old_opening_day, old_stop_lat, old_stop_lon, old_stop_notes, old_ncl, old_freq_id, old_customer_id_array, old_customer_text_array, old_customer_zee_array, old_service_notes, old_run_plan_array, old_run_plan_text_array, service_id_array, service_name_array, old_freq_mon, old_freq_tue, old_freq_wed, old_freq_thu, old_freq_fri);
 
+                }
                 stop_freq_json = stop_freq_json.substring(0, stop_freq_json.length - 1);
             }
 
-
             stop_freq_json += ']}';
 
+
             nlapiLogExecution('DEBUG', 'Stop Freq JSON', stop_freq_json);
+            nlapiLogExecution('DEBUG', 'Stop Freq JSON 2', stop_freq_json_2);
             nlapiLogExecution('DEBUG', 'Stop Freq JSON length', stop_freq_json.length);
 
             var zeeRecord = nlapiLoadRecord('partner', zee);
             zeeRecord.setFieldValue('custentity_zee_run', stop_freq_json);
+            zeeRecord.setFieldValue('custentity_zee_run_2', stop_freq_json_2);
+            zeeRecord.setFieldValue('custentity_zee_run_3', stop_freq_json_3);
             nlapiSubmitRecord(zeeRecord);
         }
 
@@ -793,7 +824,7 @@ function updateJSON(old_stop_name, old_freq_time_current, old_stop_duration, old
         for (var i = 0; i < service_id_array.length; i++) {
             stop_freq_json += '{';
             stop_freq_json += '"customer_id": "' + old_customer_id_array[i] + '",';
-            stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",'; 
+            stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",';
             stop_freq_json += '"customer_notes": "' + old_service_notes[i] + '",';
             stop_freq_json += '"customer_text": "' + old_customer_text_array[i] + '",';
             stop_freq_json += '"run_plan": "' + old_run_plan_array[i] + '",';
@@ -861,7 +892,7 @@ function addDayJSON(day_number, old_stop_name, old_freq_time_current, old_stop_d
         // nlapiLogExecution('DEBUG', 'closing day', old_closing_day[i]);
         stop_freq_json += '{';
         stop_freq_json += '"customer_id": "' + old_customer_id_array[i] + '",';
-        stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",';        
+        stop_freq_json += '"customer_zee": "' + old_customer_zee_array[i] + '",';
         stop_freq_json += '"customer_notes": "' + old_service_notes[i] + '",';
         if (date_of_week >= old_closing_day[i] && date_of_week < old_opening_day[i]) {
             stop_freq_json += '"customer_text": "CLOSED - ' + old_customer_text_array[i] + '",';
