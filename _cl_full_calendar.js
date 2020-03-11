@@ -275,12 +275,8 @@ function pageInit() {
                 for (var x = 0; x < event.services.length; x++) {
 
                     var split_name = event.services[x].customer_text.split('CLOSED - ');
-                    console.log('event.services[x].customer_zee', event.services[x].customer_zee);
-                    console.log('zee', zee);
 
                     if (isNullorEmpty(split_name[0])) {
-                        console.log('event.services[x].customer_zee', event.services[x].customer_zee);
-                        console.log('zee', zee);
                         if (event.services[x].customer_zee != zee) {
                             body += '<tr style="color:#ad3a3a;"><td><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="You are not allowed to edit because you are not the owner of this customer."><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td></span><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
                         } else {
