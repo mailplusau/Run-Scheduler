@@ -94,9 +94,6 @@ function pageInit() {
     if (zee != 0) {
 
         var zeeRecord = nlapiLoadRecord('partner', zee);
-        var stop_freq_json = zeeRecord.getFieldValue('custentity_zee_run');
-        var stop_freq_json_2 = zeeRecord.getFieldValue('custentity_zee_run_2');
-        var stop_freq_json_3 = zeeRecord.getFieldValue('custentity_zee_run_3');
         var multi = zeeRecord.getFieldValues('custentity_zee_multiple_territory');
         // var multi_text = zeeRecord.getFieldTexts('custentity_zee_multiple_territory');
 
@@ -104,23 +101,16 @@ function pageInit() {
             nlapiSetFieldValue('multi_zee', multi.toString());
         }
 
-        // nlapiSetFieldValue('multi_zee_text', multi_text.toString());
-        console.log('stop_freq_json', stop_freq_json);
-        console.log('stop_freq_json_2', stop_freq_json_2);
-        console.log('stop_freq_json_3', stop_freq_json_3);
+        var stop_freq_json_array = [];
 
-        if (!isNullorEmpty(stop_freq_json_3)) {
-            stop_freq_json = stop_freq_json.substring(0, stop_freq_json.length - 2);
-            stop_freq_json_3 += ']}';
-            var stop_freq_json_all = stop_freq_json + ',' + stop_freq_json_2 + stop_freq_json_3;
+        var i = 0;
+        while (!isNullorEmpty(zeeRecord.getFieldValue('custentity_zee_run_' + i))){
+            stop_freq_json_array[stop_freq_json_array.length] = zeeRecord.getFieldValue('custentity_zee_run_' + i);
+            i++;
         }
-        else if (!isNullorEmpty(stop_freq_json_2)) {
-            stop_freq_json = stop_freq_json.substring(0, stop_freq_json.length - 2);
-            stop_freq_json_2 += ']}'
-            var stop_freq_json_all = stop_freq_json + ',' + stop_freq_json_2;
-        } else {
-            var stop_freq_json_all = stop_freq_json;
-        }
+        var stop_freq_json_all = stop_freq_json_array.join('},');
+        stop_freq_json_all += ']}';
+
         console.log('stop_freq_json_all', stop_freq_json_all);
         var parsedStopFreq = JSON.parse(stop_freq_json_all);
 
