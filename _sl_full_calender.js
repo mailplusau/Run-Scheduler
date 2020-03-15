@@ -603,9 +603,14 @@ function runPlanner(request, response) {
             nlapiLogExecution('DEBUG', 'Stop Freq JSON 2', stop_freq_json_array[1]);
             nlapiLogExecution('DEBUG', 'Stop Freq JSON length', stop_freq_json_array.length);
 
+            if (stop_count == 0){
+                stop_freq_json_array = ['{ "data": [,']
+            } 
+
             var zeeRecord = nlapiLoadRecord('partner', zee);
             for (i = 0; i < stop_freq_json_array.length; i++) {
                 zeeRecord.setFieldValue('custentity_zee_run_' + i, stop_freq_json_array[i].substring(0, stop_freq_json_array[i].length - 1));
+                //zeeRecord.setFieldValue('custentity_zee_run_' + i, stop_freq_json_array[i]);
             }
             nlapiSubmitRecord(zeeRecord);
         }
