@@ -90,6 +90,9 @@ function createStops(request, response) {
         form.addField('custpage_updated_stop_zee', 'text', 'Service ID').setDisplayType('hidden');
         form.addField('new_service_leg_id_string', 'text', 'Service ID').setDisplayType('hidden');
         //form.addField('custpage_transfer', 'text', 'Service ID').setDisplayType('hidden');
+        form.addField('transfer_string', 'text', 'Service ID').setDisplayType('hidden');
+        form.addField('transfer_zee_string', 'text', 'Service ID').setDisplayType('hidden');
+        form.addField('stop_string', 'text', 'Service ID').setDisplayType('hidden');
 
         /**
          * Description - Get all the AP Lodgement locations for this franchisee
@@ -468,11 +471,16 @@ function createStops(request, response) {
         var updated_stop_string = request.getParameter('custpage_updated_stop');
         var old_stop_string = request.getParameter('custpage_old_stop');
         var updated_stop_zee_string = request.getParameter('custpage_updated_stop_zee');
+
         // var new_service_leg_id_string = request.getParameter('new_service_leg_id_string');
         // var zee = request.getParameter('custpage_zee');
 
-        /*        var transfer_string = request.getParameter('custpage_transfer');
-                var transfer_array = transfer_string.split(',');*/
+        var transfer_string = request.getParameter('transfer_string');
+        var transfer_array = transfer_string.split(',');
+        var transfer_zee_string = request.getParameter('transfer_zee_string');
+        var transfer_zee_array = transfer_zee_string.split(',');
+        var stop_string = request.getParameter('stop_string');
+        var stop_array = stop_string.split(',');
 
 
         nlapiLogExecution('DEBUG', 'deleted_stop_string', deleted_stop_string);
@@ -481,6 +489,10 @@ function createStops(request, response) {
         nlapiLogExecution('DEBUG', 'updated_stop_string', updated_stop_string);
         nlapiLogExecution('DEBUG', 'old_stop_string', old_stop_string);
         nlapiLogExecution('DEBUG', 'updated_stop_zee_string', updated_stop_zee_string);
+
+        nlapiLogExecution('DEBUG', 'stop_array', stop_array);
+        nlapiLogExecution('DEBUG', 'transfer_zee_array', transfer_zee_array);
+        nlapiLogExecution('DEBUG', 'transfer_array', transfer_array);
 
         // if (!isNullorEmpty(new_service_leg_id_string)) {
         //  var new_service_leg_id = new_service_leg_id_string.split(',');
@@ -509,8 +521,6 @@ function createStops(request, response) {
                 nlapiSendEmail(409635, zee_email, 'Service Leg Stop Updation', 'Old Stop: ' + old_stop[i] + ' New Stop: ' + updated_stop[i], null);
 
             }
-
-
 
         }
 
@@ -545,6 +555,39 @@ function createStops(request, response) {
                 nlapiSendEmail(409635, zee_email, 'Service Leg Deletetion', message, null);
             }
         }
+
+        for (i = 0; i < stop_array.length; i++) {
+            var stop_id = stop_array[i];
+            nlapiLogExecution('DEBUG', 'stop_id', stop_id);
+            nlapiLogExecution('DEBUG', 'parseInt(zee_response)', parseInt(zee_response));
+            var leg_record = nlapiLoadRecord('customrecord_service_leg', stop_id);
+            leg_record.setFieldValue('custrecord_service_leg_franchisee', parseInt(zee_response));
+            var service_leg = leg_record.getFieldValue('custrecord_service_leg_number');
+            if (!isNullorEmpty(transfer_array)) {
+                for (var y = 0; y < transfer_array.length; y++) {
+                    nlapiLogExecution('DEBUG', 'transfer_array[y] + 1', parseInt(transfer_array[y]) + 1);
+                    if (service_leg > parseInt(transfer_array[y]) + 1) {
+                        nlapiLogExecution('DEBUG', 'after transfer');
+                        leg_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
+                    }
+                    if (!isNullorEmpty(leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop'))) {
+                        var linked_stop = leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop');
+                        var linked_stop_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
+/*                        if (y == 0) {
+                            transfer_zee = parseInt(zee_response);
+                        } else {
+                            transfer_zee = transfer_zee_array[y - 1];
+                        }*/
+                        linked_stop_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
+                        linked_stop_record.setFieldValue('custrecord_service_leg_trf_franchisee', parseInt(zee_response));
+                        leg_record.setFieldValue('custrecord_service_leg_trf_franchisee', transfer_zee_array[y]);
+                        nlapiSubmitRecord(linked_stop_record);
+                    }
+                }
+            }
+            nlapiSubmitRecord(leg_record);
+        }
+
 
         var params = {
             customerid: customer_id,
