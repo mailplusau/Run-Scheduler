@@ -49,6 +49,7 @@ function createStops(request, response) {
         if (!isNullorEmpty(params.zee)) {
             zee = params.zee
         }
+        nlapiLogExecution('DEBUG', 'zee', zee);
 
 
         var service_id = (params.serviceid);
@@ -127,7 +128,12 @@ function createStops(request, response) {
 
         var resultSet_addresses = searched_address.runSearch();
 
-        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
+        if (nlapiGetContext().getEnvironment() == "SANDBOX") {
+            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg_2');
+        } else {
+
+            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
+        }
 
         var newFilters = new Array();
         newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_service', null, 'is', service_id);
@@ -386,7 +392,7 @@ function createStops(request, response) {
                 var service_leg_transfer_stop_linked = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_linked_stop");
                 var service_leg_trf_leg = searchResult_serviceLeg.getValue("custrecord_service_leg_trf_leg");
 
-                if (!isNullorEmpty(service_leg_transfer_stop_linked) && service_leg_trf_leg == 2) {
+                if (!isNullorEmpty(service_leg_transfer_stop_linked) && service_leg_trf_leg == 1) {
                     transfer_stop_linked_array[transfer_stop_linked_array.length] = service_leg_transfer_stop_linked;
                 }
 
@@ -468,6 +474,7 @@ function createStops(request, response) {
         var deploy = request.getParameter('custpage_deploy');
         var zee_response = request.getParameter('custpage_zee');
 
+
         var updated_stop_string = request.getParameter('custpage_updated_stop');
         var old_stop_string = request.getParameter('custpage_old_stop');
         var updated_stop_zee_string = request.getParameter('custpage_updated_stop_zee');
@@ -490,6 +497,7 @@ function createStops(request, response) {
         nlapiLogExecution('DEBUG', 'old_stop_string', old_stop_string);
         nlapiLogExecution('DEBUG', 'updated_stop_zee_string', updated_stop_zee_string);
 
+        nlapiLogExecution('DEBUG', 'zee_response', zee_response);
         nlapiLogExecution('DEBUG', 'stop_array', stop_array);
         nlapiLogExecution('DEBUG', 'transfer_zee_array', transfer_zee_array);
         nlapiLogExecution('DEBUG', 'transfer_array', transfer_array);
@@ -573,11 +581,6 @@ function createStops(request, response) {
                     if (!isNullorEmpty(leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop'))) {
                         var linked_stop = leg_record.getFieldValue('custrecord_service_leg_trf_linked_stop');
                         var linked_stop_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
-/*                        if (y == 0) {
-                            transfer_zee = parseInt(zee_response);
-                        } else {
-                            transfer_zee = transfer_zee_array[y - 1];
-                        }*/
                         linked_stop_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
                         linked_stop_record.setFieldValue('custrecord_service_leg_trf_franchisee', parseInt(zee_response));
                         leg_record.setFieldValue('custrecord_service_leg_trf_franchisee', transfer_zee_array[y]);
