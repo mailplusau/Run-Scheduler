@@ -102,6 +102,7 @@ $(document).on('click', '#alert .close', function(e) {
 
 function onclick_back() {
     var params = {
+        zee: parseInt(nlapiGetFieldValue('zee')),
         serviceid: nlapiGetFieldValue('service_id'),
         scriptid: nlapiGetFieldValue('custpage_suitlet'),
         deployid: nlapiGetFieldValue('custpage_deploy')

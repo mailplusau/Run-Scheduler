@@ -41,6 +41,7 @@ function pageInit() {
     var service_freq_count_array = [];
     var service_leg_count_array = [];
     var service_no_of_legs_array = [];
+    var show_on_app_array = [];
 
     var dataSet = '{"data":[';
 
@@ -61,6 +62,7 @@ function pageInit() {
         var service_leg_freq_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
         var service_leg_count = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
+        var show_on_app = searchResult.getValue("custrecord_show_on_app", null, "GROUP");
 
         if (count != 0 && old_customer_id != custid) {
 
@@ -74,7 +76,7 @@ function pageInit() {
 
                 dataSet += '{';
 
-                dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '","service_id": "' + service_id_array[i] + '"'
+                dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '", "show_on_app":"' + show_on_app_array[i] + '","service_id": "' + service_id_array[i] + '"';
 
                 dataSet += '},'
             }
@@ -91,6 +93,7 @@ function pageInit() {
             service_freq_count_array = [];
             service_leg_count_array = [];
             service_no_of_legs_array = [];
+            show_on_app_array = [];
 
             /*scheduled = false;*/
 
@@ -102,6 +105,7 @@ function pageInit() {
             service_freq_count_array[service_freq_count_array.length] = service_leg_freq_count;
             service_leg_count_array[service_leg_count_array.length] = service_leg_count;
             service_no_of_legs_array[service_no_of_legs_array.length] = no_of_legs;
+            show_on_app_array[show_on_app_array.length] = show_on_app;
 
             /*            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
                             scheduled = true;
@@ -117,6 +121,7 @@ function pageInit() {
             service_freq_count_array[service_freq_count_array.length] = service_leg_freq_count;
             service_leg_count_array[service_leg_count_array.length] = service_leg_count;
             service_no_of_legs_array[service_no_of_legs_array.length] = no_of_legs;
+            show_on_app_array[show_on_app_array.length] = show_on_app;
             /*            if (service_leg_freq_count == service_leg_count && service_leg_count == no_of_legs) {
                             scheduled = true;
                         } else {
@@ -146,7 +151,7 @@ function pageInit() {
 
             dataSet += '{';
 
-            dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '","service_id": "' + service_id_array[i] + '"'
+            dataSet += '"service_name": "' + service_name_array[i] + '", "service_descp": "' + service_descp_array[i] + '", "freq_count": "' + service_freq_count_array[i] + '", "leg_count": "' + service_leg_count_array[i] + '", "no_of_legs": "' + service_no_of_legs_array[i] + '", "service_price": "' + service_price_array[i] + '", "service_scheduled": "' + service_scheduled_array[i] + '", "show_on_app":"' + show_on_app_array[i] + '","service_id": "' + service_id_array[i] + '"';
 
             dataSet += '},'
         }
@@ -297,6 +302,10 @@ $(document).on('click', '.details-control', function() {
             $(this).find(".service_summary").prop('disabled', true);
         }
     });
+
+    $(function() {
+        $('[data-toggle="tooltip"]').tooltip()
+    });
 });
 
 $(document).on('click', '.setup_service', function() {
@@ -330,7 +339,7 @@ $(document).on('click', '.service_summary', function() {
     var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all');
     var newFilters = new Array();
     newFilters[newFilters.length] = new nlobjSearchFilter('internalid', 'custrecord_service_leg_service', 'is', service_id);
-    newFilters[newFilters.length] = new nlobjSearchFilter("partner","CUSTRECORD_SERVICE_LEG_CUSTOMER", 'is', zee);
+    newFilters[newFilters.length] = new nlobjSearchFilter("partner", "CUSTRECORD_SERVICE_LEG_CUSTOMER", 'is', zee);
     newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
 
     serviceLegSearch.addFilters(newFilters);
@@ -547,62 +556,6 @@ $(document).on('click', '.service_summary', function() {
     bodyStop += '</ol>';
     bodyStop += '</div>';
 
-    // BodyService
-    /*    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
-        var newFilters = new Array();
-        console.log(service_id);
-        newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'is', service_id);
-        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', zee);
-        //newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
-
-        serviceSearch.addFilters(newFilters);
-
-        var serviceResultSet = serviceSearch.runSearch();
-        serviceResultSet.forEachResult(function(searchResult) {
-            var customer_name = searchResult.getText('custrecord_service_customer', null, "GROUP");
-            console.log(customer_name);
-            var service_type = searchResult.getText('custrecord_service', null, "GROUP");
-            var mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-            var tue = searchResult.getValue("custrecord_service_freq_day_tue", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-            var wed = searchResult.getValue("custrecord_service_freq_day_wed", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-            var thu = searchResult.getValue("custrecord_service_freq_day_thu", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-            var fri = searchResult.getValue("custrecord_service_freq_day_fri", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-            var adhoc = searchResult.getValue("custrecord_service_freq_day_adhoc", "CUSTRECORD_SERVICE_FREQ_SERVICE", "GROUP");
-
-            if (mon == 'T' && tue == 'T' && wed == 'T' && thu == 'T' && fri == 'T') {
-                frequency = 'Daily';
-            } else if (adhoc == 'T') {
-                frequency = 'ADHOC';
-            } else {
-                if (mon == 'T') {
-                    frequency += 'Mon, ';
-                }
-                if (tue == 'T') {
-                    frequency += 'Tue, ';
-                }
-                if (wed == 'T') {
-                    frequency += 'Wed, ';
-                }
-                if (thu == 'T') {
-                    frequency += 'Thu, ';
-                }
-                if (fri == 'T') {
-                    frequency += 'Fri, ';
-                }
-                frequency = frequency.substring(0, frequency.length - 2);
-            }
-
-
-
-            bodyService += '<div style="font-size: medium;"><ul style="list-style: none;"><li style="padding-top: 5px;"><span class="glyphicon glyphicon-user"></span>  ' + customer_name + '</li><li style="padding-top: 5px;"><span class="glyphicon glyphicon-list-alt"></span>  ' + service_type + '</li><li style="padding-top: 5px;">'
-            if (!isNullorEmpty(frequency)) {
-                bodyService += '<span class="glyphicon glyphicon-calendar"></span> ' + frequency + '';
-            }
-            bodyService += '</ul>';
-            return true
-        });
-    */
-
     bodyService += '<div style="font-size: medium;"><ul style="list-style: none;"><li style="padding-top: 5px;"><span class="glyphicon glyphicon-user"></span>  ' + obj['customer_name'] + '</li><li style="padding-top: 5px;"><span class="glyphicon glyphicon-list-alt"></span>  ' + obj['service'] + '</li><li style="padding-top: 5px;">'
 
     bodyService += '</div></div>';
@@ -640,6 +593,7 @@ function format(index) {
         var service_freq_count_active;
         var count = 0;
         var service_scheduled;
+        var show_on_app;
         $.each(service, function(key, value) {
             if (key == "leg_count") {
                 service_leg_count = parseInt(value);
@@ -658,57 +612,32 @@ function format(index) {
                 console.log('service_scheduled', service_scheduled);
             }
 
+            if (key == "show_on_app") {
+                show_on_app = value;
+                console.log('show_on_app', show_on_app);
+            }
+
             console.log(key)
 
             service_leg_count_active = service_leg_count;
             service_freq_count_active = service_freq_count;
 
-
-            /*            if (key == "service_id") {
-                            console.log('value', value);
-                            var legSearch = nlapiLoadSearch('customrecord_service', 'customsearch_inactive_legs');
-
-                            var newFilters = new Array();
-                            newFilters[newFilters.length] = new nlobjSearchFilter('internalid', null, 'anyof', value);
-                            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_franchisee', null, 'is', nlapiGetFieldValue('zee'));
-                            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', service.custid);
-                            legSearch.addFilters(newFilters);
-
-                            var resultSetLeg_inactive = legSearch.runSearch();
-                            resultSetLeg_inactive.forEachResult(function(searchResult) {
-                                var service_leg_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "COUNT");
-                                var service_freq_count_inactive = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_SERVICE", "COUNT");
-                                var serv_id = searchResult.getValue("internalid", null, "GROUP");
-                                console.log('service_leg_count_inactive', service_leg_count_inactive);
-                                console.log('service_freq_count_inactive', service_freq_count_inactive);
-                                console.log('serv_id', serv_id);
-
-                                service_leg_count_active = service_leg_count - service_leg_count_inactive;
-                                service_freq_count_active = service_freq_count - service_freq_count_inactive;
-                                console.log('service_leg_count_active', service_leg_count_active);
-                                console.log('service_freq_count_active', service_freq_count_active);
-                                count++;
-                                return true
-                            });
-                            console.log('count', count);
-                            console.log('service_leg_count_active', service_leg_count_active);
-                            console.log('service_freq_count_active', service_freq_count_active);
-                            //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
-                            if (no_of_legs <= service_leg_count_active || no_of_legs <= service_freq_count_active) {
-                                html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
-                            } else {
-                                html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
-                            }*/
             if (key == "service_id") {
                 //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
                 if (service_scheduled == 1) {
-                    html += '<td style="text-align: center;"><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" value="REMOVE FROM RUN" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" style="white-space: normal;" value="REMOVE FROM RUN" /></div>';
+                    if (show_on_app == 2) {
+                        html += '<div class="col-sm-4"><input type="button" data-toggle="tooltip" data-placement="right" title="If you activate that service it will appear on the app" class="form-control btn-xs btn-secondary show_app" data-serviceid="' + value + '" value="ACTIVATE" /></div></td>';
+                    } else {
+                        html += '<div class="col-sm-4"><input type="button" data-toggle="tooltip" data-placement="right" title="If you inactivate that service it will no longer appear on the app" class="form-control btn-xs btn-secondary show_app" data-serviceid="' + value + '" value="INACTIVATE" /></div></td>';
+                    }
+
                 } else if (service_scheduled == 2) {
-                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 } else {
-                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 }
-            } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs" || key == "service_scheduled") {
+            } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs" || key == "service_scheduled" || key == "show_on_app") {
 
             } else {
                 html += '<td style="text-align: center;">' + value + '</td>';
@@ -726,6 +655,19 @@ function format(index) {
     return html;
 
 }
+
+$(document).on("click", ".show_app", function(e) {
+    var service_id = $(this).attr('data-serviceid');
+    var service_record = nlapiLoadRecord('customrecord_service', service_id);
+    var show_on_app = service_record.getFieldValue('custrecord_show_on_app');
+    if (isNullorEmpty(show_on_app) || show_on_app == 1) {
+        service_record.setFieldValue('custrecord_show_on_app', 2);
+    } else if (show_on_app == 2) {
+        service_record.setFieldValue('custrecord_show_on_app', 1);
+    }
+    nlapiSubmitRecord(service_record);
+    window.location.reload();
+});
 
 //On selecting zee, reload the SMC - Summary page with selected Zee parameter
 $(document).on("change", ".zee_dropdown", function(e) {

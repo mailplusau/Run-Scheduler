@@ -94,7 +94,6 @@ function pageInit() {
     if (zee != 0) {
 
         var zeeRecord = nlapiLoadRecord('partner', zee);
-        var stop_freq_json = zeeRecord.getFieldValue('custentity_zee_run', stop_freq_json);
         var multi = zeeRecord.getFieldValues('custentity_zee_multiple_territory');
         // var multi_text = zeeRecord.getFieldTexts('custentity_zee_multiple_territory');
 
@@ -102,10 +101,18 @@ function pageInit() {
             nlapiSetFieldValue('multi_zee', multi.toString());
         }
 
-        // nlapiSetFieldValue('multi_zee_text', multi_text.toString());
+        var stop_freq_json_array = [];
 
+        var i = 0;
+        while (!isNullorEmpty(zeeRecord.getFieldValue('custentity_zee_run_' + i))){
+            stop_freq_json_array[stop_freq_json_array.length] = zeeRecord.getFieldValue('custentity_zee_run_' + i);
+            i++;
+        }
+        var stop_freq_json_all = stop_freq_json_array.join('},');
+        stop_freq_json_all += ']}';
 
-        var parsedStopFreq = JSON.parse(stop_freq_json);
+        console.log('stop_freq_json_all', stop_freq_json_all);
+        var parsedStopFreq = JSON.parse(stop_freq_json_all);
 
         // console.log(parsedStopFreq);
 
@@ -258,11 +265,8 @@ function pageInit() {
                 for (var x = 0; x < event.services.length; x++) {
 
                     var split_name = event.services[x].customer_text.split('CLOSED - ');
-                    console.log('event.services[x].customer_zee', event.services[x].customer_zee);
 
                     if (isNullorEmpty(split_name[0])) {
-                        console.log('event.services[x].customer_zee', event.services[x].customer_zee);
-                        console.log('zee', zee);
                         if (event.services[x].customer_zee != zee) {
                             body += '<tr style="color:#ad3a3a;"><td><span class="d-inline-block" tabindex="0" data-toggle="tooltip" title="You are not allowed to edit because you are not the owner of this customer."><button type="button" class="btn btn-sm btn-warning glyphicon glyphicon-pencil edit_stop" data-serviceid="' + event.services[x].service_id + '" disabled></button></td></span><td>' + event.services[x].customer_text + '</td><td>' + event.services[x].service_text + '</td><td>' + event.services[x].customer_notes + '</td></tr>';
                         } else {
