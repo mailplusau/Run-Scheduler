@@ -625,7 +625,7 @@ function format(index) {
             if (key == "service_id") {
                 //html += '<td><button type="button" class="form-control btn-xs btn-secondary service_summary" data-toggle="modal" data-target="#myModal" data-serviceid="' + value + '"><span class="glyphicon glyphicon-eye-open"></span></button></td>';
                 if (service_scheduled == 1) {
-                    html += '<td style="text-align: center;"><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" style="white-space: normal;" value="REMOVE FROM RUN" /></div>';
+                    html += '<td style="text-align: center;"><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-primary setup_service" data-serviceid="' + value + '" value="EDIT STOP" /></div><div class="col-sm-4"><input type="button" class="form-control btn-xs btn-danger remove_service" data-serviceid="' + value + '" style="white-space: normal;" value="DELETE STOP" /></div>';
                     if (show_on_app == 2) {
                         html += '<div class="col-sm-4"><input type="button" data-toggle="tooltip" data-placement="right" title="If you activate that service it will appear on the app" class="form-control btn-xs btn-secondary show_app" data-serviceid="' + value + '" value="ACTIVATE" /></div></td>';
                     } else {
