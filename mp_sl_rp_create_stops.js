@@ -129,7 +129,7 @@ function createStops(request, response) {
         var resultSet_addresses = searched_address.runSearch();
 
         if (nlapiGetContext().getEnvironment() == "SANDBOX") {
-            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg_2');
+            var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
         } else {
 
             var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_serviceleg');
@@ -417,7 +417,7 @@ function createStops(request, response) {
                 inlineQty += '<td><textarea type="text" readonly class="form-control table_info" data-addresstype="' + service_leg_location_type + '"data-oldstop="' + service_leg_id + '" value="' + service_leg_location_type_text + '">' + display_html + '</textarea>';
 
                 inlineQty += '<input type="hidden" readonly class="form-control table_stop_name" data-oldvalue="' + service_leg_name + '" value="' + service_leg_name + '" data-customeraddressid="' + service_leg_addr_id + '" data-postbox="' + service_leg_postal + '" data-addr1="' + service_leg_addr1 + '" data-addr2="' +
-                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-storedzee="' + service_leg_linked_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
+                    service_leg_addr2 + '" data-city="' + service_leg_city + '" data-state="' + service_leg_state + '" data-zip="' + service_leg_zip + '" data-lat="' + service_leg_lat + '" data-lng="' + service_leg_lon + '" data-transfertype="' + service_leg_transfer_type + '"  data-linkedzee="' + service_leg_linked_zee + '" data-linkedstop="' + service_leg_transfer_stop_linked + '" data-storedzee="' + service_leg_linked_zee + '" data-ncl="' + service_leg_ncl + '" data-notes="' + service_leg_notes + '"/></td>';
 
                 inlineQty += '<td><input type="text" readonly class="form-control table_duration" data-oldstop="' + service_leg_duration + '" value="' + service_leg_duration + '" /></td>'
 
@@ -570,11 +570,13 @@ function createStops(request, response) {
             nlapiLogExecution('DEBUG', 'parseInt(zee_response)', parseInt(zee_response));
             var leg_record = nlapiLoadRecord('customrecord_service_leg', stop_id);
             leg_record.setFieldValue('custrecord_service_leg_franchisee', parseInt(zee_response));
-            var service_leg = leg_record.getFieldValue('custrecord_service_leg_number');
+            leg_record.setFieldValue('custrecord_service_leg_number', (i + 1));
+            //var service_leg = leg_record.getFieldValue('custrecord_service_leg_number');
             if (!isNullorEmpty(transfer_array)) {
                 for (var y = 0; y < transfer_array.length; y++) {
                     nlapiLogExecution('DEBUG', 'transfer_array[y] + 1', parseInt(transfer_array[y]) + 1);
-                    if (service_leg > parseInt(transfer_array[y]) + 1) {
+                    //if (service_leg > parseInt(transfer_array[y]) + 1) {
+                    if (i > parseInt(transfer_array[y])) {
                         nlapiLogExecution('DEBUG', 'after transfer');
                         leg_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
                     }
@@ -583,14 +585,14 @@ function createStops(request, response) {
                         var linked_stop_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
                         linked_stop_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
                         linked_stop_record.setFieldValue('custrecord_service_leg_trf_franchisee', parseInt(zee_response));
+                        linked_stop_record.setFieldValue('custrecord_service_leg_number', (i + 1));
                         leg_record.setFieldValue('custrecord_service_leg_trf_franchisee', transfer_zee_array[y]);
                         nlapiSubmitRecord(linked_stop_record);
                     }
                 }
             }
             nlapiSubmitRecord(leg_record);
-        }
-
+}
 
         var params = {
             customerid: customer_id,

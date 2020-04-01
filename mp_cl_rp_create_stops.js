@@ -891,6 +891,7 @@ function saveRecord() {
 
     for (var i = 0; i < edit_stop_elem.length; i++) {
         var stop_id = edit_stop_elem[i].getAttribute('data-newstop');
+        console.log('edit_stop_elem[i]', edit_stop_elem[i]);
         console.log('stop_id', stop_id);
         var old_stop_id = table_info_elem[i].getAttribute('data-oldstop');
         console.log('old_stop_id', old_stop_id);
@@ -899,16 +900,20 @@ function saveRecord() {
 
         var transfer_type = table_stop_name_elem[i].getAttribute('data-transfertype');
         var linked_zee = table_stop_name_elem[i].getAttribute('data-linkedzee');
+        var linked_stop = table_stop_name_elem[i].getAttribute('data-linkedstop');
         var old_value = table_stop_name_elem[i].getAttribute('data-oldvalue');
         var notes = table_stop_name_elem[i].getAttribute('data-notes');
 
         if (delete_stop_elem[i].value == 'T' && !isNullorEmpty(delete_stop_id)) {
-
             var serviceLegSearch = nlapiLoadSearch('customrecord_service_freq', 'customsearch_rp_servicefreq');
 
             var newFilters = new Array();
             newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_service', null, 'is', service_id);
-            newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_stop', null, 'is', delete_stop_id);
+            if (!isNullorEmpty(linked_stop)) {
+                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_stop', null, 'anyof', delete_stop_id, linked_stop);
+            } else {
+                newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_freq_stop', null, 'is', delete_stop_id);
+            }
 
             serviceLegSearch.addFilters(newFilters);
 
@@ -931,6 +936,7 @@ function saveRecord() {
 
 
             var service_leg_record = nlapiLoadRecord('customrecord_service_leg', delete_stop_id);
+            var linked_service_leg_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
 
             var deleted_link_zee = service_leg_record.getFieldValue('custrecord_service_leg_trf_franchisee');
 
@@ -942,16 +948,20 @@ function saveRecord() {
             }
 
             service_leg_record.setFieldValue('isinactive', 'T');
+            linked_service_leg_record.setFieldValue('isinactive', 'T');
 
             nlapiSubmitRecord(service_leg_record);
+            nlapiSubmitRecord(linked_service_leg_record);
 
         } else {
             //console.log('linked_stop', linked_stop);
             var transfer_created = false;
+            var edited = false;
             console.log('transfer_type', transfer_type);
             console.log('old_stop_id', old_stop_id);
 
             if (isNullorEmpty(old_stop_id)) {
+                edited = true;
                 var service_leg_record = nlapiCreateRecord('customrecord_service_leg');
                 //service_leg_record.setFieldValue('custrecord_service_leg_franchisee', zee);
                 service_leg_record.setFieldValue('custrecord_service_leg_customer', customer_id);
@@ -969,14 +979,13 @@ function saveRecord() {
                     service_leg_record_transfer.setFieldValue('custrecord_service_leg_service', service_id);
                 }
             } else if (!isNullorEmpty(old_stop_id)) {
-                var edited = false;
                 if (!isNullorEmpty(transfer_type) && transfer_type != 0) {
                     transfer_array[transfer_array.length] = i;
                     transfer_zee_array[transfer_zee_array.length] = linked_zee;
                 }
                 for (k = 0; k < edited_stop_array.length; k++) {
                     if (old_stop_id == edited_stop_array[k]) {
-                        var edited = true;
+                        edited = true;
                         var service_leg_record = nlapiLoadRecord('customrecord_service_leg', old_stop_id);
                         if (!isNullorEmpty(transfer_type) && transfer_type != 0) {
                             //transfer_array[transfer_array.length] = i;
@@ -1008,8 +1017,9 @@ function saveRecord() {
             }
 
             service_leg_record.setFieldValue('name', table_stop_name_elem[i].value);
+            console.log('table_stop_name_elem[i].value', table_stop_name_elem[i].value);
 
-            service_leg_record.setFieldValue('custrecord_service_leg_number', (i + 1));
+            //service_leg_record.setFieldValue('custrecord_service_leg_number', (i + 1));
             service_leg_record.setFieldValue('custrecord_service_leg_location_type', table_info_elem[i].getAttribute('data-addresstype'));
             if (!isNullorEmpty(table_stop_name_elem[i].getAttribute('data-ncl')) && table_stop_name_elem[i].getAttribute('data-ncl') != 0) {
                 service_leg_record.setFieldValue('custrecord_service_leg_non_cust_location', table_stop_name_elem[i].getAttribute('data-ncl'));
@@ -1069,7 +1079,7 @@ function saveRecord() {
 
                 //service_leg_record_transfer.setFieldValue('custrecord_service_leg_franchisee', linked_zee);
 
-                service_leg_record_transfer.setFieldValue('custrecord_service_leg_number', (i + 1));
+                //service_leg_record_transfer.setFieldValue('custrecord_service_leg_number', (i + 1)); 
                 service_leg_record_transfer.setFieldValue('custrecord_service_leg_location_type', table_info_elem[i].getAttribute('data-addresstype'));
                 if (!isNullorEmpty(table_stop_name_elem[i].getAttribute('data-ncl')) && table_stop_name_elem[i].getAttribute('data-ncl') != 0) {
                     service_leg_record_transfer.setFieldValue('custrecord_service_leg_non_cust_location', table_stop_name_elem[i].getAttribute('data-ncl'));
@@ -1171,22 +1181,6 @@ function saveRecord() {
     console.log('transfer_zee_array', transfer_zee_array);
     console.log('stop_array', stop_array);
 
-
-    /*    for (var y = 0; y < transfer_array.length; y++) {
-            console.log('y', y);
-            for (var i = 0; i < edit_stop_elem.length; i++) {
-                //console.log('i', i);
-                if (i > transfer_array[y]) {
-                    console.log('i', i);
-                    var leg_id = stop_array[i];
-                    console.log('leg_id', leg_id);
-                    var leg_record = nlapiLoadRecord('customrecord_service_leg', leg_id);
-                    leg_record.setFieldValue('custrecord_service_leg_franchisee', transfer_zee_array[y]);
-                    nlapiSubmitRecord(leg_record);
-                }
-            }
-        }*/
-
     //var freq_edited_string = freq_ids_to_be_edited.join();
     var stored_string = stored_zee_array.join();
     var linked_string = linked_zee_array.join();
@@ -1224,7 +1218,7 @@ function saveRecord() {
     nlapiSetFieldValue('custpage_old_stop', old_stop_string);
     nlapiSetFieldValue('custpage_updated_stop_zee', updated_stop_zee_string);
     nlapiSetFieldValue('new_service_leg_id_string', new_service_leg_id_string);
-    //nlapiSetFieldValue('custpage_transfer', transfer_array);
+
     nlapiSetFieldValue('transfer_string', transfer_string);
     nlapiSetFieldValue('transfer_zee_string', transfer_zee_string);
     nlapiSetFieldValue('stop_string', stop_string);
