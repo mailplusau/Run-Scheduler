@@ -137,7 +137,7 @@ function main() {
             var service_leg_notes = searchResult.getValue("custrecord_service_leg_notes", null, "GROUP");
             var service_leg_location_type = searchResult.getValue("custrecord_service_leg_location_type", null, "GROUP");
             var service_leg_transfer_type = searchResult.getValue("custrecord_service_leg_trf_type", null, "GROUP");
-            var service_leg_transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee", null, "GROUP");
+            //var service_leg_transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee", null, "GROUP");
             var service_leg_transfer_linked_stop = searchResult.getValue("custrecord_service_leg_trf_linked_stop", null, "GROUP");
             var service_freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
             var service_freq_mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
@@ -221,7 +221,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_leg_transfer_zee);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text);
 
                         } else {
                             var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
@@ -241,7 +241,7 @@ function main() {
                                 service_leg_addr_state,
                                 service_leg_addr_postcode,
                                 service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_leg_transfer_zee);
+                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text);
                         }
                     }
                 }
@@ -275,7 +275,7 @@ function main() {
         return true;
     });
 
-    var transferSearch = nlapiLoadSearch('customrecord_job', 'customsearch_rp_app_jobs_transfers');
+/*    var transferSearch = nlapiLoadSearch('customrecord_job', 'customsearch_rp_app_jobs_transfers');
     var transferSearchResults = transferSearch.runSearch();
     transferSearchResults.forEachResult(function(transferResult) {
         var job_id = transferResult.getValue("internalid");
@@ -302,7 +302,7 @@ function main() {
             return true;
         });
         return true;
-    });
+    });*/
 }
 
 function createAppJobGroup(service_leg_service_text,
@@ -333,7 +333,7 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     service_leg_addr_state,
     service_leg_addr_postcode,
     service_leg_addr_lat,
-    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_leg_transfer_zee) {
+    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text) {
     var app_job_rec = nlapiCreateRecord('customrecord_job');
     app_job_rec.setFieldValue('custrecord_job_franchisee', service_leg_zee);
     nlapiLogExecution('DEBUG', 'Adhoc Value', service_freq_adhoc);
@@ -372,7 +372,7 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     app_job_rec.setFieldValue('custrecord_app_job_run', service_freq_run_plan_id);
     app_job_rec.setFieldValue('custrecord_app_job_location_type', service_leg_location_type);
     // app_job_rec.setFieldValue('');
-    app_job_rec.setFieldValue('custrecord_job_trf_franchisee', service_leg_transfer_zee);
+    //app_job_rec.setFieldValue('custrecord_job_trf_franchisee', service_leg_transfer_zee);
 
     nlapiSubmitRecord(app_job_rec);
 }
