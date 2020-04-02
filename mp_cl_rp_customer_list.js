@@ -632,9 +632,9 @@ function format(index) {
                     }
 
                 } else if (service_scheduled == 2) {
-                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 } else {
-                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 }
             } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs" || key == "service_scheduled" || key == "show_on_app") {
 
