@@ -10,6 +10,8 @@ $(window).load(function() {
 });
 
 var table;
+var inactivate_id_array = [];
+var remove_id_array = [];
 
 /**
  * [pageInit description] - On page initialization, load the Dynatable CSS and sort the table based on the customer name and align the table to the center of the page. 
@@ -271,6 +273,16 @@ function onclick_back() {
     params = JSON.stringify(params);
     var upload_url = baseURL + nlapiResolveURL('SUITELET', 'customscript_sl_full_calendar', 'customdeploy_sl_full_calender') + '&unlayered=T&zee=' + parseInt(nlapiGetFieldValue('zee')) + '&custparam_params=' + params;
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
+}
+
+function saveRecord(){
+    console.log('remove_id_array', remove_id_array);
+    console.log('inactivate_id_array', inactivate_id_array);
+    var remove_id_string = remove_id_array.join();
+    var inactivate_id_string = inactivate_id_array.join();
+    nlapiSetFieldValue('custpage_remove_service', remove_id_string);
+    nlapiSetFieldValue('custpage_inactivate_service', inactivate_id_string);
+    return true;
 }
 
 $(document).on('click', '.details-control', function() {
@@ -632,9 +644,9 @@ function format(index) {
                     }
 
                 } else if (service_scheduled == 2) {
-                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 } else {
-                    html += '<td style="text-align: center;"><div class="col-sm-4"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
+                    html += '<td style="text-align: center;"><div class="col-sm-3"></div><div class="col-sm-6"><input type="button" class="form-control btn-xs btn-danger setup_service" data-serviceid="' + value + '" value="SETUP STOP" /></div></td>';
                 }
             } else if (key == "freq_count" || key == "leg_count" || key == "no_of_legs" || key == "service_scheduled" || key == "show_on_app") {
 
@@ -657,15 +669,9 @@ function format(index) {
 
 $(document).on("click", ".show_app", function(e) {
     var service_id = $(this).attr('data-serviceid');
-    var service_record = nlapiLoadRecord('customrecord_service', service_id);
-    var show_on_app = service_record.getFieldValue('custrecord_show_on_app');
-    if (isNullorEmpty(show_on_app) || show_on_app == 1) {
-        service_record.setFieldValue('custrecord_show_on_app', 2);
-    } else if (show_on_app == 2) {
-        service_record.setFieldValue('custrecord_show_on_app', 1);
-    }
-    nlapiSubmitRecord(service_record);
-    window.location.reload();
+    inactivate_id_array[inactivate_id_array.length] = service_id;
+    console.log('inactivate service_id', service_id);
+    $(this).prop('disabled', true);
 });
 
 //On selecting zee, reload the SMC - Summary page with selected Zee parameter
@@ -689,58 +695,9 @@ $(document).on("change", ".zee_dropdown", function(e) {
 $(document).on("click", ".remove_service", function(e) {
     if (confirm('Are you sure you want to remove this service from run?\n\nThis action cannot be undone.')) {
         var service_id = $(this).attr('data-serviceid');
-        var serviceLegSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_all');
-
-        var newFilters = new Array();
-        newFilters[newFilters.length] = new nlobjSearchFilter('internalid', 'custrecord_service_leg_service', 'is', service_id);
-        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
-        newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
-
-        serviceLegSearch.addFilters(newFilters);
-
-        var resultSet = serviceLegSearch.runSearch();
-        var leg_toinactivate = [];
-        var freq_toinactivate = [];
-        var count = 0;
-        var customer_id;
-        resultSet.forEachResult(function(searchResult) {
-            if (count == 0) {
-                customer_id = searchResult.getValue("custrecord_service_leg_customer");
-            }
-            if (leg_toinactivate[leg_toinactivate.length - 1] != searchResult.getValue('internalid')) {
-                leg_toinactivate[leg_toinactivate.length] = searchResult.getValue('internalid');
-            }
-            freq_toinactivate[freq_toinactivate.length] = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", null);
-            console.log('leg_toinactivate', leg_toinactivate);
-            console.log('freq_toinactivate', freq_toinactivate);
-            return true
-        });
-
-        for (i = 0; i < leg_toinactivate.length; i++) {
-            var leg_id = leg_toinactivate[i];
-            console.log('delete leg', leg_id);
-            var legRecord = nlapiLoadRecord('customrecord_service_leg', leg_id);
-            legRecord.setFieldValue('isinactive', 'T');
-            nlapiSubmitRecord(legRecord);
-        }
-
-        for (i = 0; i < freq_toinactivate.length; i++) {
-            var freq_id = freq_toinactivate[i];
-            console.log('delete freq', freq_id);
-            var freqRecord = nlapiLoadRecord('customrecord_service_freq', freq_id);
-            freqRecord.setFieldValue('isinactive', 'T');
-            nlapiSubmitRecord(freqRecord);
-        }
-
-        var service_record = nlapiLoadRecord('customrecord_service', service_id);
-        service_record.setFieldValue('custrecord_service_run_scheduled', 2);
-        nlapiSubmitRecord(service_record);
-
-        var customer_record = nlapiLoadRecord('customer', customer_id);
-        customer_record.setFieldValue('custentity_run_scheduled', 2);
-        nlapiSubmitRecord(customer_record);
-        //$(this).prop('hidden', true);
-        window.location.reload();
+        remove_id_array[remove_id_array.length] = service_id;
+        console.log('remove service_id', service_id);
+        $(this).prop('disabled', true);
     }
 
 
