@@ -53,7 +53,7 @@ function pageInit() {
         var entityid = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
         var companyname = searchResult.getValue("companyname", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
         var scheduled = searchResult.getValue("custentity_run_scheduled", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
-        console.log('scheduled', scheduled);
+        //console.log('scheduled', scheduled);
 
         var service_id = searchResult.getValue("internalid", null, "GROUP");
         var service_name = searchResult.getText('custrecord_service', null, "GROUP");
@@ -68,12 +68,12 @@ function pageInit() {
 
         if (count != 0 && old_customer_id != custid) {
             //count the number of suspended services
-            console.log('show_on_app_array', show_on_app_array);
+            //console.log('show_on_app_array', show_on_app_array);
             for (k = 0; k < show_on_app_array.length; k++) {
                 if (!isNullorEmpty(show_on_app_array[k]) && show_on_app_array[k] == 2) {
                     services_suspended++;
                 }
-                console.log('services_suspended', services_suspended);
+                //console.log('services_suspended', services_suspended);
             }
 
             dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '","services_suspended": "' + services_suspended + '",'
