@@ -102,7 +102,7 @@ function main(request, response) {
 
         form.addField('custpage_html2', 'inlinehtml').setPadding(1).setLayoutType('outsideabove').setDefaultValue(inlinehtml2);
 
-        inlineQty += '<br><br><table border="0" cellpadding="15" id="customer" class="display tablesorter table table-striped" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th><b>SELECT</b></th><th><b>EDIT</b></th><th><b>ID</b></th><th><b>CUSTOMER NAME</b></th><th class=""><b>CUSTOMER SCHEDULED</b></th></tr></thead>';
+        inlineQty += '<br><br><table border="0" cellpadding="15" id="customer" class="display tablesorter table table-striped" cellspacing="0" style="width: 100%;"><thead style="color: white;background-color: #607799;"><tr><th><b>SELECT</b></th><th><b>EDIT</b></th><th><b>ID</b></th><th><b>CUSTOMER NAME</b></th><th class=""><b>CUSTOMER SCHEDULED</b></th><th><b>SUSPENDED SERVICES</b></th></tr></thead>';
 
 
 
