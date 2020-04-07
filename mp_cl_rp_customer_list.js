@@ -263,10 +263,10 @@ $(document).on('click', '.edit_customer', function() {
 
 $('.collapse').on('shown.bs.collapse', function() {
     $("#customer_wrapper").css({
-        "padding-top": "450px"
+        "padding-top": "500px"
     });
     $(".admin_section").css({
-        "padding-top": "450px"
+        "padding-top": "500px"
     });
 })
 
