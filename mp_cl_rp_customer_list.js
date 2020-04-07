@@ -215,9 +215,9 @@ function pageInit() {
                 "render": function(data, type, row) {
                     if (data.services_suspended == 1) {
                         //return 'All services appear on the app'
-                        return '' + data.services_suspended + ' suspended service'
+                        return '<button type="button" class="form-control btn-xs btn-info" disabled><span style="font-size: large;">' + data.services_suspended + '</span> SUSPENDED SERVICE</button>';
                     } else if (data.services_suspended > 1) {
-                        return '' + data.services_suspended + ' suspended services'
+                        return '<button type="button" class="form-control btn-xs btn-info" disabled><span style="font-size: large;">' + data.services_suspended + '</span> SUSPENDED SERVICES</button>';
                     }
                 },
                 "targets": [5]
@@ -263,10 +263,10 @@ $(document).on('click', '.edit_customer', function() {
 
 $('.collapse').on('shown.bs.collapse', function() {
     $("#customer_wrapper").css({
-        "padding-top": "300px"
+        "padding-top": "450px"
     });
     $(".admin_section").css({
-        "padding-top": "300px"
+        "padding-top": "450px"
     });
 })
 
