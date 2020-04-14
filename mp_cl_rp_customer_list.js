@@ -43,6 +43,7 @@ function pageInit() {
     var service_leg_count_array = [];
     var service_no_of_legs_array = [];
     var show_on_app_array = [];
+    var services_suspended = 0;
 
     var dataSet = '{"data":[';
 
@@ -52,7 +53,7 @@ function pageInit() {
         var entityid = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
         var companyname = searchResult.getValue("companyname", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
         var scheduled = searchResult.getValue("custentity_run_scheduled", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
-        console.log('scheduled', scheduled);
+        //console.log('scheduled', scheduled);
 
         var service_id = searchResult.getValue("internalid", null, "GROUP");
         var service_name = searchResult.getText('custrecord_service', null, "GROUP");
@@ -66,9 +67,16 @@ function pageInit() {
         var show_on_app = searchResult.getValue("custrecord_show_on_app", null, "GROUP");
 
         if (count != 0 && old_customer_id != custid) {
+            //count the number of suspended services
+            //console.log('show_on_app_array', show_on_app_array);
+            for (k = 0; k < show_on_app_array.length; k++) {
+                if (!isNullorEmpty(show_on_app_array[k]) && show_on_app_array[k] == 2) {
+                    services_suspended++;
+                }
+                //console.log('services_suspended', services_suspended);
+            }
 
-
-            dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '",'
+            dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '","services_suspended": "' + services_suspended + '",'
 
             dataSet += '"services": ['
 
@@ -95,6 +103,7 @@ function pageInit() {
             service_leg_count_array = [];
             service_no_of_legs_array = [];
             show_on_app_array = [];
+            services_suspended = 0;
 
             /*scheduled = false;*/
 
@@ -143,7 +152,7 @@ function pageInit() {
     });
 
     if (count > 0) {
-        dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '",'
+        dataSet += '{"cust_id":"' + old_customer_id + '", "entity_id":"' + old_entity_id + '", "company_name":"' + old_company_name + '","scheduled": "' + old_scheduled + '","services_suspended": "' + services_suspended + '",'
 
         dataSet += '"services": ['
 
@@ -189,7 +198,11 @@ function pageInit() {
             }, {
                 "data": null,
                 "defaultContent": ''
-            }, ],
+            }, {
+                "data": null,
+                "defaultContent": ''
+
+            }],
             "columnDefs": [{
 
                 "render": function(data, type, row) {
@@ -198,6 +211,17 @@ function pageInit() {
                     }
                 },
                 "targets": [4]
+            }, {
+                "render": function(data, type, row) {
+                    if (data.services_suspended == 1) {
+                        //return 'All services appear on the app'
+                        return '<button type="button" class="form-control btn-xs btn-info" disabled><span style="font-size: large;">' + data.services_suspended + '</span> SUSPENDED SERVICE</button>';
+                    } else if (data.services_suspended > 1) {
+                        return '<button type="button" class="form-control btn-xs btn-info" disabled><span style="font-size: large;">' + data.services_suspended + '</span> SUSPENDED SERVICES</button>';
+                    }
+                },
+                "targets": [5]
+
             }],
             "order": [
                 [1, 'asc']
@@ -239,10 +263,10 @@ $(document).on('click', '.edit_customer', function() {
 
 $('.collapse').on('shown.bs.collapse', function() {
     $("#customer_wrapper").css({
-        "padding-top": "300px"
+        "padding-top": "500px"
     });
     $(".admin_section").css({
-        "padding-top": "300px"
+        "padding-top": "500px"
     });
 })
 
@@ -275,7 +299,7 @@ function onclick_back() {
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 
-function saveRecord(){
+function saveRecord() {
     console.log('remove_id_array', remove_id_array);
     console.log('inactivate_id_array', inactivate_id_array);
     var remove_id_string = remove_id_array.join();
