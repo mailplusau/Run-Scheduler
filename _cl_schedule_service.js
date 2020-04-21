@@ -412,24 +412,6 @@ function validateTimes() {
             }
         }
     }
-    // if (earliest_time_array.length > 1) {
-    //  for (var x = 0; x < earliest_time_array.length; x++) {
-    //      console.log(earliest_time_array[x]);
-    //      if(earliest_time_array[x+1] < earliest_time_array[x]){
-    //          showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
-    //          break;
-    //      }
-    //  }
-    // }
-    // if (latest_time_array.length > 1) {
-    //  for (var x = 0; x < latest_time_array.length; x++) {
-    //      console.log(latest_time_array[x]);
-    //      if(latest_time_array[x+1] < latest_time_array[x]){
-    //          showAlert('Please Enter the correct Service Time. Service Time entered for stop ' + (x+1) + ' is before stop ' + x);
-    //          break;
-    //      }
-    //  }
-    // }
 }
 
 function uncheckDailyAdhocFreq() {
@@ -983,6 +965,9 @@ function saveRecord() {
 
     var freq_time_current_array = [];
 
+    var run_array = [];
+    var freq_edited = false;
+
     $(".tabs").each(function() {
         $(this).find(".nav-tabs li").each(function(index, element) {
             var stop_id = $(this).children('a').attr('href');
@@ -1010,6 +995,7 @@ function saveRecord() {
                 console.log('Rows Length :' + rows.length);
                 if (rows.length == 1 || rows.length == 0) {
                     var run = $('#' + stop_id[1]).find('#run' + stop_id[1]).val();
+                    run_array[run_array.length] = run;
                     var old_run = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-oldrun');
                     if (isNullorEmpty(freq_main_id)) {
                         var run_freq_id = $('#' + stop_id[1]).find('#run' + stop_id[1]).attr('data-freqid');
@@ -1066,6 +1052,7 @@ function saveRecord() {
                         var old_latest_time = onTimeChange($('#' + stop_id[1]).find('#latest_time' + stop_id[1]).attr('data-oldlatesttime'));
 
                         if (freq_change == true || (run != old_run) || (service_time != old_service_time) || (earliest_time != old_earliest_time) || (latest_time != old_latest_time)) {
+                            freq_edited = true;
                             if (isNullorEmpty(run_freq_id)) {
                                 var freq_record = nlapiCreateRecord('customrecord_service_freq');
                             } else {
@@ -1128,6 +1115,7 @@ function saveRecord() {
                             var freq_id = $row.find('.run').attr('data-freqid');
 
                             var run = $row.find('.run').val();
+                            run_array[run_array.length] = run;
                             var old_run = $row.find('.run').attr('data-oldrun');
                             var service_time = onTimeChange($row.find('#table_service_time').val());
                             var old_service_time = onTimeChange($row.find('#table_service_time').attr('data-oldtime'));
@@ -1166,6 +1154,7 @@ function saveRecord() {
                             //} 
                             else {
                                 if (freq_change == true || (run != old_run) || (service_time != old_service_time) || (earliest_time != old_earliest_time) || (latest_time != old_latest_time)) {
+                                    freq_edited = true;
                                     if (isNullorEmpty(freq_id)) {
                                         var freq_record = nlapiCreateRecord('customrecord_service_freq');
                                     } else {
@@ -1212,6 +1201,11 @@ function saveRecord() {
         var delete_freq_string = delete_freq_array.join();
         nlapiSetFieldValue('delete_freq', delete_freq_string)
     }
+
+    var run_string = run_array.join();
+    nlapiSetFieldValue('run', run_string);
+    nlapiSetFieldValue('freq_edited', freq_edited);
+
 
     if (error == true) {
         // $(this).children('a').css('background-color', '#337ab7')
