@@ -103,7 +103,7 @@ function scheduleRun(request, response) {
             var freq_time_end = searchResult.getValue("custrecord_service_freq_time_end", "CUSTRECORD_SERVICE_FREQ_STOP", null);
             var freq_run_plan = searchResult.getValue("custrecord_service_freq_run_plan", "CUSTRECORD_SERVICE_FREQ_STOP", null);
 
-            nlapiLogExecution('DEBUG','transfer_app_service_leg_no',transfer_app_service_leg_no);
+            nlapiLogExecution('DEBUG', 'transfer_app_service_leg_no', transfer_app_service_leg_no);
 
             if (!isNullorEmpty(transfer_stop_linked) && transfer_app_service_leg_no == 1) {
                 transfer_stop_linked_array[transfer_stop_linked_array.length] = transfer_stop_linked;
@@ -381,7 +381,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] +'" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
+                inlineQty += '<li role="presentation" class="active"><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] + '" style="background-color: rgb(50, 122, 183); color: white;"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = 'active';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
             } else {
@@ -400,7 +400,7 @@ function scheduleRun(request, response) {
                                 } else {
                                     inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq=""  data-stopno="' + (i + 1) + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '</a></li>';
                                 }*/
-                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] +'"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
+                inlineQty += '<li role="presentation" class=""><a href="#' + obj['stop_id'] + '" data-freq="" data-stopno="' + (i + 1) + '" data-operationzee="' + obj['operation_zee'] + '"><b>Stop ' + (i + 1) + ':</b> ' + obj['stop_name'] + '<span style="font-style: italic;"> (' + obj['operation_zee_name'] + ')</span></a></li>';
                 active_class = '';
                 nlapiLogExecution('DEBUG', 'active_class', active_class);
 
@@ -761,6 +761,8 @@ function scheduleRun(request, response) {
         form.addField('service_id', 'text', 'Stop IDs').setDisplayType('hidden').setDefaultValue(service_id);
         form.addField('zee', 'text', 'zee').setDisplayType('hidden').setDefaultValue(zee);
         form.addField('delete_freq', 'text', 'Stop IDs').setDisplayType('hidden');
+        form.addField('run', 'text', 'Stop IDs').setDisplayType('hidden');
+        form.addField('freq_edited', 'text', 'Stop IDs').setDisplayType('hidden');
 
         transfer_stop_linked_array = transfer_stop_linked_array.join();
         transfer_type_array = transfer_type_array.join();
@@ -800,35 +802,51 @@ function scheduleRun(request, response) {
 
         var service_id = request.getParameter('service_id');
         var customer_id = request.getParameter('customer_id');
+        var freq_edited = request.getParameter('freq_edited');
+        var run_string = request.getParameter('run');
+        var run_array = run_string.split(',');
+        nlapiLogExecution('DEBUG', 'run_array', run_array);
+        nlapiLogExecution('DEBUG', 'freq_edited', freq_edited);
         var customerScheduled = true;
 
         nlapiLogExecution('DEBUG', 'service_id', service_id);
         nlapiLogExecution('DEBUG', 'customer_id', customer_id);
 
-        service_record = nlapiLoadRecord('customrecord_service', service_id);
-        service_record.setFieldValue('custrecord_service_run_scheduled', 1);
-        nlapiSubmitRecord(service_record);
-
-        var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
-
-        var newFilters = new Array();
-        newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', customer_id);
-        serviceSearch.addFilters(newFilters);
-        var resultSetService = serviceSearch.runSearch();
-        resultSetService.forEachResult(function(searchResult) {
-            var scheduleRun = searchResult.getValue("custrecord_service_run_scheduled", null, "GROUP");
-            nlapiLogExecution('DEBUG', 'scheduleRun', scheduleRun);
-            if (scheduleRun == 2 || isNullorEmpty(scheduleRun)) {
-                customerScheduled = false;
-                return false;
+        if (freq_edited == 'true') {
+            nlapiLogExecution('DEBUG', 'updating service & customer');
+            service_record = nlapiLoadRecord('customrecord_service', service_id);
+            service_record.setFieldValue('custrecord_service_run_scheduled', 1);
+            var multiple_operators = 2;
+            for (i = 1; i < run_array.length; i++) {
+                if (run_array[i] != run_array[i - 1]) {
+                    multiple_operators = 1;
+                    break;
+                }
             }
-            return true;
-        });
-        nlapiLogExecution('DEBUG', 'customerScheduled', customerScheduled);
-        if (customerScheduled == true) {
-            var customer_record = nlapiLoadRecord('customer', customer_id);
-            customer_record.setFieldValue('custentity_run_scheduled', 1);
-            nlapiSubmitRecord(customer_record);
+            service_record.setFieldValue('custrecord_multiple_operators', multiple_operators);
+            nlapiSubmitRecord(service_record);
+
+            var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
+
+            var newFilters = new Array();
+            newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', customer_id);
+            serviceSearch.addFilters(newFilters);
+            var resultSetService = serviceSearch.runSearch();
+            resultSetService.forEachResult(function(searchResult) {
+                var scheduleRun = searchResult.getValue("custrecord_service_run_scheduled", null, "GROUP");
+                nlapiLogExecution('DEBUG', 'scheduleRun', scheduleRun);
+                if (scheduleRun == 2 || isNullorEmpty(scheduleRun)) {
+                    customerScheduled = false;
+                    return false;
+                }
+                return true;
+            });
+            nlapiLogExecution('DEBUG', 'customerScheduled', customerScheduled);
+            if (customerScheduled == true) {
+                var customer_record = nlapiLoadRecord('customer', customer_id);
+                customer_record.setFieldValue('custentity_run_scheduled', 1);
+                nlapiSubmitRecord(customer_record);
+            }
         }
 
         var zee_response = request.getParameter('zee');
