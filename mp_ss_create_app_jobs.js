@@ -67,9 +67,9 @@ function main() {
                     "OR", ["custrecord_service_freq_stop.custrecord_service_freq_day_adhoc", "is", 'T']
                 ],
                 "AND", ["isinactive", "is", "F"],
-                "AND", ["custrecord_service_leg_franchisee", "is", zee_id],
+                //"AND", ["custrecord_service_leg_franchisee", "is", zee_id],
                 //"AND", ["custrecord_service_leg_franchisee", "is", 228330],
-                //"AND", ["custrecord_service_leg_customer.partner", "is", zee_id],
+                "AND", ["custrecord_service_leg_customer.partner", "is", zee_id],
                 "AND", ["custrecord_service_leg_customer.status", "anyof", "32", "13"],
                 "AND", ["custrecord_service_leg_service.isinactive", "is", "F"],
                 "AND", ["custrecord_service_freq_stop.internalid", "noneof", "@NONE@"],
@@ -77,7 +77,7 @@ function main() {
                     ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_closing_date}, 'DD/MM/YYYY') <= TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"], "AND", ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_opening_date}, 'DD/MM/YYYY') > TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"]
                 ],
                 "AND", ["custrecord_app_ser_leg_daily_job_create", "anyof", "2", "@NONE@"],
-                "AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"]
+                //"AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"]
             ];
             // var newFiltersRunPlan = new Array();
             // newFiltersRunPlan[newFiltersRunPlan.length] = new nlobjSearchFilter(days_of_week[day], 'custrecord_service_freq_stop', 'is', 'T');
@@ -138,7 +138,6 @@ function main() {
             var service_leg_notes = searchResult.getValue("custrecord_service_leg_notes", null, "GROUP");
             var service_leg_location_type = searchResult.getValue("custrecord_service_leg_location_type", null, "GROUP");
             var service_leg_transfer_type = searchResult.getValue("custrecord_service_leg_trf_type", null, "GROUP");
-            //var service_leg_transfer_zee = searchResult.getValue("custrecord_service_leg_trf_franchisee", null, "GROUP");
             var service_leg_transfer_linked_stop = searchResult.getValue("custrecord_service_leg_trf_linked_stop", null, "GROUP");
             var service_freq_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
             var service_freq_mon = searchResult.getValue("custrecord_service_freq_day_mon", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
@@ -278,42 +277,6 @@ function main() {
         return true;
     });
 
-
-/*    var transferSearch = nlapiLoadSearch('customrecord_job', 'customsearch_rp_app_jobs_transfers');
-    var transferSearchResults = transferSearch.runSearch();
-
-    var old_job_id;
-    var old_job_group_id;
-    var old_service_id;
-    var old_service_leg;
-    var old_transfer_service_leg;
-
-    transferSearchResults.forEachResult(function(transferResult) {
-        var service_id = transferResult.getValue("custrecord_job_service");
-        var job_id = transferResult.getValue('custrecord_job');
-        var job_group_id = transferResult.getValue('custrecord_job_group');
-        var service_leg = transferResult.getValue('custrecord_job_service_leg');
-        var transfer_service_leg = transferResult.getValue("custrecord_service_leg_trf_leg","CUSTRECORD_JOB_STOP",null);
-        if (old_service_id == service_id && old_service_leg == service_leg && old_transfer_service_leg != transfer_service_leg){ //old_job is leg 1 and job is leg 2 of the transfer
-            nlapiLogExecution('DEBUG', 'service_id', service_id);
-            nlapiLogExecution('DEBUG', 'old_job_id', old_job_id);
-            nlapiLogExecution('DEBUG', 'job_id', job_id);
-            var old_jobRecord = nlapiLoadRecord('customrecord_job', old_job_id);
-            var jobRecord = nlapiLoadRecord('customrecord_job', job_id);
-            old_jobRecord.setFieldValue('custrecord_transfer_job_group', job_group_id);
-            jobRecord.setFieldValue('custrecord_transfer_job_group', old_job_group_id);
-            nlapiSubmitRecord(old_jobRecord);
-            nlapiSubmitRecord(jobRecord);
-        }
-        old_job_id = job_id;
-        old_job_group_id = job_group_id;
-        old_service_id = service_id;
-        old_service_leg = service_leg;
-        old_transfer_service_leg = transfer_service_leg;
-
-
-        return true;
-    })*/
 }
 
 function createAppJobGroup(service_leg_service_text,
@@ -383,7 +346,6 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     app_job_rec.setFieldValue('custrecord_app_job_run', service_freq_run_plan_id);
     app_job_rec.setFieldValue('custrecord_app_job_location_type', service_leg_location_type);
     // app_job_rec.setFieldValue('');
-    //app_job_rec.setFieldValue('custrecord_job_trf_franchisee', service_leg_transfer_zee);
     app_job_rec.setFieldValue('custrecord_job_multiple_operators', service_multiple_operators);
 
     nlapiSubmitRecord(app_job_rec);
