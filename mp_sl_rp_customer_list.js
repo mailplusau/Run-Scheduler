@@ -166,7 +166,7 @@ function main(request, response) {
 
             var newFilters = new Array();
             newFilters[newFilters.length] = new nlobjSearchFilter('internalid', 'custrecord_service_leg_service', 'anyof', remove_service_id);
-            newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
+            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
             newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
 
             serviceLegSearch.addFilters(newFilters);
