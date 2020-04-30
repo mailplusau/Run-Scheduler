@@ -166,7 +166,7 @@ function main(request, response) {
 
             var newFilters = new Array();
             newFilters[newFilters.length] = new nlobjSearchFilter('internalid', 'custrecord_service_leg_service', 'anyof', remove_service_id);
-            newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
+            //newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_leg_franchisee', null, 'is', zee);
             newFilters[newFilters.length] = new nlobjSearchFilter('isinactive', null, 'is', 'F');
 
             serviceLegSearch.addFilters(newFilters);
@@ -194,6 +194,7 @@ function main(request, response) {
                 nlapiLogExecution('DEBUG', 'delete leg', leg_id);
                 var legRecord = nlapiLoadRecord('customrecord_service_leg', leg_id);
                 legRecord.setFieldValue('isinactive', 'T');
+                legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
                 nlapiSubmitRecord(legRecord);
             }
 

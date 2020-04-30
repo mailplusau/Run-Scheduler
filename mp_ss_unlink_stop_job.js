@@ -1,19 +1,19 @@
-/*var usage_threshold = 30; //20
-var usage_threshold_invoice = 1000; //1000
+var usage_threshold = 1000; 
 var adhoc_inv_deploy = 'customdeploy2';
-var prev_inv_deploy = null;*/
+var prev_inv_deploy = null;
 var ctx = nlapiGetContext();
 
 function main() {
-    /*    nlapiLogExecution('AUDIT', 'prev_deployment', ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'));
-        if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'))) {
-            prev_inv_deploy = ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment');
-        } else {
-            prev_inv_deploy = ctx.getDeploymentId();
-        }*/
+/*    nlapiLogExecution('AUDIT', 'prev_deployment', ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'));
+    if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'))) {
+        prev_inv_deploy = ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment');
+    } else {
+        prev_inv_deploy = ctx.getDeploymentId();
+    }*/
 
     var count = 0;
     var old_leg_id;
+    var old_freq_id;
     var job_id_array = [];
     var freq_id_array = [];
 
@@ -22,23 +22,23 @@ function main() {
     var resultSetStop = stopSearch.runSearch();
     resultSetStop.forEachResult(function(searchResult) {
 
-        /*
-                var usage_loopstart_cust = ctx.getRemainingUsage();
+
+        var usage_loopstart_cust = ctx.getRemainingUsage();
+        nlapiLogExecution('AUDIT', 'usage_loopstart_cust', usage_loopstart_cust);
 
 
-                if (usage_loopstart_cust < usage_threshold) {
+        if (usage_loopstart_cust < usage_threshold) {
+            var params = {
+                custscript_rp_prev_deployment: ctx.getDeploymentId()
+            }
 
-                    var params = {
-                        custscript_rp_prev_deployment: ctx.getDeploymentId()
-                    }
+            reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
+            nlapiLogExecution('AUDIT', 'Reschedule Return', reschedule);
+            if (reschedule == false) {
 
-                    reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
-                    nlapiLogExecution('AUDIT', 'Reschedule Return', reschedule);
-                    if (reschedule == false) {
-
-                        return false;
-                    }
-                }*/
+                return false;
+            }
+        }
 
         var leg_id = searchResult.getValue("internalid");
         var job_id = searchResult.getValue("internalid", "CUSTRECORD159", null);
@@ -59,7 +59,7 @@ function main() {
                 if (!isNullorEmpty(job_id)) {
                     job_id_array[job_id_array.length] = job_id;
                 }
-                if (!isNullorEmpty(freq_id)) {
+                if (!isNullorEmpty(freq_id) && old_freq_id != freq_id) {
                     freq_id_array[freq_id_array.length] = freq_id;
                 }
             } else if (leg_id != old_leg_id) {
@@ -70,6 +70,8 @@ function main() {
                 for (i = 0; i < job_id_array.length; i++) {
                     nlapiLogExecution('DEBUG', 'job_id_array[i]', job_id_array[i]);
                     var jobRecord = nlapiLoadRecord('customrecord_job', job_id_array[i]);
+                    var stop = jobRecord.getFieldValue('custrecord_job_stop');
+                    nlapiLogExecution('DEBUG', 'stop', stop);
                     jobRecord.setFieldValue('custrecord_job_stop', null);
                     jobRecord.setFieldValue('custrecord159', null);
                     nlapiSubmitRecord(jobRecord);
@@ -80,7 +82,7 @@ function main() {
                 }
                 var legRecord = nlapiLoadRecord('customrecord_service_leg', old_leg_id);
                 legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
-                var old_leg_id = nlapiSubmitRecord('legRecord');
+                old_leg_id = nlapiSubmitRecord(legRecord);
                 nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
                 nlapiDeleteRecord('customrecord_service_leg', old_leg_id);
 
@@ -93,14 +95,13 @@ function main() {
                 if (!isNullorEmpty(freq_id)) {
                     freq_id_array[freq_id_array.length] = freq_id;
                 }
-
             }
         }
         old_leg_id = leg_id;
+        old_freq_id = freq_id;
         nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
         count++;
         return true;
-
     });
 
     if (count > 0) {
@@ -118,7 +119,7 @@ function main() {
         }
         var legRecord = nlapiLoadRecord('customrecord_service_leg', old_leg_id);
         legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
-        var old_leg_id = nlapiSubmitRecord('legRecord');
+        old_leg_id = nlapiSubmitRecord(legRecord);
         nlapiLogExecution('DEBUG', 'old_leg_id', old_leg_id);
         nlapiDeleteRecord('customrecord_service_leg', old_leg_id);
     }
