@@ -2,7 +2,9 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
+
  * @Last Modified time: 2020-04-30 14:56:03
+
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -32,6 +34,7 @@ function main() {
     var endDate = moment(startDate).endOf('month').date();
 
 
+
     nlapiLogExecution('DEBUG', 'day', day);
     nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
     nlapiLogExecution('DEBUG', 'date', date);
@@ -47,11 +50,13 @@ function main() {
 
     // date_of_week = date + '/' + (month + 1) + '/' + year;
 
-    day = day + 1;
-    nlapiLogExecution('DEBUG', days_of_week[day]);
-    // nlapiLogExecution('DEBUG', 'date_of_week', date_of_week);
+
+    nlapiLogExecution('DEBUG', 'day', day);
+    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
     nlapiLogExecution('DEBUG', 'date', date);
-    nlapiLogExecution('DEBUG', 'date', date_of_week);
+    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
+    nlapiLogExecution('DEBUG', 'month', month);
+    nlapiLogExecution('DEBUG', 'year', year);
 
     nlapiLogExecution('AUDIT', 'prev_deployment', ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'));
     if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'))) {
