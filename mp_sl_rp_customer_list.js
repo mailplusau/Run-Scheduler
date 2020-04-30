@@ -194,6 +194,7 @@ function main(request, response) {
                 nlapiLogExecution('DEBUG', 'delete leg', leg_id);
                 var legRecord = nlapiLoadRecord('customrecord_service_leg', leg_id);
                 legRecord.setFieldValue('isinactive', 'T');
+                legRecord.setFieldValue('custrecord_service_leg_trf_linked_stop', null);
                 nlapiSubmitRecord(legRecord);
             }
 
