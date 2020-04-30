@@ -2,7 +2,7 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
- * @Last Modified time: 2020-02-18 15:31:39
+ * @Last Modified time: 2020-04-30 14:56:03
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -28,7 +28,24 @@ function main() {
     var month = moment().utc().month();
     var year = moment().utc().year();
 
-    date_of_week = date + '/' + (month + 1) + '/' + year;
+    var startDate = moment([year, month]);
+    var endDate = moment(startDate).endOf('month').date();
+
+
+    nlapiLogExecution('DEBUG', 'day', day);
+    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
+    nlapiLogExecution('DEBUG', 'date', date);
+    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
+    nlapiLogExecution('DEBUG', 'month', month);
+    nlapiLogExecution('DEBUG', 'year', year);
+
+    if(moment().utc().date() == endDate){
+        date_of_week = date + '/' + (month + 2) + '/' + year;
+    } else {
+        date_of_week = date + '/' + (month + 1) + '/' + year;
+    }
+
+    // date_of_week = date + '/' + (month + 1) + '/' + year;
 
     day = day + 1;
     nlapiLogExecution('DEBUG', days_of_week[day]);
