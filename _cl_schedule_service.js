@@ -99,6 +99,10 @@ $(document).on('click', '#alert .close', function(e) {
     $(this).parent().hide();
 });
 
+$(document).on('click', '#myModal .btn', function(e){
+    window.location.reload();
+});
+
 
 function onclick_back() {
     var params = {
