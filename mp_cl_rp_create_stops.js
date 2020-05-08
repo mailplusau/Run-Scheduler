@@ -29,6 +29,8 @@ var edited_stop_array = [];
 if (role == 1000) {
     //Franchisee
     zee = ctx.getUser();
+} else {
+    zee = parseInt(nlapiGetFieldValue('custpage_zee'));
 }
 
 $(window).load(function() {
@@ -163,13 +165,9 @@ $(document).on('click', '.add_next_stop', function(e) {
 
 
 function onclick_back() {
-    var params = {
-
-    }
-    params = JSON.stringify(params);
     console.log(nlapiGetFieldValue('custpage_suitlet'))
     console.log(nlapiGetFieldValue('custpage_deploy'))
-    var upload_url = baseURL + nlapiResolveURL('SUITELET', nlapiGetFieldValue('custpage_suitlet'), nlapiGetFieldValue('custpage_deploy')) + '&unlayered=T&custparam_params=' + params;
+    var upload_url = baseURL + nlapiResolveURL('SUITELET', nlapiGetFieldValue('custpage_suitlet'), nlapiGetFieldValue('custpage_deploy')) + '&unlayered=T&zee=' + zee;
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 
