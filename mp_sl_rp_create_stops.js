@@ -33,13 +33,13 @@ if (role == 1000) {
 function createStops(request, response) {
     if (request.getMethod() == "GET") {
 
-        var script_id = null;
+        /*var script_id = null;
         var deploy_id = null;
-        var entryParamsString = null;
+        var entryParamsString = null;*/
 
-        var commReg = null;
+        /*var commReg = null;
         var dateEffective = null;
-        var editPage = 'F';
+        var editPage = 'F';*/
 
 
         var params = request.getParameter('custparam_params');

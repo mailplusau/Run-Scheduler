@@ -17,6 +17,7 @@ if (nlapiGetContext().getEnvironment() == "SANDBOX") {
 
 var delete_freq_array = [];
 var freq_change = false;
+var savingRecord = false;
 
 var ctx = nlapiGetContext();
 
@@ -97,6 +98,12 @@ function showAlert(message) {
 
 $(document).on('click', '#alert .close', function(e) {
     $(this).parent().hide();
+});
+
+$(document).on('click', '#myModal .btn', function(e) {
+    if (savingRecord == true) {
+        window.location.reload();
+    }
 });
 
 
@@ -951,7 +958,8 @@ function checkIfMultiFreq(value, unchecked) {
 
 
 function saveRecord() {
-    console.log('SAVING RECORD');
+    savingRecord = true;
+    console.log('savingRecord', savingRecord);
 
     var customer_id = nlapiGetFieldValue('customer_id');
     var service_id = nlapiGetFieldValue('service_id');

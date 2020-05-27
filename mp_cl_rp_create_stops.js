@@ -29,6 +29,8 @@ var edited_stop_array = [];
 if (role == 1000) {
     //Franchisee
     zee = ctx.getUser();
+} else {
+    zee = parseInt(nlapiGetFieldValue('custpage_zee'));
 }
 
 $(window).load(function() {
@@ -163,13 +165,9 @@ $(document).on('click', '.add_next_stop', function(e) {
 
 
 function onclick_back() {
-    var params = {
-
-    }
-    params = JSON.stringify(params);
     console.log(nlapiGetFieldValue('custpage_suitlet'))
     console.log(nlapiGetFieldValue('custpage_deploy'))
-    var upload_url = baseURL + nlapiResolveURL('SUITELET', nlapiGetFieldValue('custpage_suitlet'), nlapiGetFieldValue('custpage_deploy')) + '&unlayered=T&custparam_params=' + params;
+    var upload_url = baseURL + nlapiResolveURL('SUITELET', nlapiGetFieldValue('custpage_suitlet'), nlapiGetFieldValue('custpage_deploy')) + '&unlayered=T&zee=' + zee;
     window.open(upload_url, "_self", "height=750,width=650,modal=yes,alwaysRaised=yes");
 }
 
@@ -936,7 +934,7 @@ function saveRecord() {
 
 
             var service_leg_record = nlapiLoadRecord('customrecord_service_leg', delete_stop_id);
-            var linked_service_leg_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
+
 
             var deleted_link_zee = service_leg_record.getFieldValue('custrecord_service_leg_trf_franchisee');
 
@@ -948,10 +946,17 @@ function saveRecord() {
             }
 
             service_leg_record.setFieldValue('isinactive', 'T');
-            linked_service_leg_record.setFieldValue('isinactive', 'T');
-
             nlapiSubmitRecord(service_leg_record);
-            nlapiSubmitRecord(linked_service_leg_record);
+
+            //FOR TRANSFERS
+            if (!isNullorEmpty(linked_stop)) {
+                var linked_service_leg_record = nlapiLoadRecord('customrecord_service_leg', linked_stop);
+                linked_service_leg_record.setFieldValue('isinactive', 'T');
+                nlapiSubmitRecord(linked_service_leg_record);
+            }
+
+            
+
 
         } else {
             //console.log('linked_stop', linked_stop);
