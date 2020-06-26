@@ -628,6 +628,7 @@ function runPlanner(request, response) {
         form.addButton('save', 'Save Changes', 'onclick_save()');
 
         form.addButton('back', 'Cancel', 'onclick_reset()');
+        form.addButton('network_map', 'Network Map', 'onclick_networkMap(' + zee + ')');
         form.setScript('customscript_cl_full_calendar');
 
         response.writePage(form);
