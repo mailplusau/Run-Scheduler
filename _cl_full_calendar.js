@@ -411,6 +411,10 @@ function onclick_customerClosure() {
     }
 }
 
+function onclick_networkMap(zee){
+    window.open(nlapiResolveURL('SUITELET', 'customscript_sl_run_planner_map', 'customdeploy_sl_run_planner_map') + "&zee=" + zee +'');
+}
+
 function download(strData, strFileName, strMimeType) {
     var D = document,
         A = arguments,
