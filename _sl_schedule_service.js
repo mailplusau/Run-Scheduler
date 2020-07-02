@@ -807,15 +807,19 @@ function scheduleRun(request, response) {
         var run_array = run_string.split(',');
         nlapiLogExecution('DEBUG', 'run_array', run_array);
         nlapiLogExecution('DEBUG', 'freq_edited', freq_edited);
-        var customerScheduled = true;
+        
 
         nlapiLogExecution('DEBUG', 'service_id', service_id);
         nlapiLogExecution('DEBUG', 'customer_id', customer_id);
 
         if (freq_edited == 'true') {
             nlapiLogExecution('DEBUG', 'updating service & customer');
+
+            //Update the Run Scheduled box for the service
             service_record = nlapiLoadRecord('customrecord_service', service_id);
             service_record.setFieldValue('custrecord_service_run_scheduled', 1);
+            
+            //Check if more than one operators for that service
             var multiple_operators = 2;
             for (i = 1; i < run_array.length; i++) {
                 if (run_array[i] != run_array[i - 1]) {
@@ -826,27 +830,7 @@ function scheduleRun(request, response) {
             service_record.setFieldValue('custrecord_multiple_operators', multiple_operators);
             nlapiSubmitRecord(service_record);
 
-            var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
-
-            var newFilters = new Array();
-            newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', customer_id);
-            serviceSearch.addFilters(newFilters);
-            var resultSetService = serviceSearch.runSearch();
-            resultSetService.forEachResult(function(searchResult) {
-                var scheduleRun = searchResult.getValue("custrecord_service_run_scheduled", null, "GROUP");
-                nlapiLogExecution('DEBUG', 'scheduleRun', scheduleRun);
-                if (scheduleRun == 2 || isNullorEmpty(scheduleRun)) {
-                    customerScheduled = false;
-                    return false;
-                }
-                return true;
-            });
-            nlapiLogExecution('DEBUG', 'customerScheduled', customerScheduled);
-            if (customerScheduled == true) {
-                var customer_record = nlapiLoadRecord('customer', customer_id);
-                customer_record.setFieldValue('custentity_run_scheduled', 1);
-                nlapiSubmitRecord(customer_record);
-            }
+            updateGreenTick(customer_id);
         }
 
         var zee_response = request.getParameter('zee');
@@ -858,6 +842,37 @@ function scheduleRun(request, response) {
         }
         nlapiSetRedirectURL('SUITELET', 'customscript_sl_rp_customer_list', 'customdeploy_sl_rp_customer_list', null, params);
 
+    }
+}
+
+
+/**
+ * Update the Run Scheduled box for the customer ie if the customer if fully scheduled or not
+ * @params {Int} Customer ID
+ */
+function updateGreenTick(customer_id) {
+    var customerScheduled = true;
+    var serviceSearch = nlapiLoadSearch('customrecord_service', 'customsearch_rp_services');
+
+    var newFilters = new Array();
+    newFilters[newFilters.length] = new nlobjSearchFilter('custrecord_service_customer', null, 'is', customer_id);
+    newFilters[newFilters.length] = new nlobjSearchFilter("internalid", "CUSTRECORD_SERVICE", 'noneof', 24); //ignore MPEX Pickup
+    serviceSearch.addFilters(newFilters);
+    var resultSetService = serviceSearch.runSearch();
+    resultSetService.forEachResult(function(searchResult) {
+        var scheduleRun = searchResult.getValue("custrecord_service_run_scheduled", null, "GROUP");
+        nlapiLogExecution('DEBUG', 'scheduleRun', scheduleRun);
+        if (scheduleRun == 2 || isNullorEmpty(scheduleRun)) {
+            customerScheduled = false;
+            return false;
+        }
+        return true;
+    });
+    nlapiLogExecution('DEBUG', 'customerScheduled', customerScheduled);
+    if (customerScheduled == true) {
+        var customer_record = nlapiLoadRecord('customer', customer_id);
+        customer_record.setFieldValue('custentity_run_scheduled', 1);
+        nlapiSubmitRecord(customer_record);
     }
 }
 
