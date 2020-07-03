@@ -66,6 +66,11 @@ function pageInit() {
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
         var show_on_app = searchResult.getValue("custrecord_show_on_app", null, "GROUP");
 
+        if (service_price == '.00'){
+            console.log('MPEX Pickup service_price', service_price);
+            service_price = 0;
+        }
+
         if (count != 0 && old_customer_id != custid) {
             //count the number of suspended services
             //console.log('show_on_app_array', show_on_app_array);
