@@ -3,7 +3,7 @@
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
 
- * @Last Modified time: 2020-04-30 14:56:03
+ * @Last Modified time: 2020-08-12 13:55:53
 
  */
 var days_of_week = [];
@@ -33,15 +33,6 @@ function main() {
     var startDate = moment([year, month]);
     var endDate = moment(startDate).endOf('month').date();
 
-
-
-    nlapiLogExecution('DEBUG', 'day', day);
-    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
-    nlapiLogExecution('DEBUG', 'date', date);
-    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
-    nlapiLogExecution('DEBUG', 'month', month);
-    nlapiLogExecution('DEBUG', 'year', year);
-
     if(moment().utc().date() == endDate){
         date_of_week = date + '/' + (month + 2) + '/' + year;
     } else {
@@ -51,12 +42,13 @@ function main() {
     // date_of_week = date + '/' + (month + 1) + '/' + year;
 
 
-    nlapiLogExecution('DEBUG', 'day', day);
-    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
-    nlapiLogExecution('DEBUG', 'date', date);
-    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
-    nlapiLogExecution('DEBUG', 'month', month);
-    nlapiLogExecution('DEBUG', 'year', year);
+    nlapiLogExecution('AUDIT', 'day', day);
+    nlapiLogExecution('AUDIT', 'original date', moment().utc().date());
+    nlapiLogExecution('AUDIT', 'date', date);
+    nlapiLogExecution('AUDIT', 'Last Day of Month', endDate);
+    nlapiLogExecution('AUDIT', 'month', month);
+    nlapiLogExecution('AUDIT', 'year', year);
+    nlapiLogExecution('AUDIT', 'date_of_week', date_of_week);
 
     nlapiLogExecution('AUDIT', 'prev_deployment', ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'));
     if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'))) {
@@ -74,18 +66,18 @@ function main() {
         var zee_id = searchResultZee.getValue("internalid");
         var zee_name = searchResultZee.getValue("entityid");
 
-        nlapiLogExecution('DEBUG', 'date_of_week', date_of_week);
+        nlapiLogExecution('AUDIT', 'date_of_week', date_of_week);
         //SEARCH: RP - Service Leg Frequency - All - Create App Jobs
         var runPlanSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_create_app_jobs');
 
-        nlapiLogExecution('DEBUG', days_of_week[day]);
+        nlapiLogExecution('AUDIT', days_of_week[day+1]);
         // nlapiLogExecution('DEBUG', service_leg_customer);
 
 
         if (day != 0 && day != 6) {
             var filterExpression = [
                 [
-                    [days_of_week[day], "is", 'T'], // customer id
+                    [days_of_week[day+1], "is", 'T'], // customer id
                     "OR", ["custrecord_service_freq_stop.custrecord_service_freq_day_adhoc", "is", 'T']
                 ],
                 "AND", ["isinactive", "is", "F"],
