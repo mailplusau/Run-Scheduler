@@ -2,9 +2,9 @@
  * @Author: ankith.ravindran
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   Ankith
-
- * @Last Modified time: 2020-04-30 14:56:03
-
+ 
+ * @Last Modified time: 2020-08-25 08:44:27
+ 
  */
 var days_of_week = [];
 days_of_week[0] = 0;
@@ -14,6 +14,15 @@ days_of_week[3] = 'custrecord_service_freq_stop.custrecord_service_freq_day_wed'
 days_of_week[4] = 'custrecord_service_freq_stop.custrecord_service_freq_day_thu';
 days_of_week[5] = 'custrecord_service_freq_stop.custrecord_service_freq_day_fri';
 days_of_week[6] = 6;
+
+var days_of_week2 = [];
+days_of_week2[0] = 0;
+days_of_week2[1] = 'custrecord_service_freq_day_mon';
+days_of_week2[2] = 'custrecord_service_freq_day_tue';
+days_of_week2[3] = 'custrecord_service_freq_day_wed';
+days_of_week2[4] = 'custrecord_service_freq_day_thu';
+days_of_week2[5] = 'custrecord_service_freq_day_fri';
+days_of_week2[6] = 6;
 
 var usage_threshold = 200; //20
 var usage_threshold_invoice = 1000; //1000
@@ -33,16 +42,7 @@ function main() {
     var startDate = moment([year, month]);
     var endDate = moment(startDate).endOf('month').date();
 
-
-
-    nlapiLogExecution('DEBUG', 'day', day);
-    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
-    nlapiLogExecution('DEBUG', 'date', date);
-    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
-    nlapiLogExecution('DEBUG', 'month', month);
-    nlapiLogExecution('DEBUG', 'year', year);
-
-    if(moment().utc().date() == endDate){
+    if (moment().utc().date() == endDate) {
         date_of_week = date + '/' + (month + 2) + '/' + year;
     } else {
         date_of_week = date + '/' + (month + 1) + '/' + year;
@@ -51,12 +51,15 @@ function main() {
     // date_of_week = date + '/' + (month + 1) + '/' + year;
 
 
-    nlapiLogExecution('DEBUG', 'day', day);
-    nlapiLogExecution('DEBUG', 'original date', moment().utc().date());
-    nlapiLogExecution('DEBUG', 'date', date);
-    nlapiLogExecution('DEBUG', 'Last Day of Month', endDate);
-    nlapiLogExecution('DEBUG', 'month', month);
-    nlapiLogExecution('DEBUG', 'year', year);
+    nlapiLogExecution('AUDIT', 'moment().utc()', moment().utc());
+    nlapiLogExecution('AUDIT', 'day', day);
+    nlapiLogExecution('AUDIT', 'original date', moment().utc().date());
+    nlapiLogExecution('AUDIT', 'date', date);
+    nlapiLogExecution('AUDIT', 'Last Day of Month', endDate);
+    nlapiLogExecution('AUDIT', 'month', month);
+    nlapiLogExecution('AUDIT', 'year', year);
+    nlapiLogExecution('AUDIT', 'date_of_week', date_of_week);
+    nlapiLogExecution('AUDIT', 'days_of_week', days_of_week[day + 1]);
 
     nlapiLogExecution('AUDIT', 'prev_deployment', ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'));
     if (!isNullorEmpty(ctx.getSetting('SCRIPT', 'custscript_rp_prev_deployment'))) {
@@ -74,18 +77,18 @@ function main() {
         var zee_id = searchResultZee.getValue("internalid");
         var zee_name = searchResultZee.getValue("entityid");
 
-        nlapiLogExecution('DEBUG', 'date_of_week', date_of_week);
+        nlapiLogExecution('AUDIT', 'date_of_week', date_of_week);
         //SEARCH: RP - Service Leg Frequency - All - Create App Jobs
         var runPlanSearch = nlapiLoadSearch('customrecord_service_leg', 'customsearch_rp_leg_freq_create_app_jobs');
 
-        nlapiLogExecution('DEBUG', days_of_week[day]);
+        // nlapiLogExecution('AUDIT', days_of_week[day+1]);
         // nlapiLogExecution('DEBUG', service_leg_customer);
 
 
         if (day != 0 && day != 6) {
             var filterExpression = [
                 [
-                    [days_of_week[day], "is", 'T'], // customer id
+                    [days_of_week[day + 1], "is", 'T'], // customer id
                     "OR", ["custrecord_service_freq_stop.custrecord_service_freq_day_adhoc", "is", 'T']
                 ],
                 "AND", ["isinactive", "is", "F"],
@@ -99,7 +102,7 @@ function main() {
                     ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_closing_date}, 'DD/MM/YYYY') <= TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"], "AND", ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_opening_date}, 'DD/MM/YYYY') > TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"]
                 ],
                 "AND", ["custrecord_app_ser_leg_daily_job_create", "anyof", "2", "@NONE@"],
-                //"AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"]
+                "AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"], "AND", ["custrecord_service_leg_service.custrecord_show_on_app", "anyof", "@NONE@", "1"]
             ];
             // var newFiltersRunPlan = new Array();
             // newFiltersRunPlan[newFiltersRunPlan.length] = new nlobjSearchFilter(days_of_week[day], 'custrecord_service_freq_stop', 'is', 'T');
@@ -175,7 +178,7 @@ function main() {
             var service_freq_operator = searchResult.getValue("custrecord_service_freq_operator", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
             var service_freq_zee = searchResult.getValue("custrecord_service_freq_franchisee", "CUSTRECORD_SERVICE_FREQ_STOP", "GROUP");
 
-            var service_multiple_operators = searchResult.getValue("custrecord_multiple_operators","CUSTRECORD_SERVICE_LEG_SERVICE","GROUP");
+            var service_multiple_operators = searchResult.getValue("custrecord_multiple_operators", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
 
             var street_no_name = null;
 
@@ -187,85 +190,91 @@ function main() {
                     var run_plan_record = nlapiLoadRecord('customrecord_run_plan', service_freq_run_plan_id);
                     var run_plan_inactive = run_plan_record.getFieldValue('isinactive');
 
+                    var serviceLegRecord = nlapiLoadRecord('customrecord_service_freq', service_freq_id);
+                    var weekOfDay = serviceLegRecord.getFieldValue(days_of_week2[day + 1]);
 
+                    if (weekOfDay == 'F' && service_freq_adhoc == 'F') {
 
-                    if (run_plan_inactive == 'F') {
+                    } else {
 
-                        if (isNullorEmpty(service_leg_addr_subdwelling) && !isNullorEmpty(service_leg_addr_st_num)) {
-                            street_no_name = service_leg_addr_st_num;
-                        } else if (!isNullorEmpty(service_leg_addr_subdwelling) && isNullorEmpty(service_leg_addr_st_num)) {
+                        if (run_plan_inactive == 'F') {
 
-                            street_no_name = service_leg_addr_subdwelling;
-                        } else {
+                            if (isNullorEmpty(service_leg_addr_subdwelling) && !isNullorEmpty(service_leg_addr_st_num)) {
+                                street_no_name = service_leg_addr_st_num;
+                            } else if (!isNullorEmpty(service_leg_addr_subdwelling) && isNullorEmpty(service_leg_addr_st_num)) {
 
-                            street_no_name = service_leg_addr_subdwelling + ', ' + service_leg_addr_st_num;
-                        }
+                                street_no_name = service_leg_addr_subdwelling;
+                            } else {
 
-                        service_leg_addr_st_num = street_no_name;
-
-                        if (old_service_id != service_id) {
-
-                            var usage_loopstart_cust = ctx.getRemainingUsage();
-
-                            nlapiLogExecution('DEBUG', 'usage_loopstart_cust', usage_loopstart_cust);
-                            nlapiLogExecution('DEBUG', 'usage_threshold', usage_threshold);
-
-                            if (usage_loopstart_cust < usage_threshold) {
-
-                                var params = {
-                                    custscript_rp_prev_deployment: ctx.getDeploymentId(),
-                                    custscript_rp_old_service_id: old_service_id,
-                                    custscript_rp_app_job_group_id: app_job_group_id2
-                                }
-
-                                reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
-                                nlapiLogExecution('AUDIT', 'Reschedule Return', reschedule);
-                                if (reschedule == false) {
-                                    exit = true;
-                                    return false;
-                                }
+                                street_no_name = service_leg_addr_subdwelling + ', ' + service_leg_addr_st_num;
                             }
 
-                            var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
-                            service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
-                            nlapiSubmitRecord(service_leg_record);
+                            service_leg_addr_st_num = street_no_name;
 
-                            app_job_group_id2 = createAppJobGroup(service_leg_service_text, service_leg_customer, service_leg_zee, service_id);
+                            if (old_service_id != service_id) {
 
-                            createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
-                                service_id,
-                                service_price,
-                                service_freq_time_current,
-                                service_freq_time_end,
-                                service_freq_time_start,
-                                service_leg_no,
-                                app_job_group_id2,
-                                service_leg_addr_st_num,
-                                service_leg_addr_suburb,
-                                service_leg_addr_state,
-                                service_leg_addr_postcode,
-                                service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+                                var usage_loopstart_cust = ctx.getRemainingUsage();
 
-                        } else {
-                            var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
-                            service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
-                            nlapiSubmitRecord(service_leg_record);
+                                nlapiLogExecution('DEBUG', 'usage_loopstart_cust', usage_loopstart_cust);
+                                nlapiLogExecution('DEBUG', 'usage_threshold', usage_threshold);
 
-                            createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
-                                service_id,
-                                service_price,
-                                service_freq_time_current,
-                                service_freq_time_end,
-                                service_freq_time_start,
-                                service_leg_no,
-                                app_job_group_id2,
-                                service_leg_addr_st_num,
-                                service_leg_addr_suburb,
-                                service_leg_addr_state,
-                                service_leg_addr_postcode,
-                                service_leg_addr_lat,
-                                service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+                                if (usage_loopstart_cust < usage_threshold) {
+
+                                    var params = {
+                                        custscript_rp_prev_deployment: ctx.getDeploymentId(),
+                                        custscript_rp_old_service_id: old_service_id,
+                                        custscript_rp_app_job_group_id: app_job_group_id2
+                                    }
+
+                                    reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
+                                    nlapiLogExecution('AUDIT', 'Reschedule Return', reschedule);
+                                    if (reschedule == false) {
+                                        exit = true;
+                                        return false;
+                                    }
+                                }
+
+                                var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                                service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                                nlapiSubmitRecord(service_leg_record);
+
+                                app_job_group_id2 = createAppJobGroup(service_leg_service_text, service_leg_customer, service_leg_zee, service_id);
+
+                                createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
+                                    service_id,
+                                    service_price,
+                                    service_freq_time_current,
+                                    service_freq_time_end,
+                                    service_freq_time_start,
+                                    service_leg_no,
+                                    app_job_group_id2,
+                                    service_leg_addr_st_num,
+                                    service_leg_addr_suburb,
+                                    service_leg_addr_state,
+                                    service_leg_addr_postcode,
+                                    service_leg_addr_lat,
+                                    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+
+                            } else {
+                                var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                                service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                                nlapiSubmitRecord(service_leg_record);
+
+                                createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
+                                    service_id,
+                                    service_price,
+                                    service_freq_time_current,
+                                    service_freq_time_end,
+                                    service_freq_time_start,
+                                    service_leg_no,
+                                    app_job_group_id2,
+                                    service_leg_addr_st_num,
+                                    service_leg_addr_suburb,
+                                    service_leg_addr_state,
+                                    service_leg_addr_postcode,
+                                    service_leg_addr_lat,
+                                    service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+                            }
                         }
                     }
                 }
