@@ -3,7 +3,7 @@
  * @Date:   2018-09-19 13:20:56
  * @Last Modified by:   ankit
  
- * @Last Modified time: 2021-03-25 09:04:32
+ * @Last Modified time: 2021-05-05 07:13:48
  
  */
 var days_of_week = [];
@@ -86,6 +86,27 @@ function main() {
             break;
     }
 
+    // if (day != 0 && day != 6) {
+    //     var filterExpression = [
+    //         [
+    //             [days_of_week[day + 1], "is", 'T'], // customer id
+    //             "OR", ["custrecord_service_freq_stop.custrecord_service_freq_day_adhoc", "is", 'T']
+    //         ],
+    //         "AND", ["isinactive", "is", "F"],
+    //         //"AND", ["custrecord_service_leg_franchisee", "is", zee_id],
+    //         //"AND", ["custrecord_service_leg_franchisee", "is", 228330],
+    //         "AND", ["custrecord_service_leg_customer.partner", "is", zee_id],
+    //         "AND", ["custrecord_service_leg_customer.status", "anyof", "32", "13"],
+    //         "AND", ["custrecord_service_leg_service.isinactive", "is", "F"],
+    //         "AND", ["custrecord_service_freq_stop.internalid", "noneof", "@NONE@"],
+    //         "AND", [
+    //             ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_closing_date}, 'DD/MM/YYYY') <= TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"], "AND", ["formulatext: CASE WHEN TO_CHAR({custrecord_service_leg_opening_date}, 'DD/MM/YYYY') > TO_CHAR(SYSDATE, 'DD/MM/YYYY') THEN 'T' ELSE 'F' END", "is", "F"]
+    //         ],
+    //         "AND", ["custrecord_app_ser_leg_daily_job_create", "anyof", "2", "@NONE@"],
+    //         "AND", ["custrecord_service_leg_franchisee.custentity_zee_app_job_created", "anyof", "@NONE@", "2"], "AND", ["custrecord_service_leg_service.custrecord_show_on_app", "anyof", "@NONE@", "1"]
+    //     ];
+    //     runPlanSearch.setFilterExpression(filterExpression);
+    // }
     var resultRunPlan = runPlanSearch.runSearch();
 
     var old_service_id;
@@ -254,7 +275,71 @@ function main() {
                     // nlapiSubmitRecord(service_leg_record);
                 }
 
-               
+                // if (old_service_id != service_id) {
+
+                //     var usage_loopstart_cust = ctx.getRemainingUsage();
+
+                //     nlapiLogExecution('DEBUG', 'usage_loopstart_cust', usage_loopstart_cust);
+                //     nlapiLogExecution('DEBUG', 'usage_threshold', usage_threshold);
+
+                //     if (usage_loopstart_cust < usage_threshold) {
+
+                //         var params = {
+                //             custscript_rp_prev_deployment: ctx.getDeploymentId(),
+                //             custscript_rp_old_service_id: old_service_id,
+                //             custscript_rp_app_job_group_id: app_job_group_id2
+                //         }
+
+                //         reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, params);
+                //         nlapiLogExecution('AUDIT', 'Reschedule Return', reschedule);
+                //         if (reschedule == false) {
+                //             exit = true;
+                //             return false;
+                //         }
+                //     }
+
+                //     var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                //     service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                //     nlapiSubmitRecord(service_leg_record);
+
+                //     app_job_group_id2 = createAppJobGroup(service_leg_service_text, service_leg_customer, service_leg_zee, service_id);
+
+                //     createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
+                //         service_id,
+                //         service_price,
+                //         service_freq_time_current,
+                //         service_freq_time_end,
+                //         service_freq_time_start,
+                //         service_leg_no,
+                //         app_job_group_id2,
+                //         service_leg_addr_st_num,
+                //         service_leg_addr_suburb,
+                //         service_leg_addr_state,
+                //         service_leg_addr_postcode,
+                //         service_leg_addr_lat,
+                //         service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+
+                // } else {
+                //     var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                //     service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                //     nlapiSubmitRecord(service_leg_record);
+
+                //     createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
+                //         service_id,
+                //         service_price,
+                //         service_freq_time_current,
+                //         service_freq_time_end,
+                //         service_freq_time_start,
+                //         service_leg_no,
+                //         app_job_group_id2,
+                //         service_leg_addr_st_num,
+                //         service_leg_addr_suburb,
+                //         service_leg_addr_state,
+                //         service_leg_addr_postcode,
+                //         service_leg_addr_lat,
+                //         service_leg_addr_lon, service_leg_zee, service_id, service_leg_notes, service_freq_run_plan_id, service_leg_location_type, service_freq_adhoc, service_leg_customer_text, service_multiple_operators);
+                // }
+
 
             } else {
                 var body = 'Error on one of the following: \n';
@@ -286,6 +371,22 @@ function main() {
             return true;
         }
     });
+
+    // nlapiLogExecution('AUDIT', 'Total Count for ' + zee_name, count);
+    // nlapiLogExecution('EMERGENCY', 'Exit ' + zee_name, exit);
+    // if (exit == false) {
+    //     var zee_record = nlapiLoadRecord('partner', zee_id);
+    //     zee_record.setFieldValue('custentity_zee_app_job_created', 1);
+    //     nlapiSubmitRecord(zee_record, false, true);
+    //     reschedule = rescheduleScript(prev_inv_deploy, adhoc_inv_deploy, null);
+    //     if (reschedule == false) {
+
+    //         return false;
+    //     }
+    // }
+
+    //     return true;
+    // });
 
 }
 
