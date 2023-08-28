@@ -114,7 +114,7 @@ function main() {
 
     var count = 0;
     var exit = false;
-    resultRunPlan.forEachResult(function(searchResult) {
+    resultRunPlan.forEachResult(function (searchResult) {
 
         nlapiLogExecution('EMERGENCY', 'Start of App Job Creation Loop. Exit: ', exit);
 
@@ -125,6 +125,7 @@ function main() {
         var service_leg_customer_text = searchResult.getText("custrecord_service_leg_customer", null, "GROUP");
         var service_id = searchResult.getValue("internalid", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
         var service_leg_service = searchResult.getValue("custrecord_service_leg_service", null, "GROUP");
+        var service_leg_service_description = searchResult.getValue("custrecord_service_description", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
         var service_leg_service_text = searchResult.getText("custrecord_service_leg_service", null, "GROUP");
         var service_price = searchResult.getValue("custrecord_service_price", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
         var service_cat = searchResult.getValue("custrecord_service_category", "CUSTRECORD_SERVICE_LEG_SERVICE", "GROUP");
@@ -204,6 +205,7 @@ function main() {
 
                         createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
                             service_id,
+                            service_leg_service_description,
                             service_price,
                             service_freq_time_current,
                             service_freq_time_end,
@@ -231,6 +233,7 @@ function main() {
 
                         createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
                             service_id,
+                            service_leg_service_description,
                             service_price,
                             service_freq_time_current,
                             service_freq_time_end,
@@ -270,9 +273,9 @@ function main() {
                     body += 'Run Plan: ' + service_freq_run_plan_id + '\n';
                     // body += 'e: ' + e + '\n';
                     nlapiSendEmail(112209, 'ankith.ravindran@mailplus.com.au', 'Create App Jobs - Run Plan Inactive', body);
-                    // var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
-                    // service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
-                    // nlapiSubmitRecord(service_leg_record);
+                    var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                    service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                    nlapiSubmitRecord(service_leg_record);
                 }
 
                 // if (old_service_id != service_id) {
@@ -348,9 +351,9 @@ function main() {
                 body += 'Run Plan: ' + service_freq_run_plan_id + '\n';
                 // body += 'e: ' + e + '\n';
                 nlapiSendEmail(112209, 'ankith.ravindran@mailplus.com.au', 'Create App Jobs - empty Run Plan ID', body);
-                // var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
-                // service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
-                // nlapiSubmitRecord(service_leg_record);
+                var service_leg_record = nlapiLoadRecord('customrecord_service_leg', service_leg_id);
+                service_leg_record.setFieldValue('custrecord_app_ser_leg_daily_job_create', 1);
+                nlapiSubmitRecord(service_leg_record);
             }
         } catch (e) {
             // statements
@@ -407,6 +410,7 @@ function createAppJobGroup(service_leg_service_text,
 
 function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     service_id,
+    service_leg_service_description,
     service_price,
     service_freq_time_current,
     service_freq_time_end,
@@ -436,6 +440,7 @@ function createAppJobs(service_leg_id, service_leg_customer, service_leg_name,
     app_job_rec.setFieldValue('custrecord_job_customer', service_leg_customer);
     app_job_rec.setFieldValue('custrecord_job_source', 6);
     app_job_rec.setFieldValue('custrecord_job_service', service_id);
+    app_job_rec.setFieldValue('custrecord_job_invoice_detail', service_leg_service_description);
     app_job_rec.setFieldValue('custrecord_job_service_price', service_price);
     app_job_rec.setFieldValue('custrecord_job_stop', service_leg_id);
     app_job_rec.setFieldValue('custrecord159', service_leg_id);

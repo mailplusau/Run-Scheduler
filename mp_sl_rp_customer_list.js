@@ -86,7 +86,7 @@ function main(request, response) {
 
             inlinehtml2 += '<option value=""></option>'
 
-            resultSet_zee.forEachResult(function(searchResult_zee) {
+            resultSet_zee.forEachResult(function (searchResult_zee) {
                 zee_id = searchResult_zee.getValue('internalid');
                 // WS Edit: Updated entityid to companyname
                 zee_name = searchResult_zee.getValue('companyname');
@@ -176,7 +176,7 @@ function main(request, response) {
             var freq_toinactivate = [];
             var count = 0;
             var customer_id;
-            resultSet.forEachResult(function(searchResult) {
+            resultSet.forEachResult(function (searchResult) {
                 if (count == 0) {
                     customer_id = searchResult.getValue("custrecord_service_leg_customer");
                 }

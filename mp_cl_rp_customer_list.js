@@ -4,7 +4,7 @@ if (nlapiGetContext().getEnvironment() == "SANDBOX") {
 }
 
 //To show loader while the page is laoding
-$(window).load(function() {
+$(window).load(function () {
     // Animate loader off screen
     $(".se-pre-con").fadeOut("slow");;
 });
@@ -47,7 +47,7 @@ function pageInit() {
 
     var dataSet = '{"data":[';
 
-    resultSetCustomer.forEachResult(function(searchResult) {
+    resultSetCustomer.forEachResult(function (searchResult) {
 
         var custid = searchResult.getValue("custrecord_service_customer", null, "GROUP");
         var entityid = searchResult.getValue("entityid", "CUSTRECORD_SERVICE_CUSTOMER", "GROUP");
@@ -66,7 +66,7 @@ function pageInit() {
         var no_of_legs = searchResult.getValue("custrecord_service_type_leg_no", "CUSTRECORD_SERVICE", "GROUP");
         var show_on_app = searchResult.getValue("custrecord_show_on_app", null, "GROUP");
 
-        if (service_price == '.00'){
+        if (service_price == '.00') {
             console.log('MPEX Pickup service_price', service_price);
             service_price = 0;
         }
@@ -184,7 +184,7 @@ function pageInit() {
     // AddStyle('https://1048144.app.netsuite.com/core/media/media.nl?id=1988776&c=1048144&h=58352d0b4544df20b40f&_xt=.css', 'head');
 
     //JQuery to sort table based on click of header. Attached library  
-    $(document).ready(function() {
+    $(document).ready(function () {
         table = $("#customer").DataTable({
             "data": parsedData.data,
             "columns": [{
@@ -193,7 +193,7 @@ function pageInit() {
                 "defaultContent": '<button type="button" class="details-control form-control btn-xs btn-success " ><span class="span_class glyphicon glyphicon-plus"></span></button>'
             }, {
                 "data": null,
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     return '<button type="button" data-custid="' + data.cust_id + '" class="edit_customer form-control btn-xs btn-warning " ><span class="span_class glyphicon glyphicon-pencil"></span></button>';
                 }
             }, {
@@ -210,14 +210,14 @@ function pageInit() {
             }],
             "columnDefs": [{
 
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     if (data.scheduled == 1) {
                         return '<img src="https://1048144.app.netsuite.com/core/media/media.nl?id=1990778&c=1048144&h=e7f4f60576de531265f7" height="25" width="25">';
                     }
                 },
                 "targets": [4]
             }, {
-                "render": function(data, type, row) {
+                "render": function (data, type, row) {
                     if (data.services_suspended == 1) {
                         //return 'All services appear on the app'
                         return '<button type="button" class="form-control btn-xs btn-info" disabled><span style="font-size: large;">' + data.services_suspended + '</span> SUSPENDED SERVICE</button>';
@@ -252,7 +252,7 @@ function pageInit() {
 
 }
 
-$(document).on('click', '.edit_customer', function() {
+$(document).on('click', '.edit_customer', function () {
 
     var custid = $(this).attr('data-custid')
     console.log(custid);
@@ -266,7 +266,7 @@ $(document).on('click', '.edit_customer', function() {
 
 });
 
-$('.collapse').on('shown.bs.collapse', function() {
+$('.collapse').on('shown.bs.collapse', function () {
     $("#customer_wrapper").css({
         "padding-top": "500px"
     });
@@ -275,7 +275,7 @@ $('.collapse').on('shown.bs.collapse', function() {
     });
 })
 
-$('.collapse').on('hide.bs.collapse', function() {
+$('.collapse').on('hide.bs.collapse', function () {
     $("#customer_wrapper").css({
         "padding-top": "0px"
     });
@@ -314,7 +314,7 @@ function saveRecord() {
     return true;
 }
 
-$(document).on('click', '.details-control', function() {
+$(document).on('click', '.details-control', function () {
     var tr = $(this).closest('tr');
     var row = table.row(tr);
 
@@ -337,18 +337,18 @@ $(document).on('click', '.details-control', function() {
     }
 
 
-    $(".row_service").each(function() {
+    $(".row_service").each(function () {
         if ($(this).find(".setup_service").val() == 'SETUP STOP') {
             $(this).find(".service_summary").prop('disabled', true);
         }
     });
 
-    $(function() {
+    $(function () {
         $('[data-toggle="tooltip"]').tooltip()
     });
 });
 
-$(document).on('click', '.setup_service', function() {
+$(document).on('click', '.setup_service', function () {
     var service_id = $(this).attr('data-serviceid');
 
     zee = nlapiGetFieldValue('zee');
@@ -365,7 +365,7 @@ $(document).on('click', '.setup_service', function() {
     window.open(upload_url, "_blank", "height=750,width=650,modal=yes,alwaysRaised=yes");
 });
 
-$(document).on('click', '.service_summary', function() {
+$(document).on('click', '.service_summary', function () {
     console.log('click');
 
     var header = '<div><h3><label class="control-label">Summary Page</label></h3></div>';
@@ -392,7 +392,7 @@ $(document).on('click', '.service_summary', function() {
     var freq_id_count = 0;
     var freq_count = 0;
     var stop_freq_json = '{ "data": [';
-    resultSet.forEachResult(function(searchResult) {
+    resultSet.forEachResult(function (searchResult) {
         var customer_name = searchResult.getText('custrecord_service_leg_customer');
         var service = searchResult.getText('custrecord_service_leg_service');
         var stop_id = searchResult.getValue('internalid');
@@ -619,7 +619,7 @@ function format(index) {
     console.log('index.cust_id', index.cust_id);
     var html = '<table class="table table-responsive" cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">';
 
-    $.each(index.services, function(i, service) {
+    $.each(index.services, function (i, service) {
         console.log('service', service);
         if (i == 0) {
             html += '<thead><tr style="color:white;background-color: grey;" data-custid = "' + index.cust_id + '"><th style="text-align: center;"></th><th style="text-align: center;">Service Name</th><th style="text-align: center;">Description</th><th style="text-align: center;">Price</th><th class="col-sm-4" style="text-align: center;">Action</th></tr></thead>';
@@ -634,7 +634,7 @@ function format(index) {
         var count = 0;
         var service_scheduled;
         var show_on_app;
-        $.each(service, function(key, value) {
+        $.each(service, function (key, value) {
             if (key == "leg_count") {
                 service_leg_count = parseInt(value);
             }
@@ -696,7 +696,7 @@ function format(index) {
 
 }
 
-$(document).on("click", ".show_app", function(e) {
+$(document).on("click", ".show_app", function (e) {
     var service_id = $(this).attr('data-serviceid');
     inactivate_id_array[inactivate_id_array.length] = service_id;
     console.log('inactivate service_id', service_id);
@@ -704,7 +704,7 @@ $(document).on("click", ".show_app", function(e) {
 });
 
 //On selecting zee, reload the SMC - Summary page with selected Zee parameter
-$(document).on("change", ".zee_dropdown", function(e) {
+$(document).on("change", ".zee_dropdown", function (e) {
 
     var zee = $(this).val();
 
@@ -721,7 +721,7 @@ $(document).on("change", ".zee_dropdown", function(e) {
     window.location.href = url;
 });
 
-$(document).on("click", ".remove_service", function(e) {
+$(document).on("click", ".remove_service", function (e) {
     if (confirm('Are you sure you want to remove this service from run?\n\nThis action cannot be undone.')) {
         var service_id = $(this).attr('data-serviceid');
         remove_id_array[remove_id_array.length] = service_id;
